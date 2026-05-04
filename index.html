@@ -565,27 +565,9 @@ footer { background:var(--ink); border-top:1px solid rgba(255,255,255,.08); padd
     }
   </script>
 </div>
-<!-- VIDÉO -->
-<hr class="section-divider">
-<div style="background:var(--surface);">
-  <div style="max-width:800px;margin:0 auto;padding:4rem 3rem;text-align:center;">
-    <div class="section-label" style="justify-content:center;">En action</div>
-    <h2 style="margin-bottom:2.5rem;">Mylidie expliquée <em>en vidéo</em></h2>
-    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border:1px solid var(--border);">
-      <iframe
-        src="https://www.youtube.com/embed/3lIEj6kwKrI"
-        title="Mylidie en action"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        style="position:absolute;top:0;left:0;width:100%;height:100%;">
-      </iframe>
-    </div>
-  </div>
-</div>
+
 
 <!-- BÉNÉFICES -->
-<hr class="section-divider">
 <hr class="section-divider">
 <div class="section testimonial-section" style="max-width:900px;margin:0 auto;padding:4rem 3rem;">
   <div class="testimonial-card" style="display:flex;gap:3rem;align-items:flex-start;background:var(--white);border:1px solid var(--border);padding:2.5rem 3rem;">
@@ -922,7 +904,7 @@ footer { background:var(--ink); border-top:1px solid rgba(255,255,255,.08); padd
     <h2>Un forfait unique.<br><em>Tout inclus.</em></h2>
     <p class="lead">Pas de frais à la minute, pas de coûts cachés. Vous savez exactement ce que vous payez.</p>
     <div class="toggle-wrap">
-      <button class="toggle-btn active" id="btn-annual" onclick="gtag('event','cta_click',{button_id:'pricing_toggle_annual',button_location:'pricing',button_text:'Annuel',button_type:'toggle',priority:3});setMode('annual')">Annuel <span class="discount-pill">−29%</span></button>
+      <button class="toggle-btn active" id="btn-annual" onclick="gtag('event','cta_click',{button_id:'pricing_toggle_annual',button_location:'pricing',button_text:'Annuel',button_type:'toggle',priority:3});setMode('annual')">Annuel <span class="discount-pill">−33%</span></button>
       <button class="toggle-btn" id="btn-monthly" onclick="gtag('event','cta_click',{button_id:'pricing_toggle_monthly',button_location:'pricing',button_text:'Mensuel',button_type:'toggle',priority:3});setMode('monthly')">Mensuel</button>
     </div>
     <div class="pricing-layout">
@@ -945,15 +927,16 @@ footer { background:var(--ink); border-top:1px solid rgba(255,255,255,.08); padd
         <div>
           <div class="price-label" id="price-label">Facturation annuelle</div>
           <div class="price-amount">
-            <div class="price-big" id="price-int">249</div><div class="price-cents" id="price-dec"></div>
+            <div class="price-big" id="price-int">99</div><div class="price-cents" id="price-dec"></div>
             <div class="price-unit">€ HT / mois <sup style="font-size:0.6em;vertical-align:super;">*</sup></div>
           </div>
-          <div class="price-strike" id="price-strike">349 € / mois</div>
+          <div class="price-strike" id="price-strike">149 € / mois</div>
           <div class="price-annual-note" id="price-annual-note" style="display:none;min-height:1.2rem;">&nbsp;</div>
           <button class="cta-primary-full" onclick="gtag('event','cta_click',{button_id:'pricing_demander_demo',button_location:'pricing',button_text:'Demander une démo',button_type:'calendly',priority:1});window.open('https://calendly.com/adeveyrac/20min','_blank')">Demander une démo</button>
           <button class="cta-ghost-full" onclick="gtag('event','cta_click',{button_id:'pricing_tester_mylidie',button_location:'pricing',button_text:'Tester mylidie',button_type:'tel',priority:2});window.location.href='tel:+33757590436'">📞 Tester mylidie</button>
           <div class="price-note" id="price-note">Paiement annuel en une fois · Sans frais à la minute</div>
         </div>
+        <a href="/onboarding.html" onclick="gtag('event','cta_click',{button_id:'pricing_essai_gratuit',button_location:'pricing',button_text:'Essayer gratuitement',button_type:'link',priority:1});" style="display:block;text-align:center;background:var(--gold);color:var(--cream);font-family:'Jost',sans-serif;font-weight:500;font-size:0.85rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.9rem 1.5rem;border:none;cursor:pointer;transition:background 0.2s;text-decoration:none;margin-bottom:0.75rem;">Essayer gratuitement</a>
         <div class="price-bottom">
           <div class="included-label">Inclus dans le forfait</div>
           <div class="included-items">
@@ -1088,13 +1071,13 @@ footer { background:var(--ink); border-top:1px solid rgba(255,255,255,.08); padd
     var pnote = document.getElementById('price-note');
     if (mode === 'annual') {
       btnA.classList.add('active'); btnM.classList.remove('active');
-      pi.textContent = '249'; pd.textContent = '';
+      pi.textContent = '99'; pd.textContent = '';
       lbl.textContent = 'Facturation annuelle';
       if (strike) { strike.style.visibility = 'visible'; }
       if (pnote) pnote.textContent = 'Paiement annuel · Sans frais à la minute';
     } else {
       btnM.classList.add('active'); btnA.classList.remove('active');
-      pi.textContent = '349'; pd.textContent = '';
+      pi.textContent = '149'; pd.textContent = '';
       lbl.textContent = 'Facturation mensuelle';
       if (strike) { strike.style.visibility = 'hidden'; }
       if (pnote) pnote.textContent = 'Sans engagement · Sans frais à la minute';
