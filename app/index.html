@@ -1,0 +1,564 @@
+<title>Réception Mylidie</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{
+    --bg:#eceae2; --surface:#ffffff; --surface-2:#f5f3ec; --surface-3:#efece2;
+    --ink:#24231c; --ink-soft:#5c5a4e; --ink-faint:#928f80;
+    --line:#e6e2d6; --line-strong:#d8d3c4;
+    --brand:#3a3a28; --brand-2:#4d4c36; --btn-bg:#3a3a28; --btn-fg:#fff;
+    --resa:#c0392b; --resa-bg:#fbeae7; --resa-line:#e7b7ae;
+    --info:#2f7d5b; --info-bg:#e7f2ec; --info-line:#b0d4c2;
+    --annul:#5b6b7a; --annul-bg:#eef1f4; --annul-line:#ccd6de;
+    --rappel:#b5850f; --rappel-bg:#fbf1d8; --rappel-line:#e8cf93;
+    --inconnu:#6d4b9f; --inconnu-bg:#efe9f6; --inconnu-line:#d3c2e6;
+    --urgence:#d9480f; --urgence-bg:#fdece3; --urgence-line:#f3c2a4;
+    --bubble-out:#3a3a28; --bubble-out-fg:#f5f3ea;
+    --shadow:0 1px 2px rgba(40,38,28,.05),0 6px 18px rgba(40,38,28,.06);
+    --fs-xs:11px; --fs-sm:13px; --fs-base:14px; --fs-lg:16px; --fs-xl:19px; --fs-2xl:24px;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,ui-serif,serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#131209; --surface:#201e18; --surface-2:#29271f; --surface-3:#2f2c22;
+    --ink:#f2efe5; --ink-soft:#bcb8a8; --ink-faint:#867f6d; --line:#322f25; --line-strong:#3d3a2e;
+    --brand:#cdbb8e; --brand-2:#d8c89e; --btn-bg:#cbb98d; --btn-fg:#231f17;
+    --resa:#e8776b; --resa-bg:#38211d; --resa-line:#5a332c; --info:#5cbd90; --info-bg:#15332a; --info-line:#28503f;
+    --annul:#9fb0bf; --annul-bg:#232a30; --annul-line:#3a454e;
+    --rappel:#e5bd52; --rappel-bg:#332a14; --rappel-line:#544527; --inconnu:#b79ae0; --inconnu-bg:#2c2338; --inconnu-line:#463a5c;
+    --urgence:#f0885c; --urgence-bg:#3a2116; --urgence-line:#5e3722;
+    --bubble-out:#cbb98d; --bubble-out-fg:#231f17; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.35);
+  }}
+  :root[data-theme="light"]{
+    --bg:#eceae2; --surface:#fff; --surface-2:#f5f3ec; --surface-3:#efece2;
+    --ink:#24231c; --ink-soft:#5c5a4e; --ink-faint:#928f80; --line:#e6e2d6; --line-strong:#d8d3c4;
+    --brand:#3a3a28; --brand-2:#4d4c36; --btn-bg:#3a3a28; --btn-fg:#fff;
+    --resa:#c0392b; --resa-bg:#fbeae7; --resa-line:#e7b7ae; --info:#2f7d5b; --info-bg:#e7f2ec; --info-line:#b0d4c2;
+    --annul:#5b6b7a; --annul-bg:#eef1f4; --annul-line:#ccd6de;
+    --rappel:#b5850f; --rappel-bg:#fbf1d8; --rappel-line:#e8cf93; --inconnu:#6d4b9f; --inconnu-bg:#efe9f6; --inconnu-line:#d3c2e6;
+    --urgence:#d9480f; --urgence-bg:#fdece3; --urgence-line:#f3c2a4;
+    --bubble-out:#3a3a28; --bubble-out-fg:#f5f3ea; --shadow:0 1px 2px rgba(40,38,28,.05),0 6px 18px rgba(40,38,28,.06);
+  }
+  :root[data-theme="dark"]{
+    --bg:#131209; --surface:#201e18; --surface-2:#29271f; --surface-3:#2f2c22;
+    --ink:#f2efe5; --ink-soft:#bcb8a8; --ink-faint:#867f6d; --line:#322f25; --line-strong:#3d3a2e;
+    --brand:#cdbb8e; --brand-2:#d8c89e; --btn-bg:#cbb98d; --btn-fg:#231f17;
+    --resa:#e8776b; --resa-bg:#38211d; --resa-line:#5a332c; --info:#5cbd90; --info-bg:#15332a; --info-line:#28503f;
+    --annul:#9fb0bf; --annul-bg:#232a30; --annul-line:#3a454e;
+    --rappel:#e5bd52; --rappel-bg:#332a14; --rappel-line:#544527; --inconnu:#b79ae0; --inconnu-bg:#2c2338; --inconnu-line:#463a5c;
+    --urgence:#f0885c; --urgence-bg:#3a2116; --urgence-line:#5e3722;
+    --bubble-out:#cbb98d; --bubble-out-fg:#231f17; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs-base);-webkit-font-smoothing:antialiased;}
+  .scrollwrap{overflow-x:auto;}
+  .workspace{display:grid;grid-template-columns:264px 372px 1fr;height:100dvh;min-width:1040px;background:var(--bg);}
+  .col{min-height:0;display:flex;flex-direction:column;}
+  .side{background:var(--surface);border-right:1px solid var(--line);}
+  .list{background:var(--bg);border-right:1px solid var(--line);}
+  .detail{background:var(--bg);}
+
+  /* ---- left ---- */
+  .brandbox{padding:16px 16px 14px;border-bottom:1px solid var(--line);display:flex;gap:11px;align-items:center;cursor:pointer;}
+  .brandbox:hover{background:var(--surface-2)}
+  .logo{width:40px;height:40px;border-radius:11px;background:var(--brand);color:#f5f3ea;display:grid;place-items:center;
+    font-family:var(--serif);font-style:italic;font-size:20px;flex:0 0 auto;}
+  @media(prefers-color-scheme:dark){.logo{background:var(--btn-bg);color:var(--btn-fg)}}
+  :root[data-theme="dark"] .logo{background:var(--btn-bg);color:var(--btn-fg)}
+  .brandbox .bx{flex:1;min-width:0}
+  .brandbox .hn{font-weight:700;font-size:var(--fs-base);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .brandbox .hp{font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:5px;margin-top:2px;}
+  .brandbox .hp .fr{font-size:12px}
+  .brandbox .chev{color:var(--ink-faint);font-size:15px}
+
+  .searchbox{padding:12px 14px;}
+  .searchbox input{width:100%;padding:9px 12px 9px 32px;border-radius:9px;border:1px solid var(--line-strong);
+    background:var(--surface-2);color:var(--ink);font-family:var(--sans);font-size:var(--fs-sm);
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='none' stroke='%23928f80' stroke-width='2' viewBox='0 0 24 24'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4-4'/></svg>");
+    background-repeat:no-repeat;background-position:10px center;}
+  .searchbox input:focus{outline:2px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:1px}
+
+  .navlbl{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);padding:6px 18px 6px;}
+  .nav{padding:0 10px;display:flex;flex-direction:column;gap:2px;}
+  .navitem{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;border:none;background:transparent;
+    color:var(--ink-soft);font-family:var(--sans);font-size:var(--fs-sm);cursor:pointer;text-align:left;width:100%;}
+  .navitem:hover{background:var(--surface-2)}
+  .navitem[aria-current="true"]{background:var(--surface-3);color:var(--ink);font-weight:600;}
+  .navitem .dot{width:9px;height:9px;border-radius:3px;flex:0 0 auto;}
+  .navitem .lbl{flex:1}
+  .navitem .cnt{font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums;
+    background:var(--surface-3);padding:1px 7px;border-radius:999px;}
+  .navitem[aria-current="true"] .cnt{background:var(--surface)}
+  .d-resa{background:var(--resa)} .d-info{background:var(--info)} .d-annulation{background:var(--annul)}
+  .d-rappel{background:var(--rappel)} .d-inconnu{background:var(--inconnu)} .d-all{background:var(--ink-faint)}
+  .d-urgence{background:var(--urgence)}
+
+  .side-foot{margin-top:auto;border-top:1px solid var(--line);padding:12px 14px;}
+  .agentline{display:flex;align-items:center;gap:9px;font-size:var(--fs-sm);color:var(--ink-soft);}
+  .agentline .adot{width:8px;height:8px;border-radius:50%;background:#5cbd90;box-shadow:0 0 0 3px color-mix(in srgb,#5cbd90 20%,transparent);}
+  .memberline{display:flex;align-items:center;gap:9px;margin-top:11px;}
+  .memberline .mav{width:28px;height:28px;border-radius:50%;background:var(--brand);color:#f5f3ea;display:grid;place-items:center;font-size:var(--fs-xs);font-weight:700;}
+  @media(prefers-color-scheme:dark){.memberline .mav{background:var(--btn-bg);color:var(--btn-fg)}}
+  .memberline .mn{font-size:var(--fs-sm)} .memberline .mv{font-size:var(--fs-xs);color:var(--ink-faint)}
+  .themebtn{margin-top:11px;width:100%;border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink-soft);
+    font-size:var(--fs-xs);padding:7px;border-radius:8px;cursor:pointer;font-family:var(--sans);}
+
+  /* ---- middle ---- */
+  .list-head{padding:16px 18px 10px;}
+  .list-head .lt{display:flex;align-items:center;gap:8px;font-size:var(--fs-xl);font-weight:700;letter-spacing:-.3px;}
+  .tabs{display:flex;gap:6px;margin-top:12px;}
+  .ltab{border:none;background:transparent;color:var(--ink-faint);font-size:var(--fs-sm);font-weight:600;padding:5px 12px;
+    border-radius:999px;cursor:pointer;font-family:var(--sans);}
+  .ltab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+  .archbtn{margin-left:8px;border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink-soft);
+  border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer;font-family:inherit}
+.archbtn:hover{background:var(--surface-3);color:var(--ink)}
+.archbtn:focus-visible,.callbtn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.archtag{margin-left:8px;border-radius:8px;padding:6px 11px;font-size:12px;
+  background:var(--surface-3);color:var(--ink-faint);border:1px solid var(--line)}
+.rows{flex:1;overflow-y:auto;padding:4px 10px 20px;}
+  .grouplbl{font-size:var(--fs-xs);color:var(--ink-faint);padding:12px 8px 6px;font-weight:600;}
+  .row{display:flex;gap:12px;align-items:center;padding:11px 10px;border-radius:11px;cursor:pointer;}
+  .row:hover{background:var(--surface-2)}
+  .row[aria-selected="true"]{background:var(--surface);box-shadow:var(--shadow)}
+  .rav{width:40px;height:40px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;color:#fff;font-weight:650;font-size:var(--fs-sm);letter-spacing:.3px;}
+  .rmeta{flex:1;min-width:0}
+  .rl1{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+  .rn{font-weight:650;font-size:var(--fs-base);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rt{font-size:var(--fs-xs);color:var(--ink-faint);white-space:nowrap;flex:0 0 auto}
+  .rl2{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:var(--fs-sm);color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rl2 .mdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+  .unread{width:9px;height:9px;border-radius:50%;background:var(--rappel);flex:0 0 auto}
+  .list-empty,.detail-empty{color:var(--ink-faint);text-align:center;padding:60px 24px;font-size:var(--fs-sm)}
+
+  /* ---- right ---- */
+  .det-head{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line);background:var(--surface);}
+  .det-head .dav{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:650;font-size:var(--fs-sm)}
+  .det-head .dn{font-weight:700;font-size:var(--fs-lg)}
+  .det-head .dp{font-size:var(--fs-sm);color:var(--ink-faint);font-variant-numeric:tabular-nums}
+  .det-head .callbtn{margin-left:auto;width:38px;height:38px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line-strong);
+    color:var(--ink);display:grid;place-items:center;cursor:pointer;font-size:16px}
+  .det-body{flex:1;overflow-y:auto;padding:22px 22px 10px;max-width:820px;width:100%;margin:0 auto;}
+
+  .beta{background:var(--inconnu-bg);border:1px solid var(--inconnu-line);border-radius:14px;padding:15px 18px;margin-bottom:20px;}
+  .beta .bh{display:flex;align-items:center;gap:8px;color:var(--inconnu);font-weight:700;font-size:var(--fs-sm);margin-bottom:10px}
+  .beta .btag{background:var(--inconnu);color:#fff;font-size:10px;padding:1px 7px;border-radius:999px;font-weight:700}
+  @media(prefers-color-scheme:dark){.beta .btag{color:#231f17}}
+  .beta ol{margin:0;padding-left:20px;color:var(--ink);font-size:var(--fs-sm);line-height:1.6}
+  .beta li{margin-bottom:5px}
+
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-xs);font-weight:600;padding:4px 11px;border-radius:999px}
+  .pill.resa{background:var(--resa-bg);color:var(--resa);border:1px solid var(--resa-line)}
+  .pill.info{background:var(--info-bg);color:var(--info);border:1px solid var(--info-line)}
+  .pill.annulation{background:var(--annul-bg);color:var(--annul);border:1px solid var(--annul-line)}
+  .pill.rappel{background:var(--rappel-bg);color:var(--rappel);border:1px solid var(--rappel-line)}
+  .pill.inconnu{background:var(--inconnu-bg);color:var(--inconnu);border:1px solid var(--inconnu-line)}
+  .pill.urgence{background:var(--urgence-bg);color:var(--urgence);border:1px solid var(--urgence-line)}
+
+  .sec-t{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);margin:22px 2px 9px}
+  .dcard{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px}
+  .player{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-top:8px}
+  .player .pp{width:34px;height:34px;border-radius:50%;background:var(--btn-bg);color:var(--btn-fg);border:none;display:grid;place-items:center;cursor:pointer;font-size:13px;flex:0 0 auto}
+  .player .track{flex:1;height:5px;border-radius:5px;background:var(--line-strong);position:relative;overflow:hidden}
+  .player .track i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--brand)}
+  @media(prefers-color-scheme:dark){.player .track i{background:var(--brand-2)}}
+  .player .dur{font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums}
+  .player .dl{color:var(--ink-faint);cursor:pointer;font-size:15px}
+
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 20px}
+  .info-grid .di{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:var(--fs-sm)}
+  .info-grid .di .k{color:var(--ink-faint)} .info-grid .di .v{color:var(--ink);font-weight:600;text-align:right}
+  .summary{font-size:var(--fs-base);line-height:1.6;color:var(--ink)}
+  .tr{display:flex;flex-direction:column;gap:9px}
+  .b{max-width:80%;padding:10px 14px;border-radius:15px;font-size:var(--fs-sm);line-height:1.5;box-shadow:var(--shadow)}
+  .b .who{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;opacity:.6;margin-bottom:3px}
+  .b.agent{align-self:flex-start;background:var(--surface-2);color:var(--ink);border-bottom-left-radius:5px}
+  .b.client{align-self:flex-end;background:var(--bubble-out);color:var(--bubble-out-fg);border-bottom-right-radius:5px}
+  .d-none{color:var(--ink-faint);font-style:italic;text-align:center;padding:16px}
+  .sugg{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .sugg button{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);font-size:var(--fs-sm);
+    padding:8px 14px;border-radius:9px;cursor:pointer;font-family:var(--sans);font-weight:600}
+
+  .composer{border-top:1px solid var(--line);background:var(--surface);padding:12px 22px 16px;max-width:820px;width:100%;margin:0 auto;}
+  .composer .cm{display:flex;gap:10px;align-items:flex-end}
+  .composer textarea{flex:1;resize:none;border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);
+    border-radius:12px;padding:11px 14px;font-family:var(--sans);font-size:var(--fs-sm);max-height:120px;line-height:1.45}
+  .composer textarea:focus{outline:2px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:1px}
+  .composer .send{width:42px;height:42px;border-radius:11px;background:var(--btn-bg);color:var(--btn-fg);border:none;cursor:pointer;font-size:16px;flex:0 0 auto}
+  .composer .cnote{font-size:var(--fs-xs);color:var(--ink-faint);margin:0 0 8px}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="scrollwrap">
+<div class="workspace">
+  <!-- LEFT -->
+  <aside class="col side">
+    <div class="brandbox" title="Profil de l'hôtel">
+      <div class="logo">M</div>
+      <div class="bx">
+        <div class="hn">Hôtel Saint-Énogat</div>
+        <div class="hp"><span class="fr">🇫🇷</span><span>+33 5 63 47 12 08</span></div>
+      </div>
+      <span class="chev">⌄</span>
+    </div>
+    <div class="searchbox">
+      <input id="search" type="search" placeholder="Chercher un nom, un numéro, « animaux »…">
+    </div>
+    <div class="navlbl">Motif d'appel</div>
+    <div class="nav" id="nav">
+      <button class="navitem" data-f="all" aria-current="true"><span class="dot d-all"></span><span class="lbl">Tous</span><span class="cnt" data-c="all"></span></button>
+      <button class="navitem" data-f="urgence"><span class="dot d-urgence"></span><span class="lbl">Urgences</span><span class="cnt" data-c="urgence"></span></button>
+      <button class="navitem" data-f="resa"><span class="dot d-resa"></span><span class="lbl">Réservation</span><span class="cnt" data-c="resa"></span></button>
+      <button class="navitem" data-f="info"><span class="dot d-info"></span><span class="lbl">Information</span><span class="cnt" data-c="info"></span></button>
+      <button class="navitem" data-f="annulation"><span class="dot d-annulation"></span><span class="lbl">Annulation</span><span class="cnt" data-c="annulation"></span></button>
+      <button class="navitem" data-f="rappel"><span class="dot d-rappel"></span><span class="lbl">Demande de rappel</span><span class="cnt" data-c="rappel"></span></button>
+      <button class="navitem" data-f="inconnu"><span class="dot d-inconnu"></span><span class="lbl">Inconnu</span><span class="cnt" data-c="inconnu"></span></button>
+    </div>
+    <div class="side-foot">
+      <div class="agentline"><span class="adot"></span>Réceptionniste IA · active</div>
+      <div class="memberline"><span class="mav">AV</span><div><div class="mn">Amaury De Veyrac</div><div class="mv">Vous · réception</div></div></div>
+      <button class="themebtn" id="themeBtn">Basculer clair / sombre</button>
+    </div>
+  </aside>
+
+  <!-- MIDDLE -->
+  <section class="col list">
+    <div class="list-head">
+      <div class="lt">Discussions</div>
+      <div class="tabs" id="tabs">
+        <button class="ltab" aria-selected="true" data-t="tous">Tous</button>
+        <button class="ltab" aria-selected="false" data-t="nonlus">Non lus</button>
+        <button class="ltab" aria-selected="false" data-t="archives">Archivés</button>
+      </div>
+    </div>
+    <div class="rows" id="rows"></div>
+  </section>
+
+  <!-- RIGHT -->
+  <section class="col detail" id="detailCol">
+    <div class="detail-empty" id="detailEmpty">Sélectionnez une conversation pour voir le détail.</div>
+    <div class="col" id="detailInner" style="display:none;height:100%">
+      <div class="det-head" id="detHead"></div>
+      <div class="det-body" id="detBody"></div>
+      <div class="composer">
+        <p class="cnote">Message SMS envoyé depuis le numéro de l'hôtel — visible par toute l'équipe.</p>
+        <div class="cm">
+          <textarea id="cInput" rows="1" placeholder="Écrire un message…"></textarea>
+          <button class="send" id="cSend" aria-label="Envoyer">➤</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</div>
+
+<script>
+(function(){
+  var LABEL={urgence:'Urgence',resa:'Réservation',info:'Information',annulation:'Annulation',rappel:'Demande de rappel',inconnu:'Inconnu'};
+  var COLOR={urgence:'#d9480f',resa:'#c0392b',info:'#2f7d5b',annulation:'#5b6b7a',rappel:'#b5850f',inconnu:'#6d4b9f'};
+  var data=[
+    {id:'c0',motif:'urgence',name:'Chambre 214 · M. Ferrand',phone:'+33 6 90 33 12 45',grp:'Cette semaine',when:'07h',d:'27/07 · 07h58',
+     unread:true,dur:'0 m 54 s',
+     summary:"Fuite d'eau sous le lavabo de la chambre 214. Le client demande une intervention rapide avant son départ à 9h.",
+     transcript:[
+       {r:'agent',x:"Hôtel Saint-Énogat, bonjour."},
+       {r:'client',x:"Bonjour, il y a une fuite d'eau sous le lavabo de ma chambre, la 214, ça coule par terre."},
+       {r:'agent',x:"Je suis désolé pour ce désagrément. Je transmets immédiatement à la maintenance pour une intervention rapide."}
+     ]},
+    {id:'c1',motif:'inconnu',name:'Appelant non identifié',phone:'+33 6 88 12 90 44',grp:'Cette semaine',when:'ven.',d:'26/07',
+     unread:true,noMessage:true,attempts:['13h07','13h17','13h19'],dur:'',
+     summary:"Aucun message laissé. A raccroché dès le décroché de l'agent, à trois reprises.",transcript:[]},
+    {id:'c2',motif:'resa',name:'Sophie Bénard',phone:'+33 6 44 90 11 07',grp:'Cette semaine',when:'ven.',d:'26/07 · 10h12',
+     unread:true,dur:'1 m 52 s',dates:'14 → 16 février',resa:'Oui',
+     summary:"Réservation 2 nuits du 14 au 16 février, chambre double, arrivée tardive vers 22h.",
+     transcript:[
+       {r:'agent',x:"Bonjour, vous êtes bien à l'Hôtel Saint-Énogat, comment puis-je vous aider ?"},
+       {r:'client',x:"Bonjour, je voudrais réserver une chambre double pour deux nuits."},
+       {r:'agent',x:"Avec plaisir. Pour quelles dates ?"},
+       {r:'client',x:"Du 14 au 16 février. On arrivera vers 22h."},
+       {r:'agent',x:"C'est noté, l'arrivée tardive est possible avec un code. Je confirme la réservation."}
+     ]},
+    {id:'c3',motif:'rappel',name:'Julien Marchand',phone:'+33 6 71 04 22 18',grp:'Cette semaine',when:'jeu.',d:'25/07 · 18h47',
+     dur:'0 m 38 s',summary:"Souhaite être rappelé pour modifier sa réservation de janvier (ajouter une nuit).",
+     transcript:[
+       {r:'agent',x:"Hôtel Saint-Énogat, bonjour."},
+       {r:'client',x:"Bonjour, j'ai une réservation en janvier et je voudrais ajouter une nuit. Vous pouvez me rappeler ?"},
+       {r:'agent',x:"Bien sûr, je transmets à la réception qui vous rappellera."}
+     ]},
+    {id:'c4',motif:'info',name:'Marc Lefèvre',phone:'+33 7 82 55 41 30',grp:'Cette semaine',when:'jeu.',d:'25/07 · 09h39',
+     dur:'0 m 47 s',summary:"Demande les horaires du petit-déjeuner et si le parking est gratuit.",
+     transcript:[
+       {r:'agent',x:"Hôtel Saint-Énogat, bonjour, que puis-je pour vous ?"},
+       {r:'client',x:"Le petit-déjeuner est servi à partir de quelle heure ? Et le parking est gratuit ?"},
+       {r:'agent',x:"Le petit-déjeuner est servi de 7h à 10h. Le parking privé extérieur est gratuit."}
+     ]},
+    {id:'c5',motif:'annulation',name:'Nathalie Girard',phone:'+33 6 24 55 71 09',grp:'Plus ancien',when:'24 juil.',d:'24/07 · 17h20',
+     dur:'1 m 03 s',dates:'nuit du 2 août',resa:'Annulée',
+     summary:"Annule sa réservation de la nuit du 2 août pour raison personnelle, demande confirmation par SMS.",
+     transcript:[
+       {r:'agent',x:"Hôtel Saint-Énogat, bonjour."},
+       {r:'client',x:"Bonjour, je dois annuler ma réservation du 2 août malheureusement."},
+       {r:'agent',x:"C'est bien noté, votre réservation du 2 août est annulée. Vous recevrez une confirmation par SMS."}
+     ]},
+    {id:'c6',motif:'info',name:'Claire Dubois',phone:'+33 6 12 88 63 45',grp:'Plus ancien',when:'24 juil.',d:'24/07 · 16h05',
+     dur:'1 m 09 s',summary:"Question sur l'acceptation des animaux et le supplément appliqué.",
+     transcript:[
+       {r:'agent',x:"Hôtel Saint-Énogat, bonjour."},
+       {r:'client',x:"Est-ce que vous acceptez les animaux ? J'ai un petit chien."},
+       {r:'agent',x:"Oui, les animaux sont acceptés avec un supplément de 5 euros par nuit."}
+     ]},
+    {id:'c7',motif:'inconnu',name:'Appelant non identifié',phone:'Numéro masqué',grp:'Plus ancien',when:'23 juil.',d:'23/07 · 22h05',
+     noMessage:true,attempts:['22h05'],dur:'',summary:"Aucun message laissé. A raccroché pendant le message d'accueil.",transcript:[]}
+  ];
+
+  var $=function(s,r){return (r||document).querySelector(s)},
+      $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))},
+      esc=function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')};
+
+  document.documentElement.setAttribute('data-theme',window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  $('#themeBtn').addEventListener('click',function(){
+    document.documentElement.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+  });
+
+  var filter='all',query='',tab='tous',selected=null;
+
+  // Mode live : rempli => l'app lit les vrais appels dans Supabase (login requis).
+  // Vide => maquette de démo, elle tourne sur le tableau `data` ci-dessus. La clé
+  // anon est publique par construction : c'est RLS qui décide ce que voit le compte.
+  var SUPA={url:'https://gyimzmgctbhqjspsujcp.supabase.co',anon:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5aW16bWdjdGJocWpzcHN1amNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2MzY1MjMsImV4cCI6MjEwMzIxMjUyM30.EDBBGlKHhi0b2kaEGO7Le0nx3EUopsmt9X7EyyLcZE0'};
+  var LIVE=!!SUPA.url, tok=null;
+  function api(path,opt){
+    opt=opt||{};opt.headers=Object.assign({apikey:SUPA.anon,Authorization:'Bearer '+tok,
+      'Content-Type':'application/json'},opt.headers||{});
+    return fetch(SUPA.url+path,opt);
+  }
+
+  function counts(){var src=data.filter(function(x){return query||tab==='archives'?true:!x.archived});var c={all:src.length,urgence:0,resa:0,info:0,annulation:0,rappel:0,inconnu:0};src.forEach(function(x){c[x.motif]++});return c;}
+  function renderCounts(){var c=counts();$$('[data-c]').forEach(function(el){el.textContent=c[el.dataset.c]});}
+  function initials(n){var p=n.split(' ');return ((p[0]||'?')[0]+((p[1]||'')[0]||'')).toUpperCase();}
+  function digits(s){return String(s||'').replace(/\D/g,'');}
+  function matchQuery(x){
+    if(!query)return true;var q=query.toLowerCase();
+    // recherche par numéro : on ignore espaces et indicatif (0690… trouve +33 6 90…)
+    var dq=digits(q);
+    if(dq.length>=3){
+      var dp=digits(x.phone);
+      if(dp&&(dp.indexOf(dq)>=0||dp.indexOf(dq.replace(/^0/,'33'))>=0))return true;
+    }
+    if(x.name.toLowerCase().indexOf(q)>=0)return true;
+    if((x.summary||'').toLowerCase().indexOf(q)>=0)return true;
+    return (x.transcript||[]).some(function(m){return m.x.toLowerCase().indexOf(q)>=0});
+  }
+  function visible(){
+    return data.filter(function(x){
+      if(filter!=='all'&&x.motif!==filter)return false;
+      // une recherche active balaie tout, y compris les archivés
+      if(!query){
+        if(tab==='archives'){ if(!x.archived)return false; }
+        else if(x.archived)return false;
+        if(tab==='nonlus'&&!x.unread)return false;
+      }
+      return matchQuery(x);
+    });
+  }
+  function renderRows(){
+    var wrap=$('#rows'),vis=visible();
+    if(!vis.length){wrap.innerHTML='<div class="list-empty">'+(query?'Aucun résultat.':tab==='archives'?'Aucune discussion archivée.':'Aucune discussion.')+'</div>';return;}
+    var html='',lastGrp=null;
+    vis.forEach(function(x){
+      if(x.grp!==lastGrp){html+='<div class="grouplbl">'+x.grp+'</div>';lastGrp=x.grp;}
+      var isMasked=x.phone==='Numéro masqué';
+      var sub=isMasked?'A raccroché · '+LABEL[x.motif]:LABEL[x.motif]+(x.dur?' · '+x.dur:'');
+      html+='<div class="row" data-id="'+x.id+'"'+(selected===x.id?' aria-selected="true"':'')+'>'+
+        '<div class="rav" style="background:'+COLOR[x.motif]+'">'+esc(initials(x.name))+'</div>'+
+        '<div class="rmeta"><div class="rl1"><span class="rn">'+esc(x.name)+'</span><span class="rt">'+x.when+'</span></div>'+
+        '<div class="rl2"><span class="mdot" style="background:'+COLOR[x.motif]+'"></span>'+esc(sub)+'</div></div>'+
+        (x.unread?'<span class="unread"></span>':'')+'</div>';
+    });
+    wrap.innerHTML=html;
+    $$('.row',wrap).forEach(function(el){el.addEventListener('click',function(){select(el.dataset.id)});});
+  }
+
+  function betaFor(x){
+    if(x.motif==='urgence')return ['Traiter en priorité la demande urgente de '+esc(x.name)+'.','Prévenir la maintenance ou le responsable de garde selon le motif signalé.'];
+    if(x.motif==='resa')return ['Confirmer à la réception la réservation de '+esc(x.name)+(x.dates?' ('+esc(x.dates)+')':'')+'.','Vérifier la disponibilité et préparer la chambre pour une arrivée tardive.'];
+    if(x.motif==='rappel')return ['Rappeler '+esc(x.name)+' au '+esc(x.phone)+' pour traiter sa demande.','Vérifier la réservation concernée avant de rappeler.'];
+    if(x.motif==='annulation')return ['Confirmer l\'annulation par SMS à '+esc(x.name)+'.','Libérer la chambre concernée dans le planning.'];
+    return null;
+  }
+  function detHeadHTML(x){
+    return '<div class="dav" style="background:'+COLOR[x.motif]+'">'+esc(initials(x.name))+'</div>'+
+      '<div><div class="dn">'+esc(x.name)+'</div><div class="dp">'+esc(x.phone)+'</div></div>'+
+      '<span class="pill '+x.motif+'" style="margin-left:14px">'+LABEL[x.motif]+'</span>'+
+      '<button class="callbtn" title="Appeler">📞</button>'+
+      (x.archived
+        ? '<span class="archtag" title="Archivée le '+esc(x.archivedAt||'')+'">Archivée</span>'
+        : '<button class="archbtn" id="archBtn" title="Archiver — masque la discussion, action définitive">Archiver</button>');
+  }
+  function detBodyHTML(x){
+    var beta=betaFor(x),multi=x.attempts&&x.attempts.length>1;
+    var betaHtml=beta?'<div class="beta"><div class="bh">✨ Avant votre prochain appel <span class="btag">Bêta</span></div><ol>'+beta.map(function(b){return '<li>'+b+'</li>'}).join('')+'</ol></div>':'';
+    var info='<div class="di"><span class="k">Type de demande</span><span class="v">'+LABEL[x.motif]+'</span></div>';
+    if(x.dates)info+='<div class="di"><span class="k">Dates séjour</span><span class="v">'+esc(x.dates)+'</span></div>';
+    if(x.resa)info+='<div class="di"><span class="k">Réservation</span><span class="v">'+esc(x.resa)+'</span></div>';
+    info+='<div class="di"><span class="k">Numéro</span><span class="v">'+esc(x.phone)+'</span></div>';
+    info+='<div class="di"><span class="k">Durée</span><span class="v">'+(x.dur||'—')+'</span></div>';
+    info+='<div class="di"><span class="k">Reçu</span><span class="v">'+esc(x.d)+'</span></div>';
+    if(multi)info+='<div class="di"><span class="k">Appels répétés</span><span class="v" style="color:var(--inconnu)">'+x.attempts.length+'× — '+x.attempts.join(', ')+'</span></div>';
+    var player=!x.noMessage?'<div class="player"><button class="pp">▶</button><div class="track"><i></i></div><span class="dur">0:00 / '+durMS(x.dur)+'</span><span class="dl">⭳</span></div>':'';
+    var tr=(x.transcript&&x.transcript.length)
+      ? '<div class="tr">'+x.transcript.map(function(m){return '<div class="b '+m.r+'"><div class="who">'+(m.r==='agent'?'Agent IA':'Client')+'</div>'+esc(m.x)+'</div>'}).join('')+'</div>'
+      : '<div class="d-none">Aucun échange — l\'appelant a raccroché sans laisser de message.</div>';
+    return betaHtml+
+      '<div class="sec-t">Enregistrement</div>'+(player||'<div class="d-none">Pas d\'enregistrement exploitable.</div>')+
+      '<div class="sec-t">Résumé de l\'appel</div><div class="dcard"><div class="summary">'+esc(x.summary)+'</div>'+
+        '<div class="sugg"><button>⚡ Actions suggérées</button><button>➕ Créer une réservation</button></div></div>'+
+      '<div class="sec-t">Informations</div><div class="dcard"><div class="info-grid">'+info+'</div></div>'+
+      '<div class="sec-t">Transcription</div><div class="dcard">'+tr+'</div>';
+  }
+  function durMS(d){if(!d)return '0:00';var m=/(\d+)\s*m\s*(\d+)/.exec(d);if(m)return m[1]+':'+('0'+m[2]).slice(-2);var s=/(\d+)\s*s/.exec(d);return s?'0:'+('0'+s[1]).slice(-2):'0:00';}
+
+  function select(id){
+    selected=id;var x=data.find(function(d){return d.id===id});if(!x)return;
+    if(x.unread)patchCall(id,{read_at:new Date().toISOString()});
+    x.unread=false;
+    $('#detailEmpty').style.display='none';$('#detailInner').style.display='flex';
+    $('#detHead').innerHTML=detHeadHTML(x);
+    $('#detBody').innerHTML=detBodyHTML(x);$('#detBody').scrollTop=0;
+    var pp=$('#detBody .pp');
+    if(pp)pp.addEventListener('click',function(){
+      if(x.audio)play($('#detBody .player'),x.audio);else simPlay($('#detBody .player'));
+    });
+    var ab=$('#archBtn');
+    if(ab)ab.addEventListener('click',function(){
+      if(!confirm('Archiver cette discussion ?\n\nElle sera masquée de la boîte. Cette action est définitive : vous la retrouverez dans l\'onglet Archivés ou par une recherche.'))return;
+      x.archived=true;
+      x.archivedAt=new Date().toLocaleDateString('fr-FR');
+      patchCall(x.id,{archived_at:new Date().toISOString()});
+      $('#detHead').innerHTML=detHeadHTML(x);
+      renderRows();renderCounts();
+    });
+    renderRows();renderCounts();
+  }
+  // Lecture réelle : l'URL pointe le proxy N8N qui rejoue l'audio ElevenLabs.
+  var au=null;
+  function mmss(t){t=Math.floor(t||0);return Math.floor(t/60)+':'+('0'+(t%60)).slice(-2);}
+  function play(pl,url){
+    if(!pl)return;
+    var bar=$('.track i',pl),pp=$('.pp',pl),lbl=$('.dur',pl);
+    if(au&&au.src===url){if(au.paused){au.play();pp.textContent='❚❚';}else{au.pause();pp.textContent='▶';}return;}
+    if(au)au.pause();
+    au=new Audio(url);pp.textContent='…';
+    au.addEventListener('timeupdate',function(){
+      if(au.duration)bar.style.width=(au.currentTime/au.duration*100)+'%';
+      lbl.textContent=mmss(au.currentTime)+' / '+mmss(au.duration);
+    });
+    au.addEventListener('playing',function(){pp.textContent='❚❚'});
+    au.addEventListener('ended',function(){pp.textContent='▶';bar.style.width='0%'});
+    au.addEventListener('error',function(){pp.textContent='▶';lbl.textContent='indisponible'});
+    au.play().catch(function(){pp.textContent='▶';lbl.textContent='indisponible'});
+  }
+  function simPlay(pl){if(!pl)return;var bar=$('.track i',pl),pp=$('.pp',pl);pp.textContent='❚❚';var w=0;
+    var iv=setInterval(function(){w+=2;bar.style.width=Math.min(100,w)+'%';if(w>=100){clearInterval(iv);pp.textContent='▶';bar.style.width='0%';}},70);}
+
+  // --------- mode live : login, chargement, écriture ---------
+  function fmtPhone(p){
+    if(!p)return 'Numéro masqué';
+    var m=/^\+33(\d)(\d{2})(\d{2})(\d{2})(\d{2})$/.exec(p);
+    return m?'+33 '+m[1]+' '+m[2]+' '+m[3]+' '+m[4]+' '+m[5]:p;
+  }
+  function fmtDur(sec){sec=sec||0;return sec>=60?Math.floor(sec/60)+' m '+(sec%60)+' s':sec+' s';}
+  function mapRow(r){
+    var d=new Date(r.started_at),now=new Date();
+    var jour=d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+    var heure=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}).replace(':','h');
+    var ecoule=(now-d)/86400000;
+    var ex=r.extracted||{},gv=function(k){return (ex[k]&&ex[k].value)?String(ex[k].value):''};
+    var tr=(r.transcript||[]).filter(function(t){return t.message})
+      .map(function(t){return {r:t.role==='agent'?'agent':'client',x:t.message}});
+    return {id:r.id,motif:r.motif||'inconnu',
+      name:gv('nom_client')||'Appelant non identifié',
+      phone:fmtPhone(r.from_e164),
+      grp:ecoule<7?'Cette semaine':'Plus ancien',
+      when:ecoule<1?heure:(ecoule<7?d.toLocaleDateString('fr-FR',{weekday:'short'}):jour),
+      d:jour+' · '+heure,
+      unread:!r.read_at,archived:!!r.archived_at,
+      archivedAt:r.archived_at?new Date(r.archived_at).toLocaleDateString('fr-FR'):'',
+      dur:fmtDur(r.duration_secs),summary:r.summary||'(pas de résumé)',
+      transcript:tr,noMessage:tr.length===0,audio:r.recording_url||'',
+      dates:gv('dates_sejour'),resa:gv('reservation_prise')};
+  }
+  function loadCalls(){
+    return api('/rest/v1/calls?select=*&order=started_at.desc&limit=200')
+      .then(function(r){if(r.status===401){logout();throw new Error('session expirée');}return r.json()})
+      .then(function(rows){
+        data.length=0;rows.forEach(function(r){data.push(mapRow(r))});
+        renderCounts();renderRows();
+        var v=visible();if(v.length)select(v[0].id);
+      });
+  }
+  function logout(){try{localStorage.removeItem('mylidie_tok')}catch(e){}tok=null;showLogin();}
+  function showLogin(msg){
+    var el=document.getElementById('loginOv');
+    if(!el){
+      el=document.createElement('div');el.id='loginOv';
+      el.style.cssText='position:fixed;inset:0;z-index:99;background:var(--bg,#fff);display:flex;'+
+        'align-items:center;justify-content:center;font-family:inherit';
+      el.innerHTML='<form id="loginF" style="width:320px;max-width:88vw;display:flex;flex-direction:column;gap:12px">'+
+        '<h1 style="font-size:18px;margin:0 0 4px">Réception Mylidie</h1>'+
+        '<input id="lMail" type="email" required placeholder="Adresse e-mail" autocomplete="username" '+
+          'style="padding:11px 13px;border:1px solid #ccc;border-radius:8px;font-size:14px;font:inherit">'+
+        '<input id="lPass" type="password" required placeholder="Mot de passe" autocomplete="current-password" '+
+          'style="padding:11px 13px;border:1px solid #ccc;border-radius:8px;font-size:14px;font:inherit">'+
+        '<button type="submit" style="padding:11px;border:0;border-radius:8px;background:#3a3a28;color:#fff;'+
+          'font-size:14px;cursor:pointer;font:inherit">Se connecter</button>'+
+        '<p id="lErr" style="color:#c0392b;font-size:13px;margin:0;min-height:18px"></p></form>';
+      document.body.appendChild(el);
+      document.getElementById('loginF').addEventListener('submit',function(e){
+        e.preventDefault();
+        var err=document.getElementById('lErr');err.textContent='Connexion…';
+        fetch(SUPA.url+'/auth/v1/token?grant_type=password',{method:'POST',
+          headers:{apikey:SUPA.anon,'Content-Type':'application/json'},
+          body:JSON.stringify({email:document.getElementById('lMail').value,
+                               password:document.getElementById('lPass').value})})
+        .then(function(r){return r.json()})
+        .then(function(j){
+          if(!j.access_token){err.textContent='Identifiants incorrects.';return;}
+          tok=j.access_token;try{localStorage.setItem('mylidie_tok',tok)}catch(e){}
+          el.remove();loadCalls();
+        }).catch(function(){err.textContent='Connexion impossible.'});
+      });
+    }
+    el.style.display='flex';
+    if(msg)document.getElementById('lErr').textContent=msg;
+  }
+  function patchCall(id,body){
+    if(!LIVE)return;
+    api('/rest/v1/calls?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},
+      body:JSON.stringify(body)}).catch(function(){});
+  }
+
+  $('#nav').addEventListener('click',function(e){var b=e.target.closest('.navitem');if(!b)return;
+    filter=b.dataset.f;$$('.navitem').forEach(function(x){x.setAttribute('aria-current',x===b?'true':'false')});renderRows();});
+  $('#tabs').addEventListener('click',function(e){var b=e.target.closest('.ltab');if(!b)return;
+    tab=b.dataset.t;$$('.ltab').forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false')});renderRows();renderCounts();});
+  $('#search').addEventListener('input',function(){query=this.value.trim();renderRows();renderCounts();});
+
+  function sendMsg(){var inp=$('#cInput'),v=inp.value.trim();if(!v)return;inp.value='';inp.style.height='auto';
+    var note=$('.composer .cnote');var old=note.textContent;note.textContent='✓ Message envoyé';setTimeout(function(){note.textContent=old},2000);}
+  $('#cSend').addEventListener('click',sendMsg);
+  $('#cInput').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(120,this.scrollHeight)+'px'});
+  $('#cInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
+
+  if(LIVE){
+    data.length=0;
+    try{tok=localStorage.getItem('mylidie_tok')}catch(e){}
+    renderCounts();renderRows();
+    if(tok)loadCalls().catch(function(){});else showLogin();
+  }else{
+    renderCounts();renderRows();select('c2');
+  }
+})();
+</script>
