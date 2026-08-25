@@ -105,16 +105,32 @@
   .side-foot{margin-top:auto;border-top:1px solid var(--line);padding:12px 14px;}
   .agentline{display:flex;align-items:center;gap:9px;font-size:var(--fs-sm);color:var(--ink-soft);}
   .agentline .adot{width:8px;height:8px;border-radius:50%;background:#5cbd90;box-shadow:0 0 0 3px color-mix(in srgb,#5cbd90 20%,transparent);}
-  .memberline{display:flex;align-items:center;gap:9px;margin-top:11px;}
-  .memberline .mav{width:28px;height:28px;border-radius:50%;background:var(--brand);color:#f5f3ea;display:grid;place-items:center;font-size:var(--fs-xs);font-weight:700;}
+  .usermenu{position:relative;margin-top:11px}
+  .memberline{display:flex;align-items:center;gap:9px;width:100%;padding:6px;border:0;border-radius:10px;
+    background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer;}
+  .memberline:hover{background:var(--surface-2)}
+  .memberline .mav{width:28px;height:28px;border-radius:50%;background:var(--brand);color:#f5f3ea;display:grid;place-items:center;font-size:var(--fs-xs);font-weight:700;flex:0 0 auto}
   @media(prefers-color-scheme:dark){.memberline .mav{background:var(--btn-bg);color:var(--btn-fg)}}
-  .memberline .mn{font-size:var(--fs-sm)} .memberline .mv{font-size:var(--fs-xs);color:var(--ink-faint)}
-  .themebtn{margin-top:11px;width:100%;border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink-soft);
-    font-size:var(--fs-xs);padding:7px;border-radius:8px;cursor:pointer;font-family:var(--sans);}
+  :root[data-theme="dark"] .memberline .mav{background:var(--btn-bg);color:var(--btn-fg)}
+  .memberline .mtxt{flex:1;min-width:0}
+  .memberline .mn{font-size:var(--fs-sm);display:block} .memberline .mv{font-size:var(--fs-xs);color:var(--ink-faint);display:block}
+  .memberline .chev{color:var(--ink-faint);font-size:14px}
+  .menu{position:absolute;bottom:calc(100% + 6px);left:0;right:0;z-index:20;background:var(--surface);
+    border:1px solid var(--line-strong);border-radius:11px;box-shadow:var(--shadow);padding:5px;
+    display:flex;flex-direction:column;gap:2px}
+  .menu[hidden]{display:none}
+  .mi{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:0;background:none;color:var(--ink);
+    font:inherit;font-size:var(--fs-sm);padding:9px 10px;border-radius:8px;cursor:pointer}
+  .mi:hover{background:var(--surface-2)}
+  .mi.danger{color:var(--resa)}
 
   /* ---- middle ---- */
   .list-head{padding:16px 18px 10px;}
   .list-head .lt{display:flex;align-items:center;gap:8px;font-size:var(--fs-xl);font-weight:700;letter-spacing:-.3px;}
+  .btag{background:var(--inconnu);color:#fff;font-size:10px;padding:2px 8px;border-radius:999px;font-weight:700;
+    letter-spacing:.4px;text-transform:uppercase;flex:0 0 auto}
+  @media(prefers-color-scheme:dark){.btag{color:#231f17}}
+  :root[data-theme="dark"] .btag{color:#231f17}
   .tabs{display:flex;gap:6px;margin-top:12px;}
   .ltab{border:none;background:transparent;color:var(--ink-faint);font-size:var(--fs-sm);font-weight:600;padding:5px 12px;
     border-radius:999px;cursor:pointer;font-family:var(--sans);}
@@ -122,7 +138,7 @@
   .archbtn{margin-left:8px;border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink-soft);
   border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer;font-family:inherit}
 .archbtn:hover{background:var(--surface-3);color:var(--ink)}
-.archbtn:focus-visible,.callbtn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.archbtn:focus-visible,.cpy:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 .archtag{margin-left:8px;border-radius:8px;padding:6px 11px;font-size:12px;
   background:var(--surface-3);color:var(--ink-faint);border:1px solid var(--line)}
 .rows{flex:1;overflow-y:auto;padding:4px 10px 20px;}
@@ -144,9 +160,16 @@
   .det-head{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line);background:var(--surface);}
   .det-head .dav{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:650;font-size:var(--fs-sm)}
   .det-head .dn{font-weight:700;font-size:var(--fs-lg)}
-  .det-head .dp{font-size:var(--fs-sm);color:var(--ink-faint);font-variant-numeric:tabular-nums}
-  .det-head .callbtn{margin-left:auto;width:38px;height:38px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line-strong);
-    color:var(--ink);display:grid;place-items:center;cursor:pointer;font-size:16px}
+  .det-head .dp{font-size:var(--fs-sm);color:var(--ink-faint);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:4px}
+  .det-head .archbtn,.det-head .archtag{margin-left:auto}
+  .det-head .archtag+.archbtn{margin-left:0}
+  .cpy{border:0;background:none;padding:2px;line-height:0;color:var(--ink-faint);cursor:pointer;
+    opacity:0;transition:opacity .12s}
+  .det-head .dp:hover .cpy,.cpy:focus-visible{opacity:1}
+  /* tactile : pas de survol possible, l'icône reste visible en permanence */
+  @media (hover:none){.cpy{opacity:1}}
+  .cpy:hover{color:var(--ink)}
+  .cpy.ok{opacity:1;color:var(--info)}
   .det-body{flex:1;overflow-y:auto;padding:22px 22px 10px;max-width:820px;width:100%;margin:0 auto;}
 
   .beta{background:var(--inconnu-bg);border:1px solid var(--inconnu-line);border-radius:14px;padding:15px 18px;margin-bottom:20px;}
@@ -164,22 +187,31 @@
   .pill.inconnu{background:var(--inconnu-bg);color:var(--inconnu);border:1px solid var(--inconnu-line)}
   .pill.urgence{background:var(--urgence-bg);color:var(--urgence);border:1px solid var(--urgence-line)}
 
-  .hist{display:flex;flex-direction:column;gap:2px}
-  .hist .hi{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;
-            color:var(--ink);font:inherit;font-size:var(--fs-sm);padding:8px 10px;border-radius:9px;cursor:pointer}
-  .hist .hi:hover{background:var(--surface-2)}
-  .hist .hi.on{background:var(--surface-3);font-weight:650}
-  .hist .hd{flex:0 0 110px;font-variant-numeric:tabular-nums}
-  .hist .hm{flex:1;display:flex;align-items:center;gap:6px;color:var(--ink-soft)}
-  .hist .hu{color:var(--ink-faint);font-size:var(--fs-xs);font-variant-numeric:tabular-nums}
-  .msgs{display:flex;flex-direction:column;gap:8px}
-  .msgs .m{max-width:78%;padding:9px 13px;border-radius:13px;font-size:var(--fs-sm);line-height:1.5;white-space:pre-wrap}
-  .msgs .m.in{align-self:flex-start;background:var(--surface-2);border:1px solid var(--line)}
-  .msgs .m.out{align-self:flex-end;background:var(--brand);color:#f5f3ea}
-  :root[data-theme="dark"] .msgs .m.out{background:var(--brand-2)}
-  .msgs .mt{font-size:var(--fs-xs);opacity:.65;margin-top:3px}
-  .sec-t{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);margin:22px 2px 9px}
-  .dcard{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px}
+  /* ---- fil de discussion : appels (dépliables) + SMS, dans l'ordre chronologique ---- */
+  .tl{display:flex;flex-direction:column;gap:10px;padding-bottom:6px}
+  .tl-day{align-self:center;font-size:var(--fs-xs);color:var(--ink-faint);background:var(--surface-3);
+    padding:3px 12px;border-radius:999px;margin:8px 0 2px}
+  .tl-call{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+  .tl-call.on{border-color:var(--line-strong)}
+  .tlh{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;color:var(--ink);
+    font:inherit;padding:12px 15px;border-radius:14px;cursor:pointer}
+  .tlh:hover{background:var(--surface-2)}
+  .tl-call.on .tlh{border-radius:14px 14px 0 0}
+  .tlh .tld{font-size:var(--fs-sm);font-variant-numeric:tabular-nums;color:var(--ink-soft);flex:0 0 auto}
+  .tlh .tlu{margin-left:auto;font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums}
+  .tlh .chev{color:var(--ink-faint);font-size:15px;flex:0 0 auto}
+  .tl-call.on .tlh .chev{transform:rotate(180deg)}
+  .tl-sum{padding:0 15px 13px;font-size:var(--fs-sm);color:var(--ink-soft);line-height:1.5}
+  .tl-call:not(.on) .tl-sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .tl-call.on .tl-sum{color:var(--ink);font-size:var(--fs-base)}
+  .tl-body{padding:13px 15px 16px;border-top:1px solid var(--line)}
+  .tl-sub{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);margin:18px 2px 9px}
+  .tl-body>.tl-sub:first-child{margin-top:0}
+  .tl .m{max-width:78%;padding:9px 13px;border-radius:13px;font-size:var(--fs-sm);line-height:1.5;white-space:pre-wrap}
+  .tl .m.in{align-self:flex-start;background:var(--surface-2);border:1px solid var(--line)}
+  .tl .m.out{align-self:flex-end;background:var(--brand);color:#f5f3ea}
+  :root[data-theme="dark"] .tl .m.out{background:var(--brand-2)}
+  .tl .mt{font-size:var(--fs-xs);opacity:.65;margin-top:3px}
   .player{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-top:8px}
   .player .pp{width:34px;height:34px;border-radius:50%;background:var(--btn-bg);color:var(--btn-fg);border:none;display:grid;place-items:center;cursor:pointer;font-size:13px;flex:0 0 auto}
   .player .track{flex:1;height:5px;border-radius:5px;background:var(--line-strong);position:relative;overflow:hidden}
@@ -209,6 +241,11 @@
   .composer textarea:focus{outline:2px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:1px}
   .composer .send{width:42px;height:42px;border-radius:11px;background:var(--btn-bg);color:var(--btn-fg);border:none;cursor:pointer;font-size:16px;flex:0 0 auto}
   .composer .cnote{font-size:var(--fs-xs);color:var(--ink-faint);margin:0 0 8px}
+
+  /* Le feedback part de l'appui, pas du survol : sur la tablette d'accueil il n'y a pas de survol. */
+  .row:active,.navitem:active,.ltab:active,.tlh:active,.mi:active,.memberline:active,.brandbox:active{background:var(--surface-3)}
+  .send,.pp,.archbtn,.spd{transition:transform 100ms ease-out}
+  .send:active,.pp:active,.archbtn:active,.spd:active{transform:scale(.96)}
 
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -240,15 +277,24 @@
     </div>
     <div class="side-foot">
       <div class="agentline"><span class="adot"></span>Réceptionniste IA · active</div>
-      <div class="memberline"><span class="mav">AV</span><div><div class="mn">Amaury De Veyrac</div><div class="mv">Vous · réception</div></div></div>
-      <button class="themebtn" id="themeBtn">Basculer clair / sombre</button>
+      <div class="usermenu">
+        <button class="memberline" id="userBtn" aria-haspopup="true" aria-expanded="false">
+          <span class="mav">AV</span>
+          <span class="mtxt"><span class="mn">Amaury De Veyrac</span><span class="mv">Vous · réception</span></span>
+          <span class="chev">⌄</span>
+        </button>
+        <div class="menu" id="userMenu" hidden>
+          <button class="mi" id="themeBtn">🌗 Basculer clair / sombre</button>
+          <button class="mi danger" id="logoutBtn">⏻ Déconnexion</button>
+        </div>
+      </div>
     </div>
   </aside>
 
   <!-- MIDDLE -->
   <section class="col list">
     <div class="list-head">
-      <div class="lt">Discussions</div>
+      <div class="lt">Discussions <span class="btag" title="Version bêta — l'app évolue encore, signalez ce qui coince">Bêta</span></div>
       <div class="tabs" id="tabs">
         <button class="ltab" aria-selected="true" data-t="tous">Tous</button>
         <button class="ltab" aria-selected="false" data-t="nonlus">Non lus</button>
@@ -412,7 +458,7 @@
     });
   }
   function renderRows(){
-    var wrap=$('#rows'),grps=groupsOf(visible());
+    var wrap=$('#rows'),grps=groupsOf(visible()),keep=wrap.scrollTop;
     if(!grps.length){wrap.innerHTML='<div class="list-empty">'+(query?'Aucun résultat.':tab==='archives'?'Aucune discussion archivée.':'Aucune discussion.')+'</div>';return;}
     var html='',lastGrp=null;
     grps.forEach(function(g){
@@ -429,7 +475,7 @@
         '<div class="rl2"><span class="mdot" style="background:'+COLOR[x.motif]+'"></span>'+esc(sub)+'</div></div>'+
         (unread?'<span class="unread"></span>':'')+'</div>';
     });
-    wrap.innerHTML=html;
+    wrap.innerHTML=html;wrap.scrollTop=keep;
     $$('.row',wrap).forEach(function(el){el.addEventListener('click',function(){select(el.dataset.id)});});
   }
 
@@ -440,18 +486,39 @@
     if(x.motif==='annulation')return ['Confirmer l\'annulation par SMS à '+esc(x.name)+'.','Libérer la chambre concernée dans le planning.'];
     return null;
   }
+  var COPY_SVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '+
+    'stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/>'+
+    '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
   function detHeadHTML(x){
     return '<div class="dav" style="background:'+COLOR[x.motif]+'">'+esc(initials(x.name))+'</div>'+
-      '<div><div class="dn">'+esc(x.name)+'</div><div class="dp">'+esc(x.phone)+'</div></div>'+
+      '<div><div class="dn">'+esc(x.name)+'</div>'+
+      '<div class="dp"><span>'+esc(x.phone)+'</span>'+
+      (digits(x.phone).length>=6
+        ? '<button class="cpy" title="Copier le numéro" aria-label="Copier le numéro" data-n="'+esc(x.phone)+'">'+COPY_SVG+'</button>'
+        : '')+'</div></div>'+
       '<span class="pill '+x.motif+'" style="margin-left:14px">'+LABEL[x.motif]+'</span>'+
-      '<button class="callbtn" title="Appeler">📞</button>'+
       (x.archived
-        ? '<span class="archtag" title="Archivée le '+esc(x.archivedAt||'')+'">Archivée</span>'
-        : '<button class="archbtn" id="archBtn" title="Archiver — masque la discussion, action définitive">Archiver</button>');
+        ? '<span class="archtag" title="Archivée le '+esc(x.archivedAt||'')+'">Archivée</span>'+
+          '<button class="archbtn" id="archBtn">Désarchiver</button>'
+        : '<button class="archbtn" id="archBtn" title="Masque la discussion de la boîte — réversible à tout moment">Archiver</button>');
   }
-  function detBodyHTML(x){
+  // Horodatage du fil. En live il vient de la base ; en démo on le reconstruit
+  // depuis le libellé « 27/07 · 07h58 » (année courante, suffisant pour trier).
+  function tsOf(x){
+    if(x.ts)return x.ts;
+    var m=/(\d{1,2})\/(\d{1,2})(?:\D+(\d{1,2})h(\d{2}))?/.exec(x.d||'');
+    x.ts=m?new Date(new Date().getFullYear(),+m[2]-1,+m[1],+(m[3]||0),+(m[4]||0)).getTime():0;
+    return x.ts;
+  }
+  // Un fil = un correspondant : ses appels ET ses SMS, du plus ancien au plus récent.
+  function timelineFor(x){
+    var items=historyFor(x).map(function(c){return {k:'call',ts:tsOf(c),c:c}})
+      .concat(msgsFor(x).map(function(m){return {k:'sms',ts:m.ts||0,m:m}}));
+    items.sort(function(a,b){return a.ts-b.ts});
+    return items;
+  }
+  function callBodyHTML(x){
     var beta=betaFor(x),multi=x.attempts&&x.attempts.length>1;
-    var betaHtml=beta?'<div class="beta"><div class="bh">✨ Avant votre prochain appel <span class="btag">Bêta</span></div><ol>'+beta.map(function(b){return '<li>'+b+'</li>'}).join('')+'</ol></div>':'';
     var info='<div class="di"><span class="k">Type de demande</span><span class="v">'+LABEL[x.motif]+'</span></div>';
     if(x.dates)info+='<div class="di"><span class="k">Dates séjour</span><span class="v">'+esc(x.dates)+'</span></div>';
     if(x.resa)info+='<div class="di"><span class="k">Réservation</span><span class="v">'+esc(x.resa)+'</span></div>';
@@ -463,45 +530,64 @@
     var tr=(x.transcript&&x.transcript.length)
       ? '<div class="tr">'+x.transcript.map(function(m){return '<div class="b '+m.r+'"><div class="who">'+(m.r==='agent'?'Agent IA':'Client')+'</div>'+esc(m.x)+'</div>'}).join('')+'</div>'
       : '<div class="d-none">Aucun échange — l\'appelant a raccroché sans laisser de message.</div>';
-    var sms=msgsFor(x);
-    var smsHtml=sms.length
-      ? '<div class="msgs">'+sms.map(function(m){
-          return '<div class="m '+(m.direction==='in'?'in':'out')+'">'+esc(m.body)+
-                 '<div class="mt">'+m.at+(m.direction==='out'?' · '+esc(m.status||''):'')+'</div></div>';
-        }).join('')+'</div>'
-      : '<div class="d-none">Aucun SMS échangé avec ce numéro.</div>';
-    var hist=historyFor(x);
-    var histHtml=hist.length>1
-      ? '<div class="sec-t">Appels de ce correspondant</div><div class="dcard"><div class="hist">'+
-        hist.map(function(h){
-          return '<button class="hi'+(h.id===x.id?' on':'')+'" data-go="'+h.id+'">'+
-            '<span class="hd">'+esc(h.d)+'</span>'+
-            '<span class="hm"><span class="mdot" style="background:'+COLOR[h.motif]+'"></span>'+LABEL[h.motif]+'</span>'+
-            '<span class="hu">'+(h.dur||'')+'</span></button>';
-        }).join('')+'</div></div>'
-      : '';
-    return betaHtml+histHtml+
-      '<div class="sec-t">Enregistrement</div>'+(player||'<div class="d-none">Pas d\'enregistrement exploitable.</div>')+
-      '<div class="sec-t">Résumé de l\'appel</div><div class="dcard"><div class="summary">'+esc(x.summary)+'</div></div>'+
-      '<div class="sec-t">Informations</div><div class="dcard"><div class="info-grid">'+info+'</div></div>'+
-      '<div class="sec-t">Transcription</div><div class="dcard">'+tr+'</div>'+
-      '<div class="sec-t">SMS</div><div class="dcard">'+smsHtml+'</div>';
+    return '<div class="tl-body">'+
+      '<div class="tl-sub">Enregistrement</div>'+(player||'<div class="d-none">Pas d\'enregistrement exploitable.</div>')+
+      '<div class="tl-sub">Informations</div><div class="info-grid">'+info+'</div>'+
+      '<div class="tl-sub">Transcription</div>'+tr+
+      (beta?'<div class="beta" style="margin:20px 0 0"><div class="bh">✨ Avant votre prochain appel <span class="btag">Bêta</span></div><ol>'+
+        beta.map(function(b){return '<li>'+b+'</li>'}).join('')+'</ol></div>':'')+
+      '</div>';
+  }
+  function detBodyHTML(x){
+    var items=timelineFor(x);
+    if(!items.length)return '<div class="d-none">Rien à afficher pour ce correspondant.</div>';
+    return '<div class="tl">'+items.map(function(it){
+      if(it.k==='sms'){
+        var m=it.m;
+        return '<div class="m '+(m.direction==='in'?'in':'out')+'">'+esc(m.body)+
+               '<div class="mt">'+esc(m.at)+(m.direction==='out'&&m.status?' · '+esc(m.status):'')+'</div></div>';
+      }
+      var c=it.c,on=c.id===openId;
+      return '<div class="tl-call'+(on?' on':'')+'" data-go="'+c.id+'">'+
+        '<button class="tlh"><span class="tld">'+esc(c.d)+'</span>'+
+        '<span class="pill '+c.motif+'">'+LABEL[c.motif]+'</span>'+
+        '<span class="tlu">'+esc(c.noMessage?'sans message':(c.dur||''))+'</span>'+
+        '<span class="chev">⌄</span></button>'+
+        '<div class="tl-sum">'+esc(c.summary)+'</div>'+
+        (on?callBodyHTML(c):'')+'</div>';
+    }).join('')+'</div>';
   }
   function durMS(d){if(!d)return '0:00';var m=/(\d+)\s*m\s*(\d+)/.exec(d);if(m)return m[1]+':'+('0'+m[2]).slice(-2);var s=/(\d+)\s*s/.exec(d);return s?'0:'+('0'+s[1]).slice(-2):'0:00';}
 
+  function copyPhone(e){
+    var b=e.currentTarget,ok=function(){
+      b.classList.add('ok');b.title='Numéro copié';
+      setTimeout(function(){b.classList.remove('ok');b.title='Copier le numéro'},1500);
+    };
+    if(navigator.clipboard&&navigator.clipboard.writeText)
+      navigator.clipboard.writeText(b.dataset.n||'').then(ok,function(){b.title='Copie impossible'});
+    else b.title='Copie impossible';
+  }
   function select(id){
-    selected=id;var x=data.find(function(d){return d.id===id});if(!x)return;
+    var x=data.find(function(d){return d.id===id});if(!x)return;
+    selected=id;openId=id;
     if(x.unread)patchCall(id,{read_at:new Date().toISOString()});
     x.unread=false;
+    renderDetail();renderRows();renderCounts();
+  }
+  function renderDetail(){
+    var x=data.find(function(d){return d.id===selected});if(!x)return;
     $('#detailEmpty').style.display='none';$('#detailInner').style.display='flex';
     $('#detHead').innerHTML=detHeadHTML(x);
-    $('#detBody').innerHTML=detBodyHTML(x);$('#detBody').scrollTop=0;
-    var pp=$('#detBody .pp');
+    var body=$('#detBody');body.innerHTML=detBodyHTML(x);
+    // fil chronologique : on se cale sur l'appel déplié, sinon sur le bas (le plus récent)
+    var on=$('.tl-call.on',body);
+    if(on)on.scrollIntoView({block:'center'});else body.scrollTop=body.scrollHeight;
+    var cp=$('#detHead .cpy');
+    if(cp)cp.addEventListener('click',copyPhone);
+    var pp=$('#detBody .player .pp');
     if(pp)pp.addEventListener('click',function(){
       if(x.audio)play($('#detBody .player'),x.audio);else simPlay($('#detBody .player'));
-    });
-    $$('#detBody .hi').forEach(function(b){
-      b.addEventListener('click',function(){if(b.dataset.go!==selected)select(b.dataset.go)});
     });
     var sp=$('#detBody .spd');
     if(sp)sp.addEventListener('click',function(){
@@ -509,16 +595,24 @@
       sp.textContent=String(rate).replace('.',',')+'×';
       if(au)au.playbackRate=rate;
     });
+    $$('#detBody .tlh').forEach(function(b){
+      b.addEventListener('click',function(){
+        var id=b.parentNode.dataset.go;
+        if(id===openId){openId=null;renderDetail();}else select(id);
+      });
+    });
     var ab=$('#archBtn');
     if(ab)ab.addEventListener('click',function(){
-      if(!confirm('Archiver cette discussion ?\n\nElle sera masquée de la boîte. Cette action est définitive : vous la retrouverez dans l\'onglet Archivés ou par une recherche.'))return;
-      x.archived=true;
-      x.archivedAt=new Date().toLocaleDateString('fr-FR');
-      patchCall(x.id,{archived_at:new Date().toISOString()});
-      $('#detHead').innerHTML=detHeadHTML(x);
-      renderRows();renderCounts();
+      // Archiver est réversible : la ligne reste, `archived_at` repasse à null.
+      // Un bouton qui fait l'aller-retour vaut mieux qu'un confirm() qui annonce
+      // du définitif ; le meme bouton sert d'annulation, sans fenêtre de quelques
+      // secondes à rater.
+      var on=!x.archived;
+      x.archived=on;
+      x.archivedAt=on?new Date().toLocaleDateString('fr-FR'):'';
+      patchCall(x.id,{archived_at:on?new Date().toISOString():null});
+      renderDetail();renderRows();renderCounts();
     });
-    renderRows();renderCounts();
   }
   // Lecture réelle : l'URL pointe le proxy N8N qui rejoue l'audio ElevenLabs.
   var au=null,rate=1;
@@ -641,6 +735,16 @@
     api('/rest/v1/calls?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},
       body:JSON.stringify(body)}).catch(function(){});
   }
+
+  // Le menu ne s'ouvrait jamais : la déconnexion et le thème étaient injoignables.
+  var uBtn=$('#userBtn'),uMenu=$('#userMenu');
+  function openMenu(on){uMenu.hidden=!on;uBtn.setAttribute('aria-expanded',on?'true':'false');}
+  uBtn.addEventListener('click',function(e){e.stopPropagation();openMenu(uMenu.hidden);});
+  document.addEventListener('click',function(e){if(!e.target.closest('.usermenu'))openMenu(false);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')openMenu(false);});
+  // en démo il n'y a pas de session à fermer : pas de bouton mort
+  if(LIVE)$('#logoutBtn').addEventListener('click',function(){openMenu(false);logout();});
+  else $('#logoutBtn').remove();
 
   $('#nav').addEventListener('click',function(e){var b=e.target.closest('.navitem');if(!b)return;
     filter=b.dataset.f;$$('.navitem').forEach(function(x){x.setAttribute('aria-current',x===b?'true':'false')});renderRows();});
