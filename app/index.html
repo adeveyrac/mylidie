@@ -69,7 +69,8 @@
   /* ---- left ---- */
   .brandbox{padding:16px 16px 14px;border-bottom:1px solid var(--line);display:flex;gap:11px;align-items:center;cursor:pointer;}
   .brandbox:hover{background:var(--surface-2)}
-  .logo{width:40px;height:40px;border-radius:11px;background:var(--brand);color:#f5f3ea;display:grid;place-items:center;
+  .logo img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block}
+  .logo{width:40px;height:40px;border-radius:11px;background:var(--brand);color:#f5f3ea;display:grid;place-items:center;overflow:hidden;
     font-family:var(--serif);font-style:italic;font-size:20px;flex:0 0 auto;}
   @media(prefers-color-scheme:dark){.logo{background:var(--btn-bg);color:var(--btn-fg)}}
   :root[data-theme="dark"] .logo{background:var(--btn-bg);color:var(--btn-fg)}
@@ -163,6 +164,20 @@
   .pill.inconnu{background:var(--inconnu-bg);color:var(--inconnu);border:1px solid var(--inconnu-line)}
   .pill.urgence{background:var(--urgence-bg);color:var(--urgence);border:1px solid var(--urgence-line)}
 
+  .hist{display:flex;flex-direction:column;gap:2px}
+  .hist .hi{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;
+            color:var(--ink);font:inherit;font-size:var(--fs-sm);padding:8px 10px;border-radius:9px;cursor:pointer}
+  .hist .hi:hover{background:var(--surface-2)}
+  .hist .hi.on{background:var(--surface-3);font-weight:650}
+  .hist .hd{flex:0 0 110px;font-variant-numeric:tabular-nums}
+  .hist .hm{flex:1;display:flex;align-items:center;gap:6px;color:var(--ink-soft)}
+  .hist .hu{color:var(--ink-faint);font-size:var(--fs-xs);font-variant-numeric:tabular-nums}
+  .msgs{display:flex;flex-direction:column;gap:8px}
+  .msgs .m{max-width:78%;padding:9px 13px;border-radius:13px;font-size:var(--fs-sm);line-height:1.5;white-space:pre-wrap}
+  .msgs .m.in{align-self:flex-start;background:var(--surface-2);border:1px solid var(--line)}
+  .msgs .m.out{align-self:flex-end;background:var(--brand);color:#f5f3ea}
+  :root[data-theme="dark"] .msgs .m.out{background:var(--brand-2)}
+  .msgs .mt{font-size:var(--fs-xs);opacity:.65;margin-top:3px}
   .sec-t{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);margin:22px 2px 9px}
   .dcard{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px}
   .player{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-top:8px}
@@ -172,6 +187,8 @@
   @media(prefers-color-scheme:dark){.player .track i{background:var(--brand-2)}}
   .player .dur{font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums}
   .player .dl{color:var(--ink-faint);cursor:pointer;font-size:15px}
+  .player .spd{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);border-radius:7px;
+               padding:3px 7px;font-size:var(--fs-xs);cursor:pointer;font-variant-numeric:tabular-nums;flex:0 0 auto}
 
   .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 20px}
   .info-grid .di{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:var(--fs-sm)}
@@ -183,11 +200,9 @@
   .b.agent{align-self:flex-start;background:var(--surface-2);color:var(--ink);border-bottom-left-radius:5px}
   .b.client{align-self:flex-end;background:var(--bubble-out);color:var(--bubble-out-fg);border-bottom-right-radius:5px}
   .d-none{color:var(--ink-faint);font-style:italic;text-align:center;padding:16px}
-  .sugg{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-  .sugg button{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);font-size:var(--fs-sm);
-    padding:8px 14px;border-radius:9px;cursor:pointer;font-family:var(--sans);font-weight:600}
-
-  .composer{border-top:1px solid var(--line);background:var(--surface);padding:12px 22px 16px;max-width:820px;width:100%;margin:0 auto;}
+  /* même largeur que les cartes du détail (.det-body), coins arrondis */
+  .composer{padding:4px 22px 18px;max-width:820px;width:100%;margin:0 auto;}
+  .composer .cbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:12px 14px}
   .composer .cm{display:flex;gap:10px;align-items:flex-end}
   .composer textarea{flex:1;resize:none;border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);
     border-radius:12px;padding:11px 14px;font-family:var(--sans);font-size:var(--fs-sm);max-height:120px;line-height:1.45}
@@ -250,10 +265,12 @@
       <div class="det-head" id="detHead"></div>
       <div class="det-body" id="detBody"></div>
       <div class="composer">
-        <p class="cnote">Message SMS envoyé depuis le numéro de l'hôtel — visible par toute l'équipe.</p>
-        <div class="cm">
-          <textarea id="cInput" rows="1" placeholder="Écrire un message…"></textarea>
-          <button class="send" id="cSend" aria-label="Envoyer">➤</button>
+        <div class="cbox">
+          <p class="cnote">Envoyer un sms</p>
+          <div class="cm">
+            <textarea id="cInput" rows="1" placeholder="Écrire un message…"></textarea>
+            <button class="send" id="cSend" aria-label="Envoyer">➤</button>
+          </div>
         </div>
       </div>
     </div>
@@ -335,7 +352,14 @@
   // Vide => maquette de démo, elle tourne sur le tableau `data` ci-dessus. La clé
   // anon est publique par construction : c'est RLS qui décide ce que voit le compte.
   var SUPA={url:'https://gyimzmgctbhqjspsujcp.supabase.co',anon:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5aW16bWdjdGJocWpzcHN1amNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2MzY1MjMsImV4cCI6MjEwMzIxMjUyM30.EDBBGlKHhi0b2kaEGO7Le0nx3EUopsmt9X7EyyLcZE0'};
-  var LIVE=!!SUPA.url, tok=null;
+  var LIVE=!!SUPA.url, tok=null, msgs=[], hotel=null;
+  // Le fil SMS est rattaché au numéro : on compare les chiffres seuls
+  // (+33 6 90… et 0690… désignent le même correspondant).
+  function msgsFor(x){
+    var dp=digits(x.phone);if(!dp)return [];
+    var tail=dp.slice(-9);
+    return msgs.filter(function(m){return digits(m.phone_e164).slice(-9)===tail});
+  }
   function api(path,opt){
     opt=opt||{};opt.headers=Object.assign({apikey:SUPA.anon,Authorization:'Bearer '+tok,
       'Content-Type':'application/json'},opt.headers||{});
@@ -358,6 +382,23 @@
     if((x.summary||'').toLowerCase().indexOf(q)>=0)return true;
     return (x.transcript||[]).some(function(m){return m.x.toLowerCase().indexOf(q)>=0});
   }
+  function groupKey(x){var d=digits(x.phone);return d?d.slice(-9):'seul:'+x.id;}
+  // Une discussion = un correspondant. Les appels visibles sont déjà triés du plus
+  // récent au plus ancien : la tête de groupe est donc le dernier appel.
+  function groupsOf(list){
+    var seen={},out=[];
+    list.forEach(function(x){
+      var k=groupKey(x);
+      if(seen[k]){seen[k].items.push(x);return;}
+      seen[k]={head:x,items:[x]};out.push(seen[k]);
+    });
+    return out;
+  }
+  // tous les appels du même correspondant, visibles ou non (pour le fil du détail)
+  function historyFor(x){
+    var k=groupKey(x);
+    return data.filter(function(d){return groupKey(d)===k});
+  }
   function visible(){
     return data.filter(function(x){
       if(filter!=='all'&&x.motif!==filter)return false;
@@ -371,18 +412,22 @@
     });
   }
   function renderRows(){
-    var wrap=$('#rows'),vis=visible();
-    if(!vis.length){wrap.innerHTML='<div class="list-empty">'+(query?'Aucun résultat.':tab==='archives'?'Aucune discussion archivée.':'Aucune discussion.')+'</div>';return;}
+    var wrap=$('#rows'),grps=groupsOf(visible());
+    if(!grps.length){wrap.innerHTML='<div class="list-empty">'+(query?'Aucun résultat.':tab==='archives'?'Aucune discussion archivée.':'Aucune discussion.')+'</div>';return;}
     var html='',lastGrp=null;
-    vis.forEach(function(x){
+    grps.forEach(function(g){
+      var x=g.head;
       if(x.grp!==lastGrp){html+='<div class="grouplbl">'+x.grp+'</div>';lastGrp=x.grp;}
       var isMasked=x.phone==='Numéro masqué';
       var sub=isMasked?'A raccroché · '+LABEL[x.motif]:LABEL[x.motif]+(x.dur?' · '+x.dur:'');
-      html+='<div class="row" data-id="'+x.id+'"'+(selected===x.id?' aria-selected="true"':'')+'>'+
+      if(g.items.length>1)sub+=' · '+g.items.length+' appels';
+      var unread=g.items.some(function(i){return i.unread});
+      var sel=g.items.some(function(i){return i.id===selected});
+      html+='<div class="row" data-id="'+x.id+'"'+(sel?' aria-selected="true"':'')+'>'+
         '<div class="rav" style="background:'+COLOR[x.motif]+'">'+esc(initials(x.name))+'</div>'+
         '<div class="rmeta"><div class="rl1"><span class="rn">'+esc(x.name)+'</span><span class="rt">'+x.when+'</span></div>'+
         '<div class="rl2"><span class="mdot" style="background:'+COLOR[x.motif]+'"></span>'+esc(sub)+'</div></div>'+
-        (x.unread?'<span class="unread"></span>':'')+'</div>';
+        (unread?'<span class="unread"></span>':'')+'</div>';
     });
     wrap.innerHTML=html;
     $$('.row',wrap).forEach(function(el){el.addEventListener('click',function(){select(el.dataset.id)});});
@@ -414,16 +459,33 @@
     info+='<div class="di"><span class="k">Durée</span><span class="v">'+(x.dur||'—')+'</span></div>';
     info+='<div class="di"><span class="k">Reçu</span><span class="v">'+esc(x.d)+'</span></div>';
     if(multi)info+='<div class="di"><span class="k">Appels répétés</span><span class="v" style="color:var(--inconnu)">'+x.attempts.length+'× — '+x.attempts.join(', ')+'</span></div>';
-    var player=!x.noMessage?'<div class="player"><button class="pp">▶</button><div class="track"><i></i></div><span class="dur">0:00 / '+durMS(x.dur)+'</span><span class="dl">⭳</span></div>':'';
+    var player=!x.noMessage?'<div class="player"><button class="pp">▶</button><div class="track"><i></i></div><span class="dur">0:00 / '+durMS(x.dur)+'</span><button class="spd" title="Vitesse de lecture">1×</button><span class="dl">⭳</span></div>':'';
     var tr=(x.transcript&&x.transcript.length)
       ? '<div class="tr">'+x.transcript.map(function(m){return '<div class="b '+m.r+'"><div class="who">'+(m.r==='agent'?'Agent IA':'Client')+'</div>'+esc(m.x)+'</div>'}).join('')+'</div>'
       : '<div class="d-none">Aucun échange — l\'appelant a raccroché sans laisser de message.</div>';
-    return betaHtml+
+    var sms=msgsFor(x);
+    var smsHtml=sms.length
+      ? '<div class="msgs">'+sms.map(function(m){
+          return '<div class="m '+(m.direction==='in'?'in':'out')+'">'+esc(m.body)+
+                 '<div class="mt">'+m.at+(m.direction==='out'?' · '+esc(m.status||''):'')+'</div></div>';
+        }).join('')+'</div>'
+      : '<div class="d-none">Aucun SMS échangé avec ce numéro.</div>';
+    var hist=historyFor(x);
+    var histHtml=hist.length>1
+      ? '<div class="sec-t">Appels de ce correspondant</div><div class="dcard"><div class="hist">'+
+        hist.map(function(h){
+          return '<button class="hi'+(h.id===x.id?' on':'')+'" data-go="'+h.id+'">'+
+            '<span class="hd">'+esc(h.d)+'</span>'+
+            '<span class="hm"><span class="mdot" style="background:'+COLOR[h.motif]+'"></span>'+LABEL[h.motif]+'</span>'+
+            '<span class="hu">'+(h.dur||'')+'</span></button>';
+        }).join('')+'</div></div>'
+      : '';
+    return betaHtml+histHtml+
       '<div class="sec-t">Enregistrement</div>'+(player||'<div class="d-none">Pas d\'enregistrement exploitable.</div>')+
-      '<div class="sec-t">Résumé de l\'appel</div><div class="dcard"><div class="summary">'+esc(x.summary)+'</div>'+
-        '<div class="sugg"><button>⚡ Actions suggérées</button><button>➕ Créer une réservation</button></div></div>'+
+      '<div class="sec-t">Résumé de l\'appel</div><div class="dcard"><div class="summary">'+esc(x.summary)+'</div></div>'+
       '<div class="sec-t">Informations</div><div class="dcard"><div class="info-grid">'+info+'</div></div>'+
-      '<div class="sec-t">Transcription</div><div class="dcard">'+tr+'</div>';
+      '<div class="sec-t">Transcription</div><div class="dcard">'+tr+'</div>'+
+      '<div class="sec-t">SMS</div><div class="dcard">'+smsHtml+'</div>';
   }
   function durMS(d){if(!d)return '0:00';var m=/(\d+)\s*m\s*(\d+)/.exec(d);if(m)return m[1]+':'+('0'+m[2]).slice(-2);var s=/(\d+)\s*s/.exec(d);return s?'0:'+('0'+s[1]).slice(-2):'0:00';}
 
@@ -438,6 +500,15 @@
     if(pp)pp.addEventListener('click',function(){
       if(x.audio)play($('#detBody .player'),x.audio);else simPlay($('#detBody .player'));
     });
+    $$('#detBody .hi').forEach(function(b){
+      b.addEventListener('click',function(){if(b.dataset.go!==selected)select(b.dataset.go)});
+    });
+    var sp=$('#detBody .spd');
+    if(sp)sp.addEventListener('click',function(){
+      rate=RATES[(RATES.indexOf(rate)+1)%RATES.length];
+      sp.textContent=String(rate).replace('.',',')+'×';
+      if(au)au.playbackRate=rate;
+    });
     var ab=$('#archBtn');
     if(ab)ab.addEventListener('click',function(){
       if(!confirm('Archiver cette discussion ?\n\nElle sera masquée de la boîte. Cette action est définitive : vous la retrouverez dans l\'onglet Archivés ou par une recherche.'))return;
@@ -450,14 +521,15 @@
     renderRows();renderCounts();
   }
   // Lecture réelle : l'URL pointe le proxy N8N qui rejoue l'audio ElevenLabs.
-  var au=null;
+  var au=null,rate=1;
+  var RATES=[1,1.5,2];
   function mmss(t){t=Math.floor(t||0);return Math.floor(t/60)+':'+('0'+(t%60)).slice(-2);}
   function play(pl,url){
     if(!pl)return;
     var bar=$('.track i',pl),pp=$('.pp',pl),lbl=$('.dur',pl);
     if(au&&au.src===url){if(au.paused){au.play();pp.textContent='❚❚';}else{au.pause();pp.textContent='▶';}return;}
     if(au)au.pause();
-    au=new Audio(url);pp.textContent='…';
+    au=new Audio(url);au.playbackRate=rate;pp.textContent='…';
     au.addEventListener('timeupdate',function(){
       if(au.duration)bar.style.width=(au.currentTime/au.duration*100)+'%';
       lbl.textContent=mmss(au.currentTime)+' / '+mmss(au.duration);
@@ -497,13 +569,36 @@
       transcript:tr,noMessage:tr.length===0,audio:r.recording_url||'',
       dates:gv('dates_sejour'),resa:gv('reservation_prise')};
   }
+  function loadHotel(){
+    return api('/rest/v1/hotels?select=name,logo_url,phone_e164&limit=1')
+      .then(function(r){return r.json()}).then(function(h){
+        if(!h||!h.length)return;
+        hotel=h[0];
+        $('.brandbox .hn').textContent=hotel.name||'';
+        if(hotel.phone_e164)$('.brandbox .hp span:last-child').textContent=fmtPhone(hotel.phone_e164);
+        if(hotel.logo_url)$('.brandbox .logo').innerHTML='<img src="'+hotel.logo_url+'" alt="">';
+      }).catch(function(){});
+  }
+  function loadMsgs(){
+    return api('/rest/v1/messages?select=*&order=created_at.asc&limit=500')
+      .then(function(r){return r.json()})
+      .then(function(rows){
+        msgs=(rows||[]).map(function(m){
+          return {direction:m.direction,body:m.body,status:m.status,phone_e164:m.phone_e164||'',
+                  at:new Date(m.created_at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',
+                       hour:'2-digit',minute:'2-digit'}).replace(':','h')};
+        });
+      }).catch(function(){msgs=[]});
+  }
   function loadCalls(){
     return api('/rest/v1/calls?select=*&order=started_at.desc&limit=200')
       .then(function(r){if(r.status===401){logout();throw new Error('session expirée');}return r.json()})
       .then(function(rows){
         data.length=0;rows.forEach(function(r){data.push(mapRow(r))});
-        renderCounts();renderRows();
-        var v=visible();if(v.length)select(v[0].id);
+        return Promise.all([loadHotel(),loadMsgs()]).then(function(){
+          renderCounts();renderRows();
+          var v=visible();if(v.length)select(v[0].id);
+        });
       });
   }
   function logout(){try{localStorage.removeItem('mylidie_tok')}catch(e){}tok=null;showLogin();}
@@ -553,8 +648,25 @@
     tab=b.dataset.t;$$('.ltab').forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false')});renderRows();renderCounts();});
   $('#search').addEventListener('input',function(){query=this.value.trim();renderRows();renderCounts();});
 
-  function sendMsg(){var inp=$('#cInput'),v=inp.value.trim();if(!v)return;inp.value='';inp.style.height='auto';
-    var note=$('.composer .cnote');var old=note.textContent;note.textContent='✓ Message envoyé';setTimeout(function(){note.textContent=old},2000);}
+  var SMS_OUT='https://n8n-5tkb.srv1203069.hstgr.cloud/webhook/mylidie-sms-out';
+  function sendMsg(){
+    var inp=$('#cInput'),v=inp.value.trim();if(!v)return;
+    var note=$('.composer .cnote'),old='Envoyer un sms';
+    var x=data.find(function(d){return d.id===selected});
+    if(!LIVE){inp.value='';inp.style.height='auto';
+      note.textContent='✓ Message envoyé';setTimeout(function(){note.textContent=old},2000);return;}
+    if(!x||digits(x.phone).length<6){note.textContent='Numéro inconnu, envoi impossible.';
+      setTimeout(function(){note.textContent=old},3000);return;}
+    inp.value='';inp.style.height='auto';note.textContent='Envoi…';
+    // le webhook N8N revalide le jeton auprès de Supabase avant de faire partir le SMS
+    fetch(SMS_OUT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+      body:JSON.stringify({to:'+'+digits(x.phone),body:v})})
+      .then(function(r){if(!r.ok)throw new Error();return r.json()})
+      .then(function(){note.textContent='✓ SMS envoyé';
+        return loadMsgs().then(function(){if(selected)select(selected)});})
+      .catch(function(){note.textContent='Échec de l\'envoi.';inp.value=v;})
+      .then(function(){setTimeout(function(){note.textContent=old},3000)});
+  }
   $('#cSend').addEventListener('click',sendMsg);
   $('#cInput').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(120,this.scrollHeight)+'px'});
   $('#cInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
