@@ -191,8 +191,15 @@
   .tl{display:flex;flex-direction:column;gap:10px;padding-bottom:6px}
   .tl-day{align-self:center;font-size:var(--fs-xs);color:var(--ink-faint);background:var(--surface-3);
     padding:3px 12px;border-radius:999px;margin:8px 0 2px}
-  .tl-call{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
-  .tl-call.on{border-color:var(--line-strong)}
+  /* Un appel se lit comme un message recu : ancre a gauche, largeur de bulle.
+     Deplie, il s'elargit pour laisser respirer infos/transcription — sans bouger
+     son bord gauche, la carte grandit depuis son point d'ancrage. */
+  .tl-call{align-self:flex-start;width:100%;max-width:78%;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+  .tl-call.on{max-width:100%;border-color:var(--line-strong)}
+  /* toute la carte repliee est cliquable, pas seulement sa ligne d'en-tete */
+  .tl-call:not(.on){cursor:pointer}
+  .tl-call:not(.on):hover,.tl-call:not(.on):active{background:var(--surface-2)}
   .tlh{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;color:var(--ink);
     font:inherit;padding:12px 15px;border-radius:14px;cursor:pointer}
   .tlh:hover{background:var(--surface-2)}
@@ -207,11 +214,16 @@
   .tl-body{padding:13px 15px 16px;border-top:1px solid var(--line)}
   .tl-sub{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);margin:18px 2px 9px}
   .tl-body>.tl-sub:first-child{margin-top:0}
-  .tl .m{max-width:78%;padding:9px 13px;border-radius:13px;font-size:var(--fs-sm);line-height:1.5;white-space:pre-wrap}
-  .tl .m.in{align-self:flex-start;background:var(--surface-2);border:1px solid var(--line)}
-  .tl .m.out{align-self:flex-end;background:var(--brand);color:#f5f3ea}
+  /* Un SMS = son en-tête (« SMS envoyé · date ») au-dessus de sa bulle.
+     Le wrapper porte l'alignement et la largeur, la bulle remplit. */
+  .sms{display:flex;flex-direction:column;gap:3px;max-width:78%}
+  .sms.in{align-self:flex-start;align-items:flex-start}
+  .sms.out{align-self:flex-end;align-items:flex-end}
+  .smsh{font-size:var(--fs-xs);color:var(--ink-faint);padding:0 4px;font-variant-numeric:tabular-nums}
+  .tl .m{max-width:100%;padding:9px 13px;border-radius:13px;font-size:var(--fs-sm);line-height:1.5;white-space:pre-wrap}
+  .tl .m.in{background:var(--surface-2);border:1px solid var(--line)}
+  .tl .m.out{background:var(--brand);color:#f5f3ea}
   :root[data-theme="dark"] .tl .m.out{background:var(--brand-2)}
-  .tl .mt{font-size:var(--fs-xs);opacity:.65;margin-top:3px}
   .player{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-top:8px}
   .player .pp{width:34px;height:34px;border-radius:50%;background:var(--btn-bg);color:var(--btn-fg);border:none;display:grid;place-items:center;cursor:pointer;font-size:13px;flex:0 0 auto}
   .player .track{flex:1;height:5px;border-radius:5px;background:var(--line-strong);position:relative;overflow:hidden}
@@ -544,8 +556,11 @@
     return '<div class="tl">'+items.map(function(it){
       if(it.k==='sms'){
         var m=it.m;
-        return '<div class="m '+(m.direction==='in'?'in':'out')+'">'+esc(m.body)+
-               '<div class="mt">'+esc(m.at)+(m.direction==='out'&&m.status?' · '+esc(m.status):'')+'</div></div>';
+        var out=m.direction!=='in';
+        return '<div class="sms '+(out?'out':'in')+'">'+
+               '<div class="smsh">'+(out?'SMS envoyé':'SMS reçu')+' · '+esc(m.at)+
+               (out&&m.status?' · '+esc(m.status):'')+'</div>'+
+               '<div class="m '+(out?'out':'in')+'">'+esc(m.body)+'</div></div>';
       }
       var c=it.c,on=c.id===openId;
       return '<div class="tl-call'+(on?' on':'')+'" data-go="'+c.id+'">'+
@@ -595,9 +610,9 @@
       sp.textContent=String(rate).replace('.',',')+'×';
       if(au)au.playbackRate=rate;
     });
-    $$('#detBody .tlh').forEach(function(b){
-      b.addEventListener('click',function(){
-        var id=b.parentNode.dataset.go;
+    $$('#detBody .tlh,#detBody .tl-call:not(.on) .tl-sum').forEach(function(el){
+      el.addEventListener('click',function(){
+        var id=el.parentNode.dataset.go;
         if(id===openId){openId=null;renderDetail();}else select(id);
       });
     });
@@ -680,7 +695,7 @@
         msgs=(rows||[]).map(function(m){
           return {direction:m.direction,body:m.body,status:m.status,phone_e164:m.phone_e164||'',
                   at:new Date(m.created_at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',
-                       hour:'2-digit',minute:'2-digit'}).replace(':','h')};
+                       hour:'2-digit',minute:'2-digit'}).replace(':','h').replace(', ',' à ')};
         });
       }).catch(function(){msgs=[]});
   }
