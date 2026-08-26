@@ -626,7 +626,11 @@
     var body=$('#detBody');body.innerHTML=detBodyHTML(x);
     // fil chronologique : on se cale sur l'appel déplié, sinon sur le bas (le plus récent)
     var on=$('.tl-call.on',body);
-    if(on)on.scrollIntoView({block:'center'});else body.scrollTop=body.scrollHeight;
+    // On cale le HAUT de l'appel deplie sous l'en-tete : centrer le faisait
+    // ouvrir au milieu de son propre contenu. scrollIntoView est evite, il
+    // fait aussi defiler les conteneurs parents.
+    if(on)body.scrollTop+=on.getBoundingClientRect().top-body.getBoundingClientRect().top-8;
+    else body.scrollTop=body.scrollHeight;
     var cp=$('#detHead .cpy');
     if(cp)cp.addEventListener('click',copyPhone);
     var pp=$('#detBody .player .pp');
