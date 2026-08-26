@@ -208,8 +208,13 @@
   .tlh .tlu{margin-left:auto;font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums}
   .tlh .chev{color:var(--ink-faint);font-size:15px;flex:0 0 auto}
   .tl-call.on .tlh .chev{transform:rotate(180deg)}
+  .tl-sumh{padding:0 15px 5px;font-size:var(--fs-sm);font-weight:700;color:var(--ink)}
   .tl-sum{padding:0 15px 13px;font-size:var(--fs-sm);color:var(--ink-soft);line-height:1.5}
-  .tl-call:not(.on) .tl-sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  /* overflow:hidden coupe au bord de la boîte de padding : avec un padding-bas,
+     la 3e ligne bavait dedans au lieu d'être coupée. En marge, la coupe tombe
+     pile à la fin de la 2e ligne. */
+  .tl-call:not(.on) .tl-sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    overflow:hidden;padding-bottom:0;margin-bottom:13px}
   .tl-call.on .tl-sum{color:var(--ink);font-size:var(--fs-base)}
   .tl-body{padding:13px 15px 16px;border-top:1px solid var(--line)}
   .tl-sub{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);margin:18px 2px 9px}
@@ -224,13 +229,22 @@
   .tl .m.in{background:var(--surface-2);border:1px solid var(--line)}
   .tl .m.out{background:var(--brand);color:#f5f3ea}
   :root[data-theme="dark"] .tl .m.out{background:var(--brand-2)}
-  .player{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-top:8px}
+  .player{display:flex;flex-direction:column;align-items:stretch;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-top:8px}
+  .plh{font-size:var(--fs-xs);color:var(--ink-faint);font-weight:600}
+  .plc{display:flex;align-items:center;gap:12px}
   .player .pp{width:34px;height:34px;border-radius:50%;background:var(--btn-bg);color:var(--btn-fg);border:none;display:grid;place-items:center;cursor:pointer;font-size:13px;flex:0 0 auto}
   .player .track{flex:1;height:5px;border-radius:5px;background:var(--line-strong);position:relative;overflow:hidden}
+  .player .track.seek{cursor:pointer}
+  .player .sk{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);border-radius:7px;
+              padding:3px 7px;font-size:var(--fs-xs);cursor:pointer;font-variant-numeric:tabular-nums;
+              flex:0 0 auto;font-family:inherit;transition:transform 100ms ease-out}
+  .player .sk:active{transform:scale(.96)}
+  .player .sk:focus-visible,.player .spd:focus-visible,.player .pp:focus-visible,.player .dl:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
   .player .track i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--brand)}
   @media(prefers-color-scheme:dark){.player .track i{background:var(--brand-2)}}
   .player .dur{font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums}
-  .player .dl{color:var(--ink-faint);cursor:pointer;font-size:15px}
+  .player .dl{color:var(--ink-faint);cursor:pointer;font-size:15px;text-decoration:none}
+  .player .dl:hover{color:var(--ink)}
   .player .spd{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);border-radius:7px;
                padding:3px 7px;font-size:var(--fs-xs);cursor:pointer;font-variant-numeric:tabular-nums;flex:0 0 auto}
 
@@ -538,7 +552,21 @@
     info+='<div class="di"><span class="k">Durée</span><span class="v">'+(x.dur||'—')+'</span></div>';
     info+='<div class="di"><span class="k">Reçu</span><span class="v">'+esc(x.d)+'</span></div>';
     if(multi)info+='<div class="di"><span class="k">Appels répétés</span><span class="v" style="color:var(--inconnu)">'+x.attempts.length+'× — '+x.attempts.join(', ')+'</span></div>';
-    var player=!x.noMessage?'<div class="player"><button class="pp">▶</button><div class="track"><i></i></div><span class="dur">0:00 / '+durMS(x.dur)+'</span><button class="spd" title="Vitesse de lecture">1×</button><span class="dl">⭳</span></div>':'';
+    // Les commandes qui exigent un vrai fichier (±10 s, vitesse, téléchargement)
+    // ne s'affichent que s'il y en a un : pas de bouton qui ne fait rien.
+    var player=!x.noMessage?'<div class="player">'+
+      '<div class="plh">Géré par votre Réceptionniste IA</div>'+
+      '<div class="plc">'+
+        '<button class="pp" aria-label="Lire l\'enregistrement">▶</button>'+
+        '<div class="track'+(x.audio?' seek':'')+'"><i></i></div>'+
+        '<span class="dur">0:00 / '+durMS(x.dur)+'</span>'+
+        (x.audio
+          ? '<button class="sk" data-s="-10" title="Reculer de 10 secondes">−10 s</button>'+
+            '<button class="sk" data-s="10" title="Avancer de 10 secondes">+10 s</button>'+
+            '<button class="spd" title="Vitesse de lecture">'+rateLabel()+'</button>'+
+            '<a class="dl" href="'+esc(x.audio)+'" download title="Télécharger l\'enregistrement" aria-label="Télécharger l\'enregistrement">⭳</a>'
+          : '')+
+      '</div></div>':'';
     var tr=(x.transcript&&x.transcript.length)
       ? '<div class="tr">'+x.transcript.map(function(m){return '<div class="b '+m.r+'"><div class="who">'+(m.r==='agent'?'Agent IA':'Client')+'</div>'+esc(m.x)+'</div>'}).join('')+'</div>'
       : '<div class="d-none">Aucun échange — l\'appelant a raccroché sans laisser de message.</div>';
@@ -568,6 +596,7 @@
         '<span class="pill '+c.motif+'">'+LABEL[c.motif]+'</span>'+
         '<span class="tlu">'+esc(c.noMessage?'sans message':(c.dur||''))+'</span>'+
         '<span class="chev">⌄</span></button>'+
+        '<div class="tl-sumh">Résumé de l\'appel</div>'+
         '<div class="tl-sum">'+esc(c.summary)+'</div>'+
         (on?callBodyHTML(c):'')+'</div>';
     }).join('')+'</div>';
@@ -607,8 +636,24 @@
     var sp=$('#detBody .spd');
     if(sp)sp.addEventListener('click',function(){
       rate=RATES[(RATES.indexOf(rate)+1)%RATES.length];
-      sp.textContent=String(rate).replace('.',',')+'×';
+      sp.textContent=rateLabel();
       if(au)au.playbackRate=rate;
+    });
+    // `au` est partagé entre les appels : on ne pilote que si c'est bien
+    // l'enregistrement affiché qui est chargé, sinon on déplacerait un autre appel.
+    function onThis(){return au&&au.src===x.audio;}
+    $$('#detBody .sk').forEach(function(b){
+      b.addEventListener('click',function(){
+        if(!onThis())return;
+        var t=au.currentTime+ +b.dataset.s;
+        au.currentTime=Math.max(0,Math.min(au.duration||t,t));
+      });
+    });
+    var tk=$('#detBody .player .track.seek');
+    if(tk)tk.addEventListener('click',function(e){
+      if(!onThis()||!au.duration)return;
+      var r=tk.getBoundingClientRect();
+      au.currentTime=Math.max(0,Math.min(au.duration,(e.clientX-r.left)/r.width*au.duration));
     });
     $$('#detBody .tlh,#detBody .tl-call:not(.on) .tl-sum').forEach(function(el){
       el.addEventListener('click',function(){
@@ -632,6 +677,7 @@
   // Lecture réelle : l'URL pointe le proxy N8N qui rejoue l'audio ElevenLabs.
   var au=null,rate=1;
   var RATES=[1,1.5,2];
+  function rateLabel(){return String(rate).replace('.',',')+'×';}
   function mmss(t){t=Math.floor(t||0);return Math.floor(t/60)+':'+('0'+(t%60)).slice(-2);}
   function play(pl,url){
     if(!pl)return;
