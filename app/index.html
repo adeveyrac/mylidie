@@ -255,8 +255,9 @@
   .player .track i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--brand)}
   @media(prefers-color-scheme:dark){.player .track i{background:var(--brand-2)}}
   .player .dur{font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums}
-  .player .dl{color:var(--ink-faint);cursor:pointer;font-size:15px;text-decoration:none}
+  .player .dl{color:var(--ink-faint);cursor:pointer;line-height:0;text-decoration:none;flex:0 0 auto;padding:2px}
   .player .dl:hover{color:var(--ink)}
+  .player .dl.busy{opacity:.5;pointer-events:none}
   .player .spd{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);border-radius:7px;
                padding:3px 7px;font-size:var(--fs-xs);cursor:pointer;font-variant-numeric:tabular-nums;flex:0 0 auto}
 
@@ -284,6 +285,28 @@
   .row:active,.navitem:active,.ltab:active,.tlh:active,.mi:active,.memberline:active,.brandbox:active{background:var(--surface-3)}
   .send,.pp,.archbtn,.spd{transition:transform 100ms ease-out}
   .send:active,.pp:active,.archbtn:active,.spd:active{transform:scale(.96)}
+
+  /* ---- ecran de connexion ----
+     Le logo est un PNG a fond opaque #fdfcf9 : l'ecran se cale sur cette teinte
+     pour qu'il s'y fonde, et reste clair quel que soit le theme. */
+  #loginOv{position:fixed;inset:0;z-index:99;background:#fdfcf9;color:#24231c;padding:24px;
+    display:flex;align-items:center;justify-content:center;font-family:var(--sans)}
+  .authbox{width:340px;max-width:100%;display:flex;flex-direction:column;gap:11px}
+  .authlogo{width:220px;max-width:72%;align-self:center;margin-bottom:6px;display:block}
+  .authbox h1{font-size:17px;font-weight:700;margin:0;text-align:center;letter-spacing:-.2px}
+  .authbox .sub{font-size:13px;color:#5c5a4e;margin:0 0 4px;text-align:center;line-height:1.5}
+  .authbox input{padding:12px 13px;border:1px solid #d8d3c4;border-radius:9px;font:inherit;
+    font-size:14px;background:#fff;color:#24231c}
+  .authbox input:focus{outline:2px solid rgba(58,58,40,.35);outline-offset:1px}
+  .authbox .main{padding:12px;border:0;border-radius:9px;background:#3a3a28;color:#fff;
+    font:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:transform 100ms ease-out}
+  .authbox .main:active{transform:scale(.98)}
+  .authbox .link{background:none;border:0;color:#5c5a4e;font:inherit;font-size:13px;
+    cursor:pointer;text-decoration:underline;padding:4px;align-self:center}
+  .authbox .link:hover{color:#24231c}
+  .authmsg{font-size:13px;margin:0;min-height:18px;text-align:center;line-height:1.4}
+  .authmsg.err{color:#c0392b}
+  .authmsg.ok{color:#2f7d5b}
 
   /* ---- telephone : une seule colonne, les vues s'empilent ---- */
   @media (max-width:900px){
@@ -455,9 +478,15 @@
       $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))},
       esc=function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')};
 
-  document.documentElement.setAttribute('data-theme',window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  // Clair par defaut : une reception est un lieu eclaire, et le sombre
+  // surprenait a la premiere ouverture. Le choix de l'utilisateur est retenu.
+  var theme='light';
+  try{theme=localStorage.getItem('mylidie_theme')||'light'}catch(e){}
+  document.documentElement.setAttribute('data-theme',theme);
   $('#themeBtn').addEventListener('click',function(){
-    document.documentElement.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+    theme=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',theme);
+    try{localStorage.setItem('mylidie_theme',theme)}catch(e){}
   });
 
   // selected = la discussion ouverte ; openId = l'appel ouvert par-dessus (ou null)
@@ -555,6 +584,11 @@
     if(x.motif==='annulation')return ['Confirmer l\'annulation par SMS à '+esc(x.name)+'.','Libérer la chambre concernée dans le planning.'];
     return null;
   }
+  // Le glyphe unicode s'affichait en tofu (rectangle barre) sur iOS : un SVG
+  // se dessine partout pareil.
+  var DL_SVG='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+
+    '<path d="M12 3v11"/><path d="M7.5 10l4.5 4.5 4.5-4.5"/><path d="M4.5 20h15"/></svg>';
   var COPY_SVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '+
     'stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/>'+
     '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
@@ -608,7 +642,7 @@
           ? '<button class="sk" data-s="-10" title="Reculer de 10 secondes">−10 s</button>'+
             '<button class="sk" data-s="10" title="Avancer de 10 secondes">+10 s</button>'+
             '<button class="spd" title="Vitesse de lecture">'+rateLabel()+'</button>'+
-            '<a class="dl" href="'+esc(x.audio)+'" download title="Télécharger l\'enregistrement" aria-label="Télécharger l\'enregistrement">⭳</a>'
+            '<a class="dl" href="'+esc(x.audio)+'" download title="Télécharger l\'enregistrement" aria-label="Télécharger l\'enregistrement">'+DL_SVG+'</a>'
           : '')+
       '</div></div>':'';
     var tr=(x.transcript&&x.transcript.length)
@@ -737,6 +771,21 @@
       var r=tk.getBoundingClientRect();
       au.currentTime=Math.max(0,Math.min(au.duration,(e.clientX-r.left)/r.width*au.duration));
     });
+    var dl=$('#detBody .player .dl');
+    if(dl)dl.addEventListener('click',function(e){
+      e.preventDefault();
+      var url=dl.getAttribute('href');
+      dl.classList.add('busy');
+      fetch(url).then(function(r){if(!r.ok)throw 0;return r.blob()}).then(function(b){
+        var u=URL.createObjectURL(b),a=document.createElement('a');
+        a.href=u;a.download='appel-'+String(c.d||'').replace(/[^0-9]+/g,'-').replace(/^-|-$/g,'')+'.mp3';
+        document.body.appendChild(a);a.click();a.remove();
+        setTimeout(function(){URL.revokeObjectURL(u)},1000);
+      }).catch(function(){
+        // hote sans CORS : on retombe sur l'ouverture, au moins le fichier est joignable
+        window.open(url,'_blank','noopener');
+      }).then(function(){dl.classList.remove('busy')});
+    });
   }
   function bindArchive(x){
     var ab=$('#archBtn');
@@ -836,39 +885,107 @@
       });
   }
   function logout(){try{localStorage.removeItem('mylidie_tok')}catch(e){}tok=null;showLogin();}
-  function showLogin(msg){
+  // Un seul ecran, trois modes : connexion, mot de passe oublie, choix du mot
+  // de passe (arrivee depuis le lien recu par mail — invitation ou reinitialisation).
+  var AUTH_LOGO='/mylidie-logo.png',lastMail='';
+  var AUTH={
+    login:{h:'Réception Mylidie',
+      sub:'Connectez-vous pour voir les appels de votre établissement.',
+      btn:'Se connecter',
+      fields:'<input id="aMail" type="email" required placeholder="Adresse e-mail" autocomplete="username">'+
+             '<input id="aPass" type="password" required placeholder="Mot de passe" autocomplete="current-password">',
+      links:'<button type="button" class="link" data-go="forgot">Mot de passe oublié ?</button>'},
+    forgot:{h:'Mot de passe oublié',
+      sub:'Indiquez votre adresse e-mail : vous recevrez un lien pour choisir un nouveau mot de passe.',
+      btn:'Envoyer le lien',
+      fields:'<input id="aMail" type="email" required placeholder="Adresse e-mail" autocomplete="username">',
+      links:'<button type="button" class="link" data-go="login">Retour à la connexion</button>'},
+    newpass:{h:'Choisissez votre mot de passe',
+      sub:'Au moins 8 caractères. Il vous servira à chaque connexion.',
+      btn:'Enregistrer et entrer',
+      fields:'<input id="aPass" type="password" required minlength="8" placeholder="Nouveau mot de passe" autocomplete="new-password">',
+      links:''}
+  };
+  function authScreen(mode,msg,good){
     var el=document.getElementById('loginOv');
-    if(!el){
-      el=document.createElement('div');el.id='loginOv';
-      el.style.cssText='position:fixed;inset:0;z-index:99;background:var(--bg,#fff);display:flex;'+
-        'align-items:center;justify-content:center;font-family:inherit';
-      el.innerHTML='<form id="loginF" style="width:320px;max-width:88vw;display:flex;flex-direction:column;gap:12px">'+
-        '<h1 style="font-size:18px;margin:0 0 4px">Réception Mylidie</h1>'+
-        '<input id="lMail" type="email" required placeholder="Adresse e-mail" autocomplete="username" '+
-          'style="padding:11px 13px;border:1px solid #ccc;border-radius:8px;font-size:14px;font:inherit">'+
-        '<input id="lPass" type="password" required placeholder="Mot de passe" autocomplete="current-password" '+
-          'style="padding:11px 13px;border:1px solid #ccc;border-radius:8px;font-size:14px;font:inherit">'+
-        '<button type="submit" style="padding:11px;border:0;border-radius:8px;background:#3a3a28;color:#fff;'+
-          'font-size:14px;cursor:pointer;font:inherit">Se connecter</button>'+
-        '<p id="lErr" style="color:#c0392b;font-size:13px;margin:0;min-height:18px"></p></form>';
-      document.body.appendChild(el);
-      document.getElementById('loginF').addEventListener('submit',function(e){
-        e.preventDefault();
-        var err=document.getElementById('lErr');err.textContent='Connexion…';
-        fetch(SUPA.url+'/auth/v1/token?grant_type=password',{method:'POST',
-          headers:{apikey:SUPA.anon,'Content-Type':'application/json'},
-          body:JSON.stringify({email:document.getElementById('lMail').value,
-                               password:document.getElementById('lPass').value})})
-        .then(function(r){return r.json()})
-        .then(function(j){
-          if(!j.access_token){err.textContent='Identifiants incorrects.';return;}
-          tok=j.access_token;try{localStorage.setItem('mylidie_tok',tok)}catch(e){}
-          el.remove();loadCalls();
-        }).catch(function(){err.textContent='Connexion impossible.'});
-      });
-    }
+    if(!el){el=document.createElement('div');el.id='loginOv';document.body.appendChild(el);}
     el.style.display='flex';
-    if(msg)document.getElementById('lErr').textContent=msg;
+    var f=AUTH[mode];
+    el.innerHTML='<form class="authbox" id="authF" novalidate>'+
+      '<img class="authlogo" src="'+AUTH_LOGO+'" alt="Mylidie">'+
+      '<h1>'+f.h+'</h1><div class="sub">'+f.sub+'</div>'+f.fields+
+      '<button type="submit" class="main">'+f.btn+'</button>'+
+      '<p class="authmsg '+(good?'ok':'err')+'" id="aMsg">'+esc(msg||'')+'</p>'+f.links+'</form>';
+    var mi=document.getElementById('aMail');
+    if(mi){if(lastMail)mi.value=lastMail;mi.focus();}
+    else{var pi=document.getElementById('aPass');if(pi)pi.focus();}
+    $$('#loginOv .link').forEach(function(b){
+      b.addEventListener('click',function(){authScreen(b.dataset.go)});
+    });
+    document.getElementById('authF').addEventListener('submit',function(e){
+      e.preventDefault();submitAuth(mode);
+    });
+  }
+  function hideAuth(){var el=document.getElementById('loginOv');if(el)el.remove();}
+  function showLogin(msg){authScreen('login',msg);}
+  function submitAuth(mode){
+    var msg=document.getElementById('aMsg'),
+        mail=document.getElementById('aMail'),
+        pass=document.getElementById('aPass');
+    if(mail)lastMail=mail.value.trim();
+    if(mail&&!lastMail){authScreen(mode,'Indiquez votre adresse e-mail.');return;}
+    msg.className='authmsg';
+
+    if(mode==='login'){
+      if(!pass.value){authScreen('login','Indiquez votre mot de passe.');return;}
+      msg.textContent='Connexion…';
+      fetch(SUPA.url+'/auth/v1/token?grant_type=password',{method:'POST',
+        headers:{apikey:SUPA.anon,'Content-Type':'application/json'},
+        body:JSON.stringify({email:lastMail,password:pass.value})})
+      .then(function(r){return r.json()})
+      .then(function(j){
+        if(!j.access_token){authScreen('login','Identifiants incorrects.');return;}
+        tok=j.access_token;try{localStorage.setItem('mylidie_tok',tok)}catch(e){}
+        hideAuth();loadCalls();
+      }).catch(function(){authScreen('login','Connexion impossible.')});
+      return;
+    }
+
+    if(mode==='forgot'){
+      msg.textContent='Envoi…';
+      // Meme reponse quoi qu'il arrive : annoncer « adresse inconnue »
+      // revelerait qui possede un compte.
+      fetch(SUPA.url+'/auth/v1/recover',{method:'POST',
+        headers:{apikey:SUPA.anon,'Content-Type':'application/json'},
+        body:JSON.stringify({email:lastMail,redirect_to:location.origin+location.pathname})})
+      .then(function(){authScreen('forgot',
+        'Si un compte existe pour cette adresse, le lien vient de partir. Pensez à regarder les indésirables.',true)})
+      .catch(function(){authScreen('forgot','Envoi impossible, réessayez dans un instant.')});
+      return;
+    }
+
+    // newpass : `tok` vient du lien recu par mail, pas d'une saisie
+    if(pass.value.length<8){authScreen('newpass','Le mot de passe doit faire au moins 8 caractères.');return;}
+    msg.textContent='Enregistrement…';
+    fetch(SUPA.url+'/auth/v1/user',{method:'PUT',
+      headers:{apikey:SUPA.anon,Authorization:'Bearer '+tok,'Content-Type':'application/json'},
+      body:JSON.stringify({password:pass.value})})
+    .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
+    .then(function(res){
+      if(!res.ok){
+        authScreen('newpass',res.j.msg||res.j.error_description||
+          'Ce lien a expiré. Demandez-en un nouveau depuis « Mot de passe oublié ».');
+        return;
+      }
+      try{localStorage.setItem('mylidie_tok',tok)}catch(e){}
+      hideAuth();loadCalls();
+    }).catch(function(){authScreen('newpass','Enregistrement impossible.')});
+  }
+  function hashParams(){
+    var o={},h=(location.hash||'').replace(/^#/,'');
+    h.split('&').forEach(function(kv){var i=kv.indexOf('=');
+      if(i>0)o[decodeURIComponent(kv.slice(0,i))]=decodeURIComponent(kv.slice(i+1));});
+    return o;
   }
   function patchCall(id,body){
     if(!LIVE)return;
@@ -928,9 +1045,18 @@
 
   if(LIVE){
     data.length=0;
-    try{tok=localStorage.getItem('mylidie_tok')}catch(e){}
+    var hp=hashParams();
     renderCounts();renderRows();
-    if(tok)loadCalls().catch(function(){});else showLogin();
+    if((hp.type==='recovery'||hp.type==='invite')&&hp.access_token){
+      // On sort le jeton de la barre d'adresse avant toute chose : il ne doit
+      // pas rester dans l'historique ni partir dans un referer.
+      tok=hp.access_token;
+      try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+      authScreen('newpass');
+    }else{
+      try{tok=localStorage.getItem('mylidie_tok')}catch(e){}
+      if(tok)loadCalls().catch(function(){});else showLogin();
+    }
   }else{
     renderCounts();renderRows();
     if(window.matchMedia('(min-width:901px)').matches)openThread('c2');
