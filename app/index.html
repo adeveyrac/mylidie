@@ -153,6 +153,8 @@
   .sheet .go[disabled]{opacity:.55;cursor:default}
   .note{font-size:var(--fs-sm);margin:9px 0 0;min-height:17px;line-height:1.45}
   .note.err{color:var(--resa)} .note.ok{color:var(--info)}
+  .sheet h2.bad{color:var(--resa)}
+  .composer .cnote.err{color:var(--resa);font-weight:600}
   .linkout{width:100%;margin-top:8px;padding:9px 11px;border:1px solid var(--line-strong);
     border-radius:9px;background:var(--surface-2);color:var(--ink-soft);font:inherit;
     font-size:var(--fs-xs);cursor:pointer}
@@ -279,15 +281,17 @@
   .plh{font-size:var(--fs-xs);color:var(--ink-faint);font-weight:600}
   .plc{display:flex;align-items:center;gap:12px}
   .player .pp{width:34px;height:34px;border-radius:50%;background:var(--btn-bg);color:var(--btn-fg);border:none;display:grid;place-items:center;cursor:pointer;font-size:13px;flex:0 0 auto}
-  .player .track{flex:1;height:5px;border-radius:5px;background:var(--line-strong);position:relative;overflow:hidden}
-  .player .track.seek{cursor:pointer}
+  /* <input type=range> plutot qu'une barre maison : le glissement, le clavier
+     et le tactile sont geres par le navigateur, et accent-color suffit a le
+     mettre aux couleurs de la marque. */
+  .player .track{flex:1;min-width:60px;margin:0;accent-color:var(--brand);cursor:pointer}
+  .player .track:disabled{cursor:default;opacity:.45}
   .player .sk{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);border-radius:7px;
               padding:3px 7px;font-size:var(--fs-xs);cursor:pointer;font-variant-numeric:tabular-nums;
               flex:0 0 auto;font-family:inherit;transition:transform 100ms ease-out}
   .player .sk:active{transform:scale(.96)}
-  .player .sk:focus-visible,.player .spd:focus-visible,.player .pp:focus-visible,.player .dl:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-  .player .track i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--brand)}
-  @media(prefers-color-scheme:dark){.player .track i{background:var(--brand-2)}}
+  .player .track:focus-visible,.player .spd:focus-visible,.player .pp:focus-visible,.player .dl:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  @media(prefers-color-scheme:dark){.player .track{accent-color:var(--brand-2)}}
   .player .dur{font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums}
   .player .dl{color:var(--ink-faint);cursor:pointer;line-height:0;text-decoration:none;flex:0 0 auto;padding:2px}
   .player .dl:hover{color:var(--ink)}
@@ -381,6 +385,7 @@
 
 <div class="scrim" id="scrim"></div>
 <div class="modal" id="adminOv" hidden></div>
+<div class="modal" id="alertOv" hidden></div>
 <div class="scrollwrap">
 <div class="workspace">
   <!-- LEFT -->
@@ -672,18 +677,19 @@
     info+='<div class="di"><span class="k">Durée</span><span class="v">'+(x.dur||'—')+'</span></div>';
     info+='<div class="di"><span class="k">Reçu</span><span class="v">'+esc(x.d)+'</span></div>';
     if(multi)info+='<div class="di"><span class="k">Appels répétés</span><span class="v" style="color:var(--inconnu)">'+x.attempts.length+'× — '+x.attempts.join(', ')+'</span></div>';
-    // Les commandes qui exigent un vrai fichier (±10 s, vitesse, téléchargement)
-    // ne s'affichent que s'il y en a un : pas de bouton qui ne fait rien.
+    // Les commandes qui exigent un vrai fichier (vitesse, téléchargement) ne
+    // s'affichent que s'il y en a un : pas de bouton qui ne fait rien. Le
+    // curseur, lui, reste visible mais desactive tant que la lecture n'a pas
+    // charge cet enregistrement — play() l'active.
     var player=!x.noMessage?'<div class="player">'+
       '<div class="plh">Géré par votre Réceptionniste IA</div>'+
       '<div class="plc">'+
         '<button class="pp" aria-label="Lire l\'enregistrement">▶</button>'+
-        '<div class="track'+(x.audio?' seek':'')+'"><i></i></div>'+
+        '<input type="range" class="track" min="0" max="1000" value="0" step="1" disabled '+
+          'aria-label="Position dans l\'enregistrement">'+
         '<span class="dur">0:00 / '+durMS(x.dur)+'</span>'+
         (x.audio
-          ? '<button class="sk" data-s="-10" title="Reculer de 10 secondes">−10 s</button>'+
-            '<button class="sk" data-s="10" title="Avancer de 10 secondes">+10 s</button>'+
-            '<button class="spd" title="Vitesse de lecture">'+rateLabel()+'</button>'+
+          ? '<button class="spd" title="Vitesse de lecture">'+rateLabel()+'</button>'+
             '<a class="dl" href="'+esc(x.audio)+'" download title="Télécharger l\'enregistrement" aria-label="Télécharger l\'enregistrement">'+DL_SVG+'</a>'
           : '')+
       '</div></div>':'';
@@ -802,19 +808,11 @@
     });
     // `au` est partagé entre les appels : on ne pilote que si c'est bien
     // l'enregistrement affiché qui est chargé, sinon on déplacerait un autre appel.
-    function onThis(){return au&&au.src===c.audio;}
-    $$('#detBody .sk').forEach(function(b){
-      b.addEventListener('click',function(){
-        if(!onThis())return;
-        var t=au.currentTime+ +b.dataset.s;
-        au.currentTime=Math.max(0,Math.min(au.duration||t,t));
-      });
-    });
-    var tk=$('#detBody .player .track.seek');
-    if(tk)tk.addEventListener('click',function(e){
-      if(!onThis()||!au.duration)return;
-      var r=tk.getBoundingClientRect();
-      au.currentTime=Math.max(0,Math.min(au.duration,(e.clientX-r.left)/r.width*au.duration));
+    // Le curseur n'est actif qu'une fois cet enregistrement chargé, donc pas de
+    // garde silencieuse ici : ce qui est cliquable fait quelque chose.
+    var tk=$('#detBody .player .track');
+    if(tk)tk.addEventListener('input',function(){
+      if(au&&au.duration)au.currentTime=tk.value/1000*au.duration;
     });
     var dl=$('#detBody .player .dl');
     if(dl)dl.addEventListener('click',function(e){
@@ -853,22 +851,46 @@
   function mmss(t){t=Math.floor(t||0);return Math.floor(t/60)+':'+('0'+(t%60)).slice(-2);}
   function play(pl,url){
     if(!pl)return;
-    var bar=$('.track i',pl),pp=$('.pp',pl),lbl=$('.dur',pl);
+    var tk=$('.track',pl),pp=$('.pp',pl),lbl=$('.dur',pl);
     if(au&&au.src===url){if(au.paused){au.play();pp.textContent='❚❚';}else{au.pause();pp.textContent='▶';}return;}
     if(au)au.pause();
     au=new Audio(url);au.playbackRate=rate;pp.textContent='…';
     au.addEventListener('timeupdate',function(){
-      if(au.duration)bar.style.width=(au.currentTime/au.duration*100)+'%';
+      // Pendant un glissement, 'input' vient deja de poser currentTime : on
+      // reecrit la meme position, le pouce ne saute pas.
+      if(au.duration)tk.value=au.currentTime/au.duration*1000;
       lbl.textContent=mmss(au.currentTime)+' / '+mmss(au.duration);
     });
+    au.addEventListener('loadedmetadata',function(){tk.disabled=false});
     au.addEventListener('playing',function(){pp.textContent='❚❚'});
-    au.addEventListener('ended',function(){pp.textContent='▶';bar.style.width='0%'});
+    au.addEventListener('ended',function(){pp.textContent='▶';tk.value=0;});
     au.addEventListener('error',function(){pp.textContent='▶';lbl.textContent='indisponible'});
     au.play().catch(function(){pp.textContent='▶';lbl.textContent='indisponible'});
   }
-  function simPlay(pl){if(!pl)return;var bar=$('.track i',pl),pp=$('.pp',pl);pp.textContent='❚❚';var w=0;
-    var iv=setInterval(function(){w+=2;bar.style.width=Math.min(100,w)+'%';if(w>=100){clearInterval(iv);pp.textContent='▶';bar.style.width='0%';}},70);}
+  // ponytail: maquette pour les appels sans fichier audio. Le curseur reste
+  // desactive — il n'y a rien a parcourir.
+  function simPlay(pl){if(!pl)return;var tk=$('.track',pl),pp=$('.pp',pl);pp.textContent='❚❚';var w=0;
+    var iv=setInterval(function(){w+=20;tk.value=Math.min(1000,w);if(w>=1000){clearInterval(iv);pp.textContent='▶';tk.value=0;}},70);}
 
+
+  // Une erreur dans la petite ligne grise du composeur passe inapercue.
+  // Reutilise .modal/.sheet de l'administration : rien de nouveau a styler.
+  function alertBox(titre,texte){
+    var ov=$('#alertOv');
+    ov.innerHTML='<div class="sheet" role="alertdialog" aria-modal="true">'+
+      '<div class="sh"><h2 class="bad">'+esc(titre)+'</h2>'+
+        '<button class="x" id="alX" aria-label="Fermer">×</button></div>'+
+      '<p class="lead">'+esc(texte)+'</p>'+
+      '<button class="go" id="alOk">J\'ai compris</button></div>';
+    ov.hidden=false;
+    function close(){ov.hidden=true;document.removeEventListener('keydown',onKey);}
+    function onKey(e){if(e.key==='Escape')close();}
+    $('#alX').addEventListener('click',close);
+    $('#alOk').addEventListener('click',close);
+    ov.addEventListener('click',function(e){if(e.target===ov)close();});
+    document.addEventListener('keydown',onKey);
+    $('#alOk').focus();
+  }
 
   // ---------------- administration ----------------
   // Reservee au compte plateforme. L'app etant du JS public, elle ne cree rien
@@ -1217,14 +1239,19 @@
     var x=data.find(function(d){return d.id===selected});
     if(!LIVE){inp.value='';inp.style.height='auto';
       note.textContent='✓ Message envoyé';setTimeout(function(){note.textContent=old},2000);return;}
-    if(!x||digits(x.phone).length<6){note.textContent='Numéro inconnu, envoi impossible.';
-      setTimeout(function(){note.textContent=old},3000);return;}
+    function fail(txt){
+      note.textContent=txt;note.classList.add('err');
+      setTimeout(function(){note.textContent=old;note.classList.remove('err');},4000);
+    }
+    if(!x||digits(x.phone).length<6){fail('Numéro inconnu, envoi impossible.');return;}
     // En France seuls les 06/07 recoivent des SMS ; Twilio rejette les fixes
     // (01-05, 09) avec « cannot be a landline ». Autant le dire tout de suite.
     var dg=digits(x.phone);
     if(dg.indexOf('33')===0&&!/^33[67]/.test(dg)){
-      note.textContent='Ligne fixe : ce numéro ne peut pas recevoir de SMS.';
-      setTimeout(function(){note.textContent=old},4000);return;}
+      alertBox('Ligne fixe',
+        'Le '+x.phone+' est une ligne fixe : elle ne peut pas recevoir de SMS. '+
+        'Seuls les numéros mobiles (06 et 07) en reçoivent. Rappelez ce client par téléphone.');
+      return;}
     inp.value='';inp.style.height='auto';note.textContent='Envoi…';
     // le webhook N8N revalide le jeton auprès de Supabase avant de faire partir le SMS
     fetch(SMS_OUT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
@@ -1232,8 +1259,8 @@
       .then(function(r){if(!r.ok)throw new Error();return r.json()})
       .then(function(){note.textContent='✓ SMS envoyé';
         return loadMsgs().then(function(){if(selected)renderDetail();refreshStatuses(3);});})
-      .catch(function(){note.textContent='Échec de l\'envoi.';inp.value=v;})
-      .then(function(){setTimeout(function(){note.textContent=old},3000)});
+      .catch(function(){fail('Échec de l\'envoi.');inp.value=v;})
+      .then(function(){setTimeout(function(){note.textContent=old;note.classList.remove('err');},3000)});
   }
   $('#cSend').addEventListener('click',sendMsg);
   $('#cInput').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(120,this.scrollHeight)+'px'});
