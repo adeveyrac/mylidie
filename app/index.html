@@ -698,6 +698,9 @@
         beta.map(function(b){return '<li>'+b+'</li>'}).join('')+'</ol></div>':'')+
       '</div>';
   }
+  // Twilio renvoie ses statuts en anglais ; la reception lit du francais.
+  var SMSST={queued:'en attente',accepted:'en attente',sending:'envoi en cours',
+    sent:'envoyé',delivered:'reçu',read:'lu',undelivered:'non délivré',failed:'échec'};
   function threadHTML(x){
     var items=timelineFor(x);
     if(!items.length)return '<div class="d-none">Rien à afficher pour ce correspondant.</div>';
@@ -707,7 +710,7 @@
         var out=m.direction!=='in';
         return '<div class="sms '+(out?'out':'in')+'">'+
                '<div class="smsh">'+(out?'SMS envoyé':'SMS reçu')+' · '+esc(m.at)+
-               (out&&m.status?' · '+esc(m.status):'')+'</div>'+
+               (out&&m.status?' · '+esc(SMSST[m.status]||m.status):'')+'</div>'+
                '<div class="m '+(out?'out':'in')+'">'+esc(m.body)+'</div></div>';
       }
       var c=it.c;
@@ -911,6 +914,10 @@
           fld('nhUrg','Numéro d\'urgence','+33650953697')+
           fld('nhAgent','Agent ElevenLabs','agent_...')+
         '</div>'+
+        '<div class="row2">'+
+          fld('nhSender','Expéditeur des SMS','St Enogat',
+              '11 caractères max, lettres, chiffres et espaces uniquement')+
+        '</div>'+
         fld('nhMails','E-mails du récap','pierre@hotel.fr, vous@mylidie.com','séparés par des virgules')+
         '<button class="go" id="nhGo">Créer l\'établissement</button>'+
         '<p class="note" id="nhNote"></p>'+
@@ -958,10 +965,11 @@
       adminCall({action:'create_hotel',
         name:$('#nhName').value,slug:$('#nhSlug').value,
         phone_e164:$('#nhPhone').value,emergency_e164:$('#nhUrg').value,
-        el_agent_id:$('#nhAgent').value,recap_emails:$('#nhMails').value})
+        el_agent_id:$('#nhAgent').value,sms_sender_id:$('#nhSender').value,
+        recap_emails:$('#nhMails').value})
       .then(function(j){
         setNote(note,'✓ « '+(j.hotel&&j.hotel.name||'')+' » créé. Invitez maintenant quelqu\'un ci-dessous.',true);
-        ['nhName','nhSlug','nhPhone','nhUrg','nhAgent','nhMails'].forEach(function(i){$('#'+i).value=''});
+        ['nhName','nhSlug','nhPhone','nhUrg','nhAgent','nhSender','nhMails'].forEach(function(i){$('#'+i).value=''});
         return loadHotelOptions(j.hotel&&j.hotel.id);
       })
       .catch(function(e){setNote(note,e.message)})
@@ -1032,7 +1040,10 @@
       .then(function(r){return r.json()})
       .then(function(rows){
         msgs=(rows||[]).map(function(m){
+          // Sans ts, timelineFor() retombait sur 0 et collait tous les SMS en
+          // haut du fil, avant des appels bien plus anciens.
           return {direction:m.direction,body:m.body,status:m.status,phone_e164:m.phone_e164||'',
+                  ts:new Date(m.created_at).getTime(),
                   at:new Date(m.created_at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',
                        hour:'2-digit',minute:'2-digit'}).replace(':','h').replace(', ',' à ')};
         });
@@ -1191,6 +1202,15 @@
   $('#search').addEventListener('input',function(){query=this.value.trim();renderRows();renderCounts();});
 
   var SMS_OUT='https://n8n-5tkb.srv1203069.hstgr.cloud/webhook/mylidie-sms-out';
+  // Au retour de l'envoi le SMS est encore "en attente" : Twilio ne fait que
+  // l'accepter. La livraison arrive 1 a 10 s plus tard par le callback, et
+  // rien ne rechargeait le fil — le statut restait fige. On recharge 3 fois.
+  function refreshStatuses(n){
+    if(n<=0)return;
+    setTimeout(function(){
+      loadMsgs().then(function(){if(selected)renderDetail();refreshStatuses(n-1);});
+    },4000);
+  }
   function sendMsg(){
     var inp=$('#cInput'),v=inp.value.trim();if(!v)return;
     var note=$('.composer .cnote'),old='Envoyer un sms';
@@ -1199,13 +1219,19 @@
       note.textContent='✓ Message envoyé';setTimeout(function(){note.textContent=old},2000);return;}
     if(!x||digits(x.phone).length<6){note.textContent='Numéro inconnu, envoi impossible.';
       setTimeout(function(){note.textContent=old},3000);return;}
+    // En France seuls les 06/07 recoivent des SMS ; Twilio rejette les fixes
+    // (01-05, 09) avec « cannot be a landline ». Autant le dire tout de suite.
+    var dg=digits(x.phone);
+    if(dg.indexOf('33')===0&&!/^33[67]/.test(dg)){
+      note.textContent='Ligne fixe : ce numéro ne peut pas recevoir de SMS.';
+      setTimeout(function(){note.textContent=old},4000);return;}
     inp.value='';inp.style.height='auto';note.textContent='Envoi…';
     // le webhook N8N revalide le jeton auprès de Supabase avant de faire partir le SMS
     fetch(SMS_OUT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
       body:JSON.stringify({to:'+'+digits(x.phone),body:v})})
       .then(function(r){if(!r.ok)throw new Error();return r.json()})
       .then(function(){note.textContent='✓ SMS envoyé';
-        return loadMsgs().then(function(){if(selected)renderDetail()});})
+        return loadMsgs().then(function(){if(selected)renderDetail();refreshStatuses(3);});})
       .catch(function(){note.textContent='Échec de l\'envoi.';inp.value=v;})
       .then(function(){setTimeout(function(){note.textContent=old},3000)});
   }
