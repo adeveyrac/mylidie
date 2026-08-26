@@ -123,6 +123,37 @@
     font:inherit;font-size:var(--fs-sm);padding:9px 10px;border-radius:8px;cursor:pointer}
   .mi:hover{background:var(--surface-2)}
   .mi.danger{color:var(--resa)}
+  .mi[hidden]{display:none}
+
+  /* ---- administration (reserve au compte plateforme) ---- */
+  .modal{position:fixed;inset:0;z-index:60;background:rgba(20,19,12,.45);
+    display:flex;align-items:flex-start;justify-content:center;padding:5vh 16px;overflow-y:auto}
+  .modal[hidden]{display:none}
+  .sheet{background:var(--surface);border:1px solid var(--line-strong);border-radius:16px;
+    box-shadow:0 20px 60px rgba(0,0,0,.28);width:520px;max-width:100%;padding:20px 22px 22px}
+  .sheet h2{font-size:var(--fs-lg);margin:0;letter-spacing:-.2px}
+  .sheet .sh{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+  .sheet .sh .x{margin-left:auto;border:0;background:none;color:var(--ink-faint);font-size:22px;
+    line-height:1;cursor:pointer;padding:2px 6px;border-radius:8px;font-family:inherit}
+  .sheet .x:hover{background:var(--surface-2);color:var(--ink)}
+  .sheet .lead{font-size:var(--fs-sm);color:var(--ink-soft);margin:0 0 16px;line-height:1.5}
+  .sheet fieldset{border:1px solid var(--line);border-radius:12px;padding:14px 15px 16px;margin:0 0 14px}
+  .sheet legend{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.6px;
+    color:var(--ink-faint);padding:0 6px;font-weight:600}
+  .fld{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+  .fld label{font-size:var(--fs-xs);color:var(--ink-soft)}
+  .fld input,.fld select{padding:9px 11px;border:1px solid var(--line-strong);border-radius:9px;
+    background:var(--surface-2);color:var(--ink);font:inherit;font-size:var(--fs-sm)}
+  .fld input:focus,.fld select:focus{outline:2px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:1px}
+  .fld .hint{font-size:var(--fs-xs);color:var(--ink-faint)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+  .sheet .go{padding:10px 14px;border:0;border-radius:9px;background:var(--btn-bg);color:var(--btn-fg);
+    font:inherit;font-size:var(--fs-sm);font-weight:600;cursor:pointer;transition:transform 100ms ease-out}
+  .sheet .go:active{transform:scale(.98)}
+  .sheet .go[disabled]{opacity:.55;cursor:default}
+  .note{font-size:var(--fs-sm);margin:9px 0 0;min-height:17px;line-height:1.45}
+  .note.err{color:var(--resa)} .note.ok{color:var(--info)}
+  @media (max-width:900px){.row2{grid-template-columns:1fr}}
 
   /* ---- middle ---- */
   .list-head{padding:16px 18px 10px;}
@@ -341,6 +372,7 @@
 </style>
 
 <div class="scrim" id="scrim"></div>
+<div class="modal" id="adminOv" hidden></div>
 <div class="scrollwrap">
 <div class="workspace">
   <!-- LEFT -->
@@ -376,6 +408,7 @@
         </button>
         <div class="menu" id="userMenu" hidden>
           <button class="mi" id="themeBtn">🌗 Basculer clair / sombre</button>
+          <button class="mi" id="adminBtn" hidden>⚙ Administration</button>
           <button class="mi danger" id="logoutBtn">⏻ Déconnexion</button>
         </div>
       </div>
@@ -824,6 +857,123 @@
   function simPlay(pl){if(!pl)return;var bar=$('.track i',pl),pp=$('.pp',pl);pp.textContent='❚❚';var w=0;
     var iv=setInterval(function(){w+=2;bar.style.width=Math.min(100,w)+'%';if(w>=100){clearInterval(iv);pp.textContent='▶';bar.style.width='0%';}},70);}
 
+
+  // ---------------- administration ----------------
+  // Reservee au compte plateforme. L'app etant du JS public, elle ne cree rien
+  // elle-meme : elle appelle la fonction `admin`, seule detentrice de la cle de
+  // service, qui revalide le jeton avant d'agir.
+  function jwtPayload(t){
+    try{
+      var p=String(t||'').split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+      return JSON.parse(atob(p+(p.length%4?'===='.slice(p.length%4):'')))||{};
+    }catch(e){return {}}
+  }
+  function isAdmin(){
+    var m=jwtPayload(tok).app_metadata;
+    return !!(m&&m.mylidie_admin===true);
+  }
+  function refreshAdmin(){var b=$('#adminBtn');if(b)b.hidden=!isAdmin();}
+  function adminCall(payload){
+    return fetch(SUPA.url+'/functions/v1/admin',{method:'POST',
+      headers:{apikey:SUPA.anon,Authorization:'Bearer '+tok,'Content-Type':'application/json'},
+      body:JSON.stringify(payload)})
+      .then(function(r){return r.json().catch(function(){return {}}).then(function(j){
+        if(!r.ok)throw new Error(j.error||'Erreur inattendue.');return j;})});
+  }
+  function fld(id,label,ph,hint,req){
+    return '<div class="fld"><label for="'+id+'">'+label+(req?' *':'')+'</label>'+
+      '<input id="'+id+'" placeholder="'+(ph||'')+'">'+
+      (hint?'<span class="hint">'+hint+'</span>':'')+'</div>';
+  }
+  function adminHTML(){
+    return '<div class="sheet">'+
+      '<div class="sh"><h2>Administration</h2>'+
+        '<button class="x" id="admX" aria-label="Fermer">×</button></div>'+
+      '<p class="lead">Créer un établissement, puis inviter les personnes qui y travaillent. '+
+        'Chacune reçoit un e-mail pour choisir son mot de passe.</p>'+
+
+      '<fieldset><legend>Nouvel établissement</legend>'+
+        fld('nhName','Nom','Hôtel Saint-Énogat','',true)+
+        '<div class="row2">'+
+          fld('nhSlug','Identifiant court','saint-enogat','minuscules, chiffres et tirets',true)+
+          fld('nhPhone','Numéro de l\'agent','+33939203637')+
+        '</div>'+
+        '<div class="row2">'+
+          fld('nhUrg','Numéro d\'urgence','+33650953697')+
+          fld('nhAgent','Agent ElevenLabs','agent_...')+
+        '</div>'+
+        fld('nhMails','E-mails du récap','pierre@hotel.fr, vous@mylidie.com','séparés par des virgules')+
+        '<button class="go" id="nhGo">Créer l\'établissement</button>'+
+        '<p class="note" id="nhNote"></p>'+
+      '</fieldset>'+
+
+      '<fieldset><legend>Inviter quelqu\'un</legend>'+
+        '<div class="fld"><label for="ivHotel">Établissement</label>'+
+          '<select id="ivHotel"></select></div>'+
+        '<div class="row2">'+
+          fld('ivMail','Adresse e-mail','pierre@hotel.fr','',true)+
+          '<div class="fld"><label for="ivRole">Rôle</label><select id="ivRole">'+
+            '<option value="staff">Réception</option>'+
+            '<option value="owner">Responsable</option></select></div>'+
+        '</div>'+
+        '<button class="go" id="ivGo">Envoyer l\'invitation</button>'+
+        '<p class="note" id="ivNote"></p>'+
+      '</fieldset></div>';
+  }
+  function loadHotelOptions(pick){
+    return api('/rest/v1/hotels?select=id,name&order=name.asc')
+      .then(function(r){return r.json()})
+      .then(function(rows){
+        var sel=$('#ivHotel');if(!sel)return;
+        sel.innerHTML=(rows||[]).map(function(h){
+          return '<option value="'+esc(h.id)+'">'+esc(h.name)+'</option>';
+        }).join('')||'<option value="">Aucun établissement</option>';
+        if(pick)sel.value=pick;
+      }).catch(function(){});
+  }
+  function setNote(el,txt,ok){
+    el.textContent=txt;el.className='note'+(txt?(ok?' ok':' err'):'');
+  }
+  function openAdmin(){
+    var ov=$('#adminOv');
+    ov.innerHTML=adminHTML();ov.hidden=false;
+    loadHotelOptions();
+    $('#admX').addEventListener('click',function(){ov.hidden=true});
+    ov.addEventListener('click',function(e){if(e.target===ov)ov.hidden=true});
+
+    $('#nhGo').addEventListener('click',function(){
+      var b=this,note=$('#nhNote');
+      setNote(note,'Création…');b.disabled=true;
+      adminCall({action:'create_hotel',
+        name:$('#nhName').value,slug:$('#nhSlug').value,
+        phone_e164:$('#nhPhone').value,emergency_e164:$('#nhUrg').value,
+        el_agent_id:$('#nhAgent').value,recap_emails:$('#nhMails').value})
+      .then(function(j){
+        setNote(note,'✓ « '+(j.hotel&&j.hotel.name||'')+' » créé. Invitez maintenant quelqu\'un ci-dessous.',true);
+        ['nhName','nhSlug','nhPhone','nhUrg','nhAgent','nhMails'].forEach(function(i){$('#'+i).value=''});
+        return loadHotelOptions(j.hotel&&j.hotel.id);
+      })
+      .catch(function(e){setNote(note,e.message)})
+      .then(function(){b.disabled=false});
+    });
+
+    $('#ivGo').addEventListener('click',function(){
+      var b=this,note=$('#ivNote'),sel=$('#ivHotel');
+      if(!sel.value){setNote(note,'Créez d\'abord un établissement.');return;}
+      setNote(note,'Envoi…');b.disabled=true;
+      adminCall({action:'invite',email:$('#ivMail').value,
+        hotel_id:sel.value,role:$('#ivRole').value})
+      .then(function(j){
+        setNote(note,j.invited
+          ? '✓ Invitation envoyée. La personne choisit son mot de passe depuis l\'e-mail.'
+          : '✓ Ce compte existait déjà : il est maintenant rattaché à cet établissement.',true);
+        $('#ivMail').value='';
+      })
+      .catch(function(e){setNote(note,e.message)})
+      .then(function(){b.disabled=false});
+    });
+  }
+
   // --------- mode live : login, chargement, écriture ---------
   function fmtPhone(p){
     if(!p)return 'Numéro masqué';
@@ -876,6 +1026,7 @@
     return api('/rest/v1/calls?select=*&order=started_at.desc&limit=200')
       .then(function(r){if(r.status===401){logout();throw new Error('session expirée');}return r.json()})
       .then(function(rows){
+        refreshAdmin();
         data.length=0;rows.forEach(function(r){data.push(mapRow(r))});
         return Promise.all([loadHotel(),loadMsgs()]).then(function(){
           renderCounts();renderRows();
@@ -1000,12 +1151,15 @@
   document.addEventListener('click',function(e){if(!e.target.closest('.usermenu'))openMenu(false);});
   document.addEventListener('keydown',function(e){
     if(e.key!=='Escape')return;
+    var ov=$('#adminOv');
+    if(ov&&!ov.hidden){ov.hidden=true;return;}
     openMenu(false);
     if(document.body.classList.contains('drawer'))drawer(false);
     else if(openId){openId=null;renderDetail();renderRows();}
     else document.body.classList.remove('detail');
   });
   // en démo il n'y a pas de session à fermer : pas de bouton mort
+  $('#adminBtn').addEventListener('click',function(){openMenu(false);openAdmin();});
   if(LIVE)$('#logoutBtn').addEventListener('click',function(){openMenu(false);logout();});
   else $('#logoutBtn').remove();
 
