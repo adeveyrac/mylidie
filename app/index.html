@@ -314,6 +314,7 @@
   .composer textarea:focus{outline:2px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:1px}
   .composer .send{width:42px;height:42px;border-radius:11px;background:var(--btn-bg);color:var(--btn-fg);border:none;cursor:pointer;font-size:16px;flex:0 0 auto}
   .composer .cnote{font-size:var(--fs-xs);color:var(--ink-faint);margin:0 0 8px}
+  .composer .cwarn{font-size:var(--fs-xs);color:var(--ink-faint);margin:8px 0 0;line-height:1.35}
 
   /* Le feedback part de l'appui, pas du survol : sur la tablette d'accueil il n'y a pas de survol. */
   .row:active,.navitem:active,.ltab:active,.tlh:active,.mi:active,.memberline:active,.brandbox:active{background:var(--surface-3)}
@@ -448,6 +449,7 @@
             <textarea id="cInput" rows="1" placeholder="Écrire un message…"></textarea>
             <button class="send" id="cSend" aria-label="Envoyer">➤</button>
           </div>
+          <p class="cwarn">Le client ne peut pas répondre à ce SMS : le numéro de l'hôtel est ajouté automatiquement à la fin du message pour qu'il puisse vous rappeler.</p>
         </div>
       </div>
     </div>
