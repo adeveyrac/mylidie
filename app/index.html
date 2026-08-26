@@ -153,6 +153,9 @@
   .sheet .go[disabled]{opacity:.55;cursor:default}
   .note{font-size:var(--fs-sm);margin:9px 0 0;min-height:17px;line-height:1.45}
   .note.err{color:var(--resa)} .note.ok{color:var(--info)}
+  .linkout{width:100%;margin-top:8px;padding:9px 11px;border:1px solid var(--line-strong);
+    border-radius:9px;background:var(--surface-2);color:var(--ink-soft);font:inherit;
+    font-size:var(--fs-xs);cursor:pointer}
   @media (max-width:900px){.row2{grid-template-columns:1fr}}
 
   /* ---- middle ---- */
@@ -360,6 +363,10 @@
     .dback.mob{display:grid}
     .det-head{padding:12px 14px;gap:9px}
     .det-head>.pill{display:none}
+    /* « Désarchiver » dit deja que la discussion est archivee : l'etiquette en
+       double poussait le numero du client hors de l'ecran */
+    .det-head .archtag{display:none}
+    .det-head .archtag+.archbtn{margin-left:auto}
     .det-head .dp{white-space:nowrap}
     /* deux colonnes d'infos sur 390px : chaque libelle passait sur deux lignes */
     .info-grid{grid-template-columns:1fr}
@@ -890,7 +897,7 @@
       '<div class="sh"><h2>Administration</h2>'+
         '<button class="x" id="admX" aria-label="Fermer">×</button></div>'+
       '<p class="lead">Créer un établissement, puis inviter les personnes qui y travaillent. '+
-        'Chacune reçoit un e-mail pour choisir son mot de passe.</p>'+
+        'Chacune choisit son mot de passe depuis le lien d\'invitation.</p>'+
 
       '<fieldset><legend>Nouvel établissement</legend>'+
         fld('nhName','Nom','Hôtel Saint-Énogat','',true)+
@@ -918,6 +925,8 @@
         '</div>'+
         '<button class="go" id="ivGo">Envoyer l\'invitation</button>'+
         '<p class="note" id="ivNote"></p>'+
+        '<input class="linkout" id="ivLink" readonly hidden '+
+          'title="Cliquez pour tout sélectionner, puis copiez">'+
       '</fieldset></div>';
   }
   function loadHotelOptions(pick){
@@ -958,20 +967,25 @@
     });
 
     $('#ivGo').addEventListener('click',function(){
-      var b=this,note=$('#ivNote'),sel=$('#ivHotel');
+      var b=this,note=$('#ivNote'),sel=$('#ivHotel'),lk=$('#ivLink');
       if(!sel.value){setNote(note,'Créez d\'abord un établissement.');return;}
-      setNote(note,'Envoi…');b.disabled=true;
+      setNote(note,'Envoi…');b.disabled=true;lk.hidden=true;
       adminCall({action:'invite',email:$('#ivMail').value,
         hotel_id:sel.value,role:$('#ivRole').value})
       .then(function(j){
-        setNote(note,j.invited
+        setNote(note,(j.invited
           ? '✓ Invitation envoyée. La personne choisit son mot de passe depuis l\'e-mail.'
-          : '✓ Ce compte existait déjà : il est maintenant rattaché à cet établissement.',true);
+          : '✓ Ce compte existait déjà : il est maintenant rattaché à cet établissement.')+
+          (j.link?' Si l\'e-mail n\'arrive pas, transmettez ce lien (valable 1 h) :':''),true);
+        if(j.link){lk.value=j.link;lk.hidden=false;}
         $('#ivMail').value='';
       })
       .catch(function(e){setNote(note,e.message)})
       .then(function(){b.disabled=false});
     });
+
+    // un lien de 300 caractères ne se sélectionne pas au doigt : un tap suffit
+    $('#ivLink').addEventListener('click',function(){this.select()});
   }
 
   // --------- mode live : login, chargement, écriture ---------
