@@ -845,27 +845,42 @@
     });
   }
   // Lecture réelle : l'URL pointe le proxy N8N qui rejoue l'audio ElevenLabs.
-  var au=null,rate=1;
+  // Ce proxy IGNORE les requêtes Range : il renvoie 200 + le fichier entier au
+  // lieu d'un 206, et pas d'Accept-Ranges. Impossible de se déplacer dans un
+  // flux servi comme ça — Chrome relance la lecture au début à chaque seek.
+  // On télécharge donc l'enregistrement en entier (~1 Mo pour 1 min) et on lit
+  // depuis un blob, où le déplacement est instantané et purement local.
+  // ponytail: si un jour le proxy gère Range, on peut revenir à new Audio(url).
+  var au=null,auUrl=null,rate=1,blobs={};
   var RATES=[1,1.5,2];
   function rateLabel(){return String(rate).replace('.',',')+'×';}
   function mmss(t){t=Math.floor(t||0);return Math.floor(t/60)+':'+('0'+(t%60)).slice(-2);}
   function play(pl,url){
     if(!pl)return;
     var tk=$('.track',pl),pp=$('.pp',pl),lbl=$('.dur',pl);
-    if(au&&au.src===url){if(au.paused){au.play();pp.textContent='❚❚';}else{au.pause();pp.textContent='▶';}return;}
+    if(au&&auUrl===url){if(au.paused){au.play();pp.textContent='❚❚';}else{au.pause();pp.textContent='▶';}return;}
     if(au)au.pause();
-    au=new Audio(url);au.playbackRate=rate;pp.textContent='…';
-    au.addEventListener('timeupdate',function(){
-      // Pendant un glissement, 'input' vient deja de poser currentTime : on
-      // reecrit la meme position, le pouce ne saute pas.
-      if(au.duration)tk.value=au.currentTime/au.duration*1000;
-      lbl.textContent=mmss(au.currentTime)+' / '+mmss(au.duration);
-    });
-    au.addEventListener('loadedmetadata',function(){tk.disabled=false});
-    au.addEventListener('playing',function(){pp.textContent='❚❚'});
-    au.addEventListener('ended',function(){pp.textContent='▶';tk.value=0;});
-    au.addEventListener('error',function(){pp.textContent='▶';lbl.textContent='indisponible'});
-    au.play().catch(function(){pp.textContent='▶';lbl.textContent='indisponible'});
+    pp.textContent='…';
+    function fail(){pp.textContent='▶';lbl.textContent='indisponible';}
+    // Un enregistrement déjà téléchargé n'est pas redemandé au serveur.
+    (blobs[url]
+      ? Promise.resolve(blobs[url])
+      : fetch(url).then(function(r){if(!r.ok)throw 0;return r.blob()})
+                  .then(function(b){return blobs[url]=URL.createObjectURL(b)})
+    ).then(function(src){
+      au=new Audio(src);auUrl=url;au.playbackRate=rate;
+      au.addEventListener('timeupdate',function(){
+        // Pendant un glissement, 'input' vient deja de poser currentTime : on
+        // reecrit la meme position, le pouce ne saute pas.
+        if(au.duration)tk.value=au.currentTime/au.duration*1000;
+        lbl.textContent=mmss(au.currentTime)+' / '+mmss(au.duration);
+      });
+      au.addEventListener('loadedmetadata',function(){tk.disabled=false});
+      au.addEventListener('playing',function(){pp.textContent='❚❚'});
+      au.addEventListener('ended',function(){pp.textContent='▶';tk.value=0;});
+      au.addEventListener('error',fail);
+      au.play().catch(fail);
+    }).catch(fail);
   }
   // ponytail: maquette pour les appels sans fichier audio. Le curseur reste
   // desactive — il n'y a rien a parcourir.
