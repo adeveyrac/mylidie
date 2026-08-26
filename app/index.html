@@ -60,7 +60,7 @@
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs-base);-webkit-font-smoothing:antialiased;}
   .scrollwrap{overflow-x:auto;}
-  .workspace{display:grid;grid-template-columns:264px 372px 1fr;height:100dvh;min-width:1040px;background:var(--bg);}
+  .workspace{display:grid;grid-template-columns:264px 372px minmax(0,1fr);height:100dvh;min-width:1040px;background:var(--bg);}
   .col{min-height:0;display:flex;flex-direction:column;}
   .side{background:var(--surface);border-right:1px solid var(--line);}
   .list{background:var(--bg);border-right:1px solid var(--line);}
@@ -149,7 +149,7 @@
   .rav{width:40px;height:40px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;color:#fff;font-weight:650;font-size:var(--fs-sm);letter-spacing:.3px;}
   .rmeta{flex:1;min-width:0}
   .rl1{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
-  .rn{font-weight:650;font-size:var(--fs-base);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rn{font-weight:650;font-size:var(--fs-base);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
   .rt{font-size:var(--fs-xs);color:var(--ink-faint);white-space:nowrap;flex:0 0 auto}
   .rl2{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:var(--fs-sm);color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .rl2 .mdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
@@ -158,9 +158,17 @@
 
   /* ---- right ---- */
   .det-head{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line);background:var(--surface);}
-  .det-head .dav{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:650;font-size:var(--fs-sm)}
-  .det-head .dn{font-weight:700;font-size:var(--fs-lg)}
+  .det-head .dav{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:650;font-size:var(--fs-sm);flex:0 0 auto}
+  .det-head .dmeta{min-width:0}
+  .det-head .dn{font-weight:700;font-size:var(--fs-lg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .det-head .dp{font-size:var(--fs-sm);color:var(--ink-faint);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:4px}
+  .dback{flex:0 0 auto;width:32px;height:32px;display:grid;place-items:center;cursor:pointer;
+    border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);
+    border-radius:9px;font:inherit;font-size:19px;line-height:1;transition:transform 100ms ease-out}
+  .dback:hover{background:var(--surface-3)}
+  .dback:active{transform:scale(.96)}
+  .dback:focus-visible,.burger:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .dback.mob,.burger{display:none}
   .det-head .archbtn,.det-head .archtag{margin-left:auto}
   .det-head .archtag+.archbtn{margin-left:0}
   .cpy{border:0;background:none;padding:2px;line-height:0;color:var(--ink-faint);cursor:pointer;
@@ -170,7 +178,10 @@
   @media (hover:none){.cpy{opacity:1}}
   .cpy:hover{color:var(--ink)}
   .cpy.ok{opacity:1;color:var(--info)}
-  .det-body{flex:1;overflow-y:auto;padding:22px 22px 10px;max-width:820px;width:100%;margin:0 auto;}
+  .det-body{flex:1;overflow-y:auto;padding:22px 22px 10px;max-width:820px;width:100%;margin:0 auto;
+    display:flex;flex-direction:column;}
+  /* un fil court se pose en bas, comme une messagerie ; long, il defile normalement */
+  .det-body>.tl{margin-top:auto}
 
   .beta{background:var(--inconnu-bg);border:1px solid var(--inconnu-line);border-radius:14px;padding:15px 18px;margin-bottom:20px;}
   .beta .bh{display:flex;align-items:center;gap:8px;color:var(--inconnu);font-weight:700;font-size:var(--fs-sm);margin-bottom:10px}
@@ -194,29 +205,30 @@
   /* Un appel se lit comme un message recu : ancre a gauche, largeur de bulle.
      Deplie, il s'elargit pour laisser respirer infos/transcription — sans bouger
      son bord gauche, la carte grandit depuis son point d'ancrage. */
-  .tl-call{align-self:flex-start;width:100%;max-width:78%;
+  /* Carte d'appel : un bouton qui pousse la vue detail. Plus d'accordeon —
+     un appel deplie faisait plusieurs ecrans au milieu du fil. */
+  .tl-call{align-self:flex-start;width:100%;max-width:78%;display:block;text-align:left;
+    font:inherit;color:var(--ink);cursor:pointer;padding:0;
     background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
-  .tl-call.on{max-width:100%;border-color:var(--line-strong)}
-  /* toute la carte repliee est cliquable, pas seulement sa ligne d'en-tete */
-  .tl-call:not(.on){cursor:pointer}
-  .tl-call:not(.on):hover,.tl-call:not(.on):active{background:var(--surface-2)}
-  .tlh{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;color:var(--ink);
-    font:inherit;padding:12px 15px;border-radius:14px;cursor:pointer}
-  .tlh:hover{background:var(--surface-2)}
-  .tl-call.on .tlh{border-radius:14px 14px 0 0}
+  .tl-call:hover,.tl-call:active{background:var(--surface-2)}
+  .tl-call:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .tlh{display:flex;align-items:center;gap:10px;width:100%;padding:12px 15px}
   .tlh .tld{font-size:var(--fs-sm);font-variant-numeric:tabular-nums;color:var(--ink-soft);flex:0 0 auto}
   .tlh .tlu{margin-left:auto;font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums}
   .tlh .chev{color:var(--ink-faint);font-size:15px;flex:0 0 auto}
-  .tl-call.on .tlh .chev{transform:rotate(180deg)}
-  .tl-sumh{padding:0 15px 5px;font-size:var(--fs-sm);font-weight:700;color:var(--ink)}
+
+  .tl-sumh{display:block;padding:0 15px 5px;font-size:var(--fs-sm);font-weight:700;color:var(--ink)}
   .tl-sum{padding:0 15px 13px;font-size:var(--fs-sm);color:var(--ink-soft);line-height:1.5}
   /* overflow:hidden coupe au bord de la boîte de padding : avec un padding-bas,
      la 3e ligne bavait dedans au lieu d'être coupée. En marge, la coupe tombe
      pile à la fin de la 2e ligne. */
-  .tl-call:not(.on) .tl-sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  .tl-sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
     overflow:hidden;padding-bottom:0;margin-bottom:13px}
-  .tl-call.on .tl-sum{color:var(--ink);font-size:var(--fs-base)}
+
   .tl-body{padding:13px 15px 16px;border-top:1px solid var(--line)}
+  /* la meme fabrique de sections, mais en pleine vue : ni cadre ni filet */
+  .callview .tl-body{padding:0;border-top:0}
+  .callview .tl-body>.tl-sub:first-child{margin-top:18px}
   .tl-sub{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);margin:18px 2px 9px}
   .tl-body>.tl-sub:first-child{margin-top:0}
   /* Un SMS = son en-tête (« SMS envoyé · date ») au-dessus de sa bulle.
@@ -273,9 +285,39 @@
   .send,.pp,.archbtn,.spd{transition:transform 100ms ease-out}
   .send:active,.pp:active,.archbtn:active,.spd:active{transform:scale(.96)}
 
+  /* ---- telephone : une seule colonne, les vues s'empilent ---- */
+  @media (max-width:900px){
+    .scrollwrap{overflow-x:hidden}
+    .workspace{grid-template-columns:minmax(0,1fr);min-width:0}
+    /* la colonne de gauche devient un tiroir : recherche, motifs, compte */
+    .side{position:fixed;top:0;bottom:0;left:0;width:min(86vw,320px);z-index:40;
+      transform:translateX(-100%);transition:transform .25s ease;box-shadow:0 0 40px rgba(0,0,0,.25)}
+    body.drawer .side{transform:none}
+    .scrim{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;
+      transition:opacity .25s ease}
+    body.drawer .scrim{opacity:1;pointer-events:auto}
+    .burger{display:grid;place-items:center;width:32px;height:32px;flex:0 0 auto;cursor:pointer;
+      border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);
+      border-radius:9px;font:inherit;font-size:15px;line-height:1;margin-right:2px}
+    /* liste et detail ne coexistent pas : on en montre une a la fois */
+    .list{border-right:0}
+    body.detail .list{display:none}
+    body:not(.detail) .detail{display:none}
+    .dback.mob{display:grid}
+    .det-head{padding:12px 14px;gap:9px}
+    .det-head>.pill{display:none}
+    .det-head .dp{white-space:nowrap}
+    /* deux colonnes d'infos sur 390px : chaque libelle passait sur deux lignes */
+    .info-grid{grid-template-columns:1fr}
+    .det-body,.composer{padding-left:15px;padding-right:15px}
+    /* une bulle a 78% est trop etroite sur un ecran de telephone */
+    .tl-call,.sms{max-width:94%}
+  }
+
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
+<div class="scrim" id="scrim"></div>
 <div class="scrollwrap">
 <div class="workspace">
   <!-- LEFT -->
@@ -320,7 +362,7 @@
   <!-- MIDDLE -->
   <section class="col list">
     <div class="list-head">
-      <div class="lt">Discussions <span class="btag" title="Version bêta — l'app évolue encore, signalez ce qui coince">Bêta</span></div>
+      <div class="lt"><button class="burger" id="burger" aria-label="Filtres et compte">☰</button>Discussions <span class="btag" title="Version bêta — l'app évolue encore, signalez ce qui coince">Bêta</span></div>
       <div class="tabs" id="tabs">
         <button class="ltab" aria-selected="true" data-t="tous">Tous</button>
         <button class="ltab" aria-selected="false" data-t="nonlus">Non lus</button>
@@ -336,7 +378,7 @@
     <div class="col" id="detailInner" style="display:none;height:100%">
       <div class="det-head" id="detHead"></div>
       <div class="det-body" id="detBody"></div>
-      <div class="composer">
+      <div class="composer" id="composer">
         <div class="cbox">
           <p class="cnote">Envoyer un sms</p>
           <div class="cm">
@@ -418,7 +460,8 @@
     document.documentElement.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
   });
 
-  var filter='all',query='',tab='tous',selected=null;
+  // selected = la discussion ouverte ; openId = l'appel ouvert par-dessus (ou null)
+  var filter='all',query='',tab='tous',selected=null,openId=null;
 
   // Mode live : rempli => l'app lit les vrais appels dans Supabase (login requis).
   // Vide => maquette de démo, elle tourne sur le tableau `data` ci-dessus. La clé
@@ -502,7 +545,7 @@
         (unread?'<span class="unread"></span>':'')+'</div>';
     });
     wrap.innerHTML=html;wrap.scrollTop=keep;
-    $$('.row',wrap).forEach(function(el){el.addEventListener('click',function(){select(el.dataset.id)});});
+    $$('.row',wrap).forEach(function(el){el.addEventListener('click',function(){openThread(el.dataset.id,true)});});
   }
 
   function betaFor(x){
@@ -516,8 +559,9 @@
     'stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/>'+
     '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
   function detHeadHTML(x){
-    return '<div class="dav" style="background:'+COLOR[x.motif]+'">'+esc(initials(x.name))+'</div>'+
-      '<div><div class="dn">'+esc(x.name)+'</div>'+
+    return '<button class="dback mob" id="dbackList" aria-label="Retour à la liste">‹</button>'+
+      '<div class="dav" style="background:'+COLOR[x.motif]+'">'+esc(initials(x.name))+'</div>'+
+      '<div class="dmeta"><div class="dn">'+esc(x.name)+'</div>'+
       '<div class="dp"><span>'+esc(x.phone)+'</span>'+
       (digits(x.phone).length>=6
         ? '<button class="cpy" title="Copier le numéro" aria-label="Copier le numéro" data-n="'+esc(x.phone)+'">'+COPY_SVG+'</button>'
@@ -578,7 +622,7 @@
         beta.map(function(b){return '<li>'+b+'</li>'}).join('')+'</ol></div>':'')+
       '</div>';
   }
-  function detBodyHTML(x){
+  function threadHTML(x){
     var items=timelineFor(x);
     if(!items.length)return '<div class="d-none">Rien à afficher pour ce correspondant.</div>';
     return '<div class="tl">'+items.map(function(it){
@@ -590,16 +634,29 @@
                (out&&m.status?' · '+esc(m.status):'')+'</div>'+
                '<div class="m '+(out?'out':'in')+'">'+esc(m.body)+'</div></div>';
       }
-      var c=it.c,on=c.id===openId;
-      return '<div class="tl-call'+(on?' on':'')+'" data-go="'+c.id+'">'+
-        '<button class="tlh"><span class="tld">'+esc(c.d)+'</span>'+
+      var c=it.c;
+      // un <button> plutot qu'un <div> cliquable : atteignable au clavier
+      return '<button class="tl-call" data-go="'+c.id+'">'+
+        '<span class="tlh"><span class="tld">'+esc(c.d)+'</span>'+
         '<span class="pill '+c.motif+'">'+LABEL[c.motif]+'</span>'+
         '<span class="tlu">'+esc(c.noMessage?'sans message':(c.dur||''))+'</span>'+
-        '<span class="chev">⌄</span></button>'+
-        '<div class="tl-sumh">Résumé de l\'appel</div>'+
-        '<div class="tl-sum">'+esc(c.summary)+'</div>'+
-        (on?callBodyHTML(c):'')+'</div>';
+        '<span class="chev">›</span></span>'+
+        '<span class="tl-sumh">Résumé de l\'appel</span>'+
+        '<span class="tl-sum">'+esc(c.summary)+'</span></button>';
     }).join('')+'</div>';
+  }
+  // Vue poussee d'un appel : le resume complet, puis les memes sections que la carte.
+  function callViewHTML(c){
+    return '<div class="callview">'+
+      '<div class="tl-sub">Résumé de l\'appel</div>'+
+      '<div class="summary">'+esc(c.summary)+'</div>'+
+      callBodyHTML(c)+'</div>';
+  }
+  function callHeadHTML(c){
+    return '<button class="dback" id="dbackThread" aria-label="Retour à la discussion" title="Retour à la discussion">‹</button>'+
+      '<div class="dmeta"><div class="dn">Appel du '+esc(c.d)+'</div>'+
+      '<div class="dp"><span>'+esc(c.name)+'</span></div></div>'+
+      '<span class="pill '+c.motif+'" style="margin-left:14px">'+LABEL[c.motif]+'</span>';
   }
   function durMS(d){if(!d)return '0:00';var m=/(\d+)\s*m\s*(\d+)/.exec(d);if(m)return m[1]+':'+('0'+m[2]).slice(-2);var s=/(\d+)\s*s/.exec(d);return s?'0:'+('0'+s[1]).slice(-2):'0:00';}
 
@@ -612,30 +669,51 @@
       navigator.clipboard.writeText(b.dataset.n||'').then(ok,function(){b.title='Copie impossible'});
     else b.title='Copie impossible';
   }
-  function select(id){
-    var x=data.find(function(d){return d.id===id});if(!x)return;
-    selected=id;openId=id;
-    if(x.unread)patchCall(id,{read_at:new Date().toISOString()});
+  function markRead(x){
+    if(!x.unread)return;
+    patchCall(x.id,{read_at:new Date().toISOString()});
     x.unread=false;
+  }
+  // Ouvrir une discussion depuis la liste. `byUser` est faux a l'ouverture
+  // automatique : on n'a pas le droit de marquer « lu » ce que personne n'a lu.
+  function openThread(id,byUser){
+    var x=data.find(function(d){return d.id===id});if(!x)return;
+    selected=id;openId=null;
+    if(byUser)markRead(x);
+    document.body.classList.add('detail');
+    renderDetail();renderRows();renderCounts();
+  }
+  // Ouvrir un appel : une vue par-dessus le fil, avec retour.
+  function openCall(id){
+    var c=data.find(function(d){return d.id===id});if(!c)return;
+    openId=id;markRead(c);
     renderDetail();renderRows();renderCounts();
   }
   function renderDetail(){
     var x=data.find(function(d){return d.id===selected});if(!x)return;
+    var c=openId?data.find(function(d){return d.id===openId}):null;
     $('#detailEmpty').style.display='none';$('#detailInner').style.display='flex';
-    $('#detHead').innerHTML=detHeadHTML(x);
-    var body=$('#detBody');body.innerHTML=detBodyHTML(x);
-    // fil chronologique : on se cale sur l'appel déplié, sinon sur le bas (le plus récent)
-    var on=$('.tl-call.on',body);
-    // On cale le HAUT de l'appel deplie sous l'en-tete : centrer le faisait
-    // ouvrir au milieu de son propre contenu. scrollIntoView est evite, il
-    // fait aussi defiler les conteneurs parents.
-    if(on)body.scrollTop+=on.getBoundingClientRect().top-body.getBoundingClientRect().top-8;
-    else body.scrollTop=body.scrollHeight;
+    $('#detHead').innerHTML=c?callHeadHTML(c):detHeadHTML(x);
+    var body=$('#detBody');body.innerHTML=c?callViewHTML(c):threadHTML(x);
+    // une vue poussee s'ouvre en haut ; un fil s'ouvre sur son dernier message
+    body.scrollTop=c?0:body.scrollHeight;
+    $('#composer').style.display=c?'none':'';
     var cp=$('#detHead .cpy');
     if(cp)cp.addEventListener('click',copyPhone);
+    var bt=$('#dbackThread');
+    if(bt)bt.addEventListener('click',function(){openId=null;renderDetail();renderRows();});
+    var bl=$('#dbackList');
+    if(bl)bl.addEventListener('click',function(){document.body.classList.remove('detail')});
+
+    if(!c){
+      $$('#detBody .tl-call').forEach(function(el){
+        el.addEventListener('click',function(){openCall(el.dataset.go)});
+      });
+      return bindArchive(x);
+    }
     var pp=$('#detBody .player .pp');
     if(pp)pp.addEventListener('click',function(){
-      if(x.audio)play($('#detBody .player'),x.audio);else simPlay($('#detBody .player'));
+      if(c.audio)play($('#detBody .player'),c.audio);else simPlay($('#detBody .player'));
     });
     var sp=$('#detBody .spd');
     if(sp)sp.addEventListener('click',function(){
@@ -645,7 +723,7 @@
     });
     // `au` est partagé entre les appels : on ne pilote que si c'est bien
     // l'enregistrement affiché qui est chargé, sinon on déplacerait un autre appel.
-    function onThis(){return au&&au.src===x.audio;}
+    function onThis(){return au&&au.src===c.audio;}
     $$('#detBody .sk').forEach(function(b){
       b.addEventListener('click',function(){
         if(!onThis())return;
@@ -659,12 +737,8 @@
       var r=tk.getBoundingClientRect();
       au.currentTime=Math.max(0,Math.min(au.duration,(e.clientX-r.left)/r.width*au.duration));
     });
-    $$('#detBody .tlh,#detBody .tl-call:not(.on) .tl-sum').forEach(function(el){
-      el.addEventListener('click',function(){
-        var id=el.parentNode.dataset.go;
-        if(id===openId){openId=null;renderDetail();}else select(id);
-      });
-    });
+  }
+  function bindArchive(x){
     var ab=$('#archBtn');
     if(ab)ab.addEventListener('click',function(){
       // Archiver est réversible : la ligne reste, `archived_at` repasse à null.
@@ -756,7 +830,8 @@
         data.length=0;rows.forEach(function(r){data.push(mapRow(r))});
         return Promise.all([loadHotel(),loadMsgs()]).then(function(){
           renderCounts();renderRows();
-          var v=visible();if(v.length)select(v[0].id);
+          var v=visible();
+          if(v.length&&window.matchMedia('(min-width:901px)').matches)openThread(v[0].id);
         });
       });
   }
@@ -806,13 +881,24 @@
   function openMenu(on){uMenu.hidden=!on;uBtn.setAttribute('aria-expanded',on?'true':'false');}
   uBtn.addEventListener('click',function(e){e.stopPropagation();openMenu(uMenu.hidden);});
   document.addEventListener('click',function(e){if(!e.target.closest('.usermenu'))openMenu(false);});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')openMenu(false);});
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Escape')return;
+    openMenu(false);
+    if(document.body.classList.contains('drawer'))drawer(false);
+    else if(openId){openId=null;renderDetail();renderRows();}
+    else document.body.classList.remove('detail');
+  });
   // en démo il n'y a pas de session à fermer : pas de bouton mort
   if(LIVE)$('#logoutBtn').addEventListener('click',function(){openMenu(false);logout();});
   else $('#logoutBtn').remove();
 
+  function drawer(on){document.body.classList.toggle('drawer',on);}
+  $('#burger').addEventListener('click',function(e){e.stopPropagation();drawer(!document.body.classList.contains('drawer'));});
+  $('#scrim').addEventListener('click',function(){drawer(false)});
+
   $('#nav').addEventListener('click',function(e){var b=e.target.closest('.navitem');if(!b)return;
-    filter=b.dataset.f;$$('.navitem').forEach(function(x){x.setAttribute('aria-current',x===b?'true':'false')});renderRows();});
+    filter=b.dataset.f;$$('.navitem').forEach(function(x){x.setAttribute('aria-current',x===b?'true':'false')});
+    drawer(false);renderRows();});
   $('#tabs').addEventListener('click',function(e){var b=e.target.closest('.ltab');if(!b)return;
     tab=b.dataset.t;$$('.ltab').forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false')});renderRows();renderCounts();});
   $('#search').addEventListener('input',function(){query=this.value.trim();renderRows();renderCounts();});
@@ -832,7 +918,7 @@
       body:JSON.stringify({to:'+'+digits(x.phone),body:v})})
       .then(function(r){if(!r.ok)throw new Error();return r.json()})
       .then(function(){note.textContent='✓ SMS envoyé';
-        return loadMsgs().then(function(){if(selected)select(selected)});})
+        return loadMsgs().then(function(){if(selected)renderDetail()});})
       .catch(function(){note.textContent='Échec de l\'envoi.';inp.value=v;})
       .then(function(){setTimeout(function(){note.textContent=old},3000)});
   }
@@ -846,7 +932,8 @@
     renderCounts();renderRows();
     if(tok)loadCalls().catch(function(){});else showLogin();
   }else{
-    renderCounts();renderRows();select('c2');
+    renderCounts();renderRows();
+    if(window.matchMedia('(min-width:901px)').matches)openThread('c2');
   }
 })();
 </script>
