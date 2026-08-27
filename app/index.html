@@ -398,7 +398,6 @@
 </style>
 
 <div class="scrim" id="scrim"></div>
-<div class="modal" id="adminOv" hidden></div>
 <div class="modal" id="alertOv" hidden></div>
 <div class="modal" id="feedOv" hidden></div>
 <div class="scrollwrap">
@@ -1049,119 +1048,14 @@
     return !!(m&&m.mylidie_admin===true);
   }
   function refreshAdmin(){var b=$('#adminBtn');if(b)b.hidden=!isAdmin();}
-  function adminCall(payload){
-    return fetch(SUPA.url+'/functions/v1/admin',{method:'POST',
-      headers:{apikey:SUPA.anon,Authorization:'Bearer '+tok,'Content-Type':'application/json'},
-      body:JSON.stringify(payload)})
-      .then(function(r){return r.json().catch(function(){return {}}).then(function(j){
-        if(!r.ok)throw new Error(j.error||'Erreur inattendue.');return j;})});
-  }
   function fld(id,label,ph,hint,req){
     return '<div class="fld"><label for="'+id+'">'+label+(req?' *':'')+'</label>'+
       '<input id="'+id+'" placeholder="'+(ph||'')+'">'+
       (hint?'<span class="hint">'+hint+'</span>':'')+'</div>';
   }
-  function adminHTML(){
-    return '<div class="sheet">'+
-      '<div class="sh"><h2>Administration</h2>'+
-        '<button class="x" id="admX" aria-label="Fermer">×</button></div>'+
-      '<p class="lead">Créer un établissement, puis inviter les personnes qui y travaillent. '+
-        'Chacune choisit son mot de passe depuis le lien d\'invitation.</p>'+
-
-      '<fieldset><legend>Nouvel établissement</legend>'+
-        fld('nhName','Nom','Hôtel Saint-Énogat','',true)+
-        '<div class="row2">'+
-          fld('nhSlug','Identifiant court','saint-enogat','minuscules, chiffres et tirets',true)+
-          fld('nhPhone','Numéro de l\'agent','+33939203637')+
-        '</div>'+
-        '<div class="row2">'+
-          fld('nhUrg','Numéro d\'urgence','+33650953697')+
-          fld('nhAgent','Agent ElevenLabs','agent_...')+
-        '</div>'+
-        '<div class="row2">'+
-          fld('nhSender','Expéditeur des SMS','St Enogat',
-              '11 caractères max, lettres, chiffres et espaces uniquement')+
-        '</div>'+
-        fld('nhMails','E-mails du récap','pierre@hotel.fr, vous@mylidie.com','séparés par des virgules')+
-        '<button class="go" id="nhGo">Créer l\'établissement</button>'+
-        '<p class="note" id="nhNote"></p>'+
-      '</fieldset>'+
-
-      '<fieldset><legend>Inviter quelqu\'un</legend>'+
-        '<div class="fld"><label for="ivHotel">Établissement</label>'+
-          '<select id="ivHotel"></select></div>'+
-        '<div class="row2">'+
-          fld('ivMail','Adresse e-mail','pierre@hotel.fr','',true)+
-          '<div class="fld"><label for="ivRole">Rôle</label><select id="ivRole">'+
-            '<option value="staff">Réception</option>'+
-            '<option value="owner">Responsable</option></select></div>'+
-        '</div>'+
-        '<button class="go" id="ivGo">Envoyer l\'invitation</button>'+
-        '<p class="note" id="ivNote"></p>'+
-        '<input class="linkout" id="ivLink" readonly hidden '+
-          'title="Cliquez pour tout sélectionner, puis copiez">'+
-      '</fieldset></div>';
-  }
-  function loadHotelOptions(pick){
-    return api('/rest/v1/hotels?select=id,name&order=name.asc')
-      .then(function(r){return r.json()})
-      .then(function(rows){
-        var sel=$('#ivHotel');if(!sel)return;
-        sel.innerHTML=(rows||[]).map(function(h){
-          return '<option value="'+esc(h.id)+'">'+esc(h.name)+'</option>';
-        }).join('')||'<option value="">Aucun établissement</option>';
-        if(pick)sel.value=pick;
-      }).catch(function(){});
-  }
   function setNote(el,txt,ok){
     el.textContent=txt;el.className='note'+(txt?(ok?' ok':' err'):'');
   }
-  function openAdmin(){
-    var ov=$('#adminOv');
-    ov.innerHTML=adminHTML();ov.hidden=false;
-    loadHotelOptions();
-    $('#admX').addEventListener('click',function(){ov.hidden=true});
-    ov.addEventListener('click',function(e){if(e.target===ov)ov.hidden=true});
-
-    $('#nhGo').addEventListener('click',function(){
-      var b=this,note=$('#nhNote');
-      setNote(note,'Création…');b.disabled=true;
-      adminCall({action:'create_hotel',
-        name:$('#nhName').value,slug:$('#nhSlug').value,
-        phone_e164:$('#nhPhone').value,emergency_e164:$('#nhUrg').value,
-        el_agent_id:$('#nhAgent').value,sms_sender_id:$('#nhSender').value,
-        recap_emails:$('#nhMails').value})
-      .then(function(j){
-        setNote(note,'✓ « '+(j.hotel&&j.hotel.name||'')+' » créé. Invitez maintenant quelqu\'un ci-dessous.',true);
-        ['nhName','nhSlug','nhPhone','nhUrg','nhAgent','nhSender','nhMails'].forEach(function(i){$('#'+i).value=''});
-        return loadHotelOptions(j.hotel&&j.hotel.id);
-      })
-      .catch(function(e){setNote(note,e.message)})
-      .then(function(){b.disabled=false});
-    });
-
-    $('#ivGo').addEventListener('click',function(){
-      var b=this,note=$('#ivNote'),sel=$('#ivHotel'),lk=$('#ivLink');
-      if(!sel.value){setNote(note,'Créez d\'abord un établissement.');return;}
-      setNote(note,'Envoi…');b.disabled=true;lk.hidden=true;
-      adminCall({action:'invite',email:$('#ivMail').value,
-        hotel_id:sel.value,role:$('#ivRole').value})
-      .then(function(j){
-        setNote(note,(j.invited
-          ? '✓ Invitation envoyée. La personne choisit son mot de passe depuis l\'e-mail.'
-          : '✓ Ce compte existait déjà : il est maintenant rattaché à cet établissement.')+
-          (j.link?' Si l\'e-mail n\'arrive pas, transmettez ce lien (valable 1 h) :':''),true);
-        if(j.link){lk.value=j.link;lk.hidden=false;}
-        $('#ivMail').value='';
-      })
-      .catch(function(e){setNote(note,e.message)})
-      .then(function(){b.disabled=false});
-    });
-
-    // un lien de 300 caractères ne se sélectionne pas au doigt : un tap suffit
-    $('#ivLink').addEventListener('click',function(){this.select()});
-  }
-
   // --------- mode live : login, chargement, écriture ---------
   function fmtPhone(p){
     if(!p)return 'Numéro masqué';
@@ -1361,15 +1255,15 @@
   document.addEventListener('click',function(e){if(!e.target.closest('.usermenu'))openMenu(false);});
   document.addEventListener('keydown',function(e){
     if(e.key!=='Escape')return;
-    var ov=$('#adminOv');
-    if(ov&&!ov.hidden){ov.hidden=true;return;}
     openMenu(false);
     if(document.body.classList.contains('drawer'))drawer(false);
     else if(openId){openId=null;renderDetail();renderRows();}
     else document.body.classList.remove('detail');
   });
   // en démo il n'y a pas de session à fermer : pas de bouton mort
-  $('#adminBtn').addEventListener('click',function(){openMenu(false);openAdmin();});
+  // La console d'administration est une page a part (/app/admin/), pas une
+  // modale : meme origine, donc meme jeton — rien a repasser au login.
+  $('#adminBtn').addEventListener('click',function(){openMenu(false);location.href='admin/';});
   if(LIVE)$('#logoutBtn').addEventListener('click',function(){openMenu(false);logout();});
   else $('#logoutBtn').remove();
 
