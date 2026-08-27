@@ -156,6 +156,8 @@
     font:inherit;font-size:var(--fs-sm);font-weight:600;cursor:pointer;transition:transform 100ms ease-out}
   .sheet .go:active{transform:scale(.98)}
   .sheet .go[disabled]{opacity:.55;cursor:default}
+  .sheet .go.ghost{background:var(--surface-2);color:var(--ink);border:1px solid var(--line-strong)}
+  .cfacts{display:flex;gap:9px;justify-content:flex-end;margin-top:16px}
   .note{font-size:var(--fs-sm);margin:9px 0 0;min-height:17px;line-height:1.45}
   .note.err{color:var(--resa)} .note.ok{color:var(--info)}
   .sheet h2.bad{color:var(--resa)}
@@ -182,6 +184,13 @@
 .archbtn:focus-visible,.cpy:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 .archtag{margin-left:8px;border-radius:8px;padding:6px 11px;font-size:12px;
   background:var(--surface-3);color:var(--ink-faint);border:1px solid var(--line)}
+/* Suppression définitive : discrète (elle ne concerne que l'administration),
+   mais rouge — la seule action de l'app qui ne se rattrape pas. */
+.delbtn{margin-left:6px;border:1px solid transparent;background:none;color:var(--resa);
+  cursor:pointer;padding:7px;border-radius:8px;line-height:0;font-family:inherit}
+.delbtn:hover{background:var(--resa-bg)}
+.delbtn:active{transform:scale(.94)}
+.delbtn:focus-visible{outline:2px solid var(--resa);outline-offset:2px}
 .rows{flex:1;overflow-y:auto;padding:4px 10px 20px;}
   .grouplbl{font-size:var(--fs-xs);color:var(--ink-faint);padding:12px 8px 6px;font-weight:600;}
   .row{display:flex;gap:12px;align-items:center;padding:11px 10px;border-radius:11px;cursor:pointer;}
@@ -549,7 +558,7 @@
   // Vide => maquette de démo, elle tourne sur le tableau `data` ci-dessus. La clé
   // anon est publique par construction : c'est RLS qui décide ce que voit le compte.
   var SUPA={url:'https://gyimzmgctbhqjspsujcp.supabase.co',anon:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5aW16bWdjdGJocWpzcHN1amNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2MzY1MjMsImV4cCI6MjEwMzIxMjUyM30.EDBBGlKHhi0b2kaEGO7Le0nx3EUopsmt9X7EyyLcZE0'};
-  var LIVE=!!SUPA.url, tok=null, msgs=[], hotel=null;
+  var LIVE=!!SUPA.url, tok=null, msgs=[], hotel=null, HOTEL_ID='';
   // Le fil SMS est rattaché au numéro : on compare les chiffres seuls
   // (+33 6 90… et 0690… désignent le même correspondant).
   function msgsFor(x){
@@ -747,8 +756,18 @@
     return '<button class="dback" id="dbackThread" aria-label="Retour à la discussion" title="Retour à la discussion">‹</button>'+
       '<div class="dmeta"><div class="dn">Appel du '+esc(c.d)+'</div>'+
       '<div class="dp"><span>'+esc(c.name)+'</span></div></div>'+
-      '<span class="pill '+c.motif+'" style="margin-left:14px">'+LABEL[c.motif]+'</span>';
+      '<span class="pill '+c.motif+'" style="margin-left:14px">'+LABEL[c.motif]+'</span>'+
+      // Suppression définitive : administration seule, et seulement ici, dans le
+      // détail d'UN appel. Jamais sur une carte de la liste ni sur l'en-tête du
+      // fil — un fil regroupe plusieurs appels, on ne saurait pas ce qu'on efface.
+      (isAdmin()
+        ? '<button class="delbtn" id="delBtn" style="margin-left:auto" '+
+          'title="Supprimer définitivement cet appel" '+
+          'aria-label="Supprimer définitivement cet appel">'+TRASH_SVG+'</button>'
+        : '');
   }
+  var TRASH_SVG='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+    'stroke-width="2" stroke-linecap="round"><path d="M4 6h16M9 6V4h6v2M7 6l1 14h8l1-14"/></svg>';
   function durMS(d){if(!d)return '0:00';var m=/(\d+)\s*m\s*(\d+)/.exec(d);if(m)return m[1]+':'+('0'+m[2]).slice(-2);var s=/(\d+)\s*s/.exec(d);return s?'0:'+('0'+s[1]).slice(-2):'0:00';}
 
   function copyPhone(e){
@@ -795,6 +814,8 @@
     if(bt)bt.addEventListener('click',function(){openId=null;renderDetail();renderRows();});
     var bl=$('#dbackList');
     if(bl)bl.addEventListener('click',function(){document.body.classList.remove('detail')});
+    var db=$('#delBtn');
+    if(db)db.addEventListener('click',function(){bindDelete(c)});
 
     if(!c){
       $$('#detBody .tl-call').forEach(function(el){
@@ -835,6 +856,30 @@
         window.open(url,'_blank','noopener');
       }).then(function(){dl.classList.remove('busy')});
     });
+  }
+  // Contrairement à l'archivage, la suppression ne se rattrape pas : la ligne
+  // part de la base, l'enregistrement et la transcription avec elle. D'où la
+  // question, et d'où le fait qu'on ne retire l'appel de l'écran qu'une fois la
+  // base d'accord — l'app a déjà menti une fois en peignant un succès trop tôt.
+  function bindDelete(c){
+    confirmBox('Supprimer définitivement ?',
+      'Voulez-vous vraiment supprimer définitivement ce message ? '+
+      'Le résumé, la transcription et l\'enregistrement seront perdus.',
+      function(){
+        api('/rest/v1/calls?id=eq.'+c.id,{method:'DELETE',headers:{Prefer:'return=minimal'}})
+          .then(function(r){
+            if(!r.ok)throw new Error();
+            var i=data.findIndex(function(d){return d.id===c.id});
+            if(i>=0)data.splice(i,1);
+            if(selected===c.id)selected=(data[0]||{}).id||null;
+            openId=null;
+            if(selected)renderDetail();else{
+              $('#detailEmpty').style.display='';$('#detailInner').style.display='none';}
+            renderRows();renderCounts();
+          })
+          .catch(function(){alertBox('Suppression impossible',
+            'L\'appel n\'a pas pu être supprimé. Réessayez dans un instant.')});
+      });
   }
   function bindArchive(x){
     var ab=$('#archBtn');
@@ -896,6 +941,26 @@
 
   // Une erreur dans la petite ligne grise du composeur passe inapercue.
   // Reutilise .modal/.sheet de l'administration : rien de nouveau a styler.
+  // Même feuille que alertBox, deux boutons. « Non » est le choix par défaut :
+  // c'est lui qui prend le focus, pas l'action irréversible.
+  function confirmBox(titre,texte,oui){
+    var ov=$('#alertOv');
+    ov.innerHTML='<div class="sheet" role="alertdialog" aria-modal="true">'+
+      '<div class="sh"><h2 class="bad">'+esc(titre)+'</h2>'+
+        '<button class="x" id="alX" aria-label="Fermer">×</button></div>'+
+      '<p class="lead">'+esc(texte)+'</p>'+
+      '<div class="cfacts"><button class="go ghost" id="alNon">Non</button>'+
+      '<button class="go" id="alOui">Oui</button></div></div>';
+    ov.hidden=false;
+    function close(){ov.hidden=true;document.removeEventListener('keydown',onKey);}
+    function onKey(e){if(e.key==='Escape')close();}
+    $('#alX').addEventListener('click',close);
+    $('#alNon').addEventListener('click',close);
+    $('#alOui').addEventListener('click',function(){close();oui();});
+    ov.addEventListener('click',function(e){if(e.target===ov)close();});
+    document.addEventListener('keydown',onKey);
+    $('#alNon').focus();
+  }
   function alertBox(titre,texte){
     var ov=$('#alertOv');
     ov.innerHTML='<div class="sheet" role="alertdialog" aria-modal="true">'+
@@ -1124,18 +1189,32 @@
       transcript:tr,noMessage:tr.length===0,audio:r.recording_url||'',
       dates:gv('dates_sejour'),resa:gv('reservation_prise')};
   }
+  // Un compte peut appartenir à plusieurs établissements — un administrateur
+  // plateforme les voit tous (is_platform_admin passe la RLS). Sans choix
+  // explicite, `calls?select=*` renvoyait les appels de TOUS les hôtels dans la
+  // même boîte, sans que rien ne le signale. On fixe donc un établissement
+  // courant, et toutes les lectures passent par lui.
+  // `?hotel=<uuid>` : la console d'administration s'en sert pour ouvrir la vue
+  // d'un hôtel donné. Un uuid inconnu retombe sur le premier, jamais sur « tous ».
+  function wantedHotel(){
+    var m=/[?&]hotel=([0-9a-fA-F-]{36})/.exec(location.search);
+    return m?m[1].toLowerCase():'';
+  }
   function loadHotel(){
-    return api('/rest/v1/hotels?select=name,logo_url,phone_e164&limit=1')
-      .then(function(r){return r.json()}).then(function(h){
-        if(!h||!h.length)return;
-        hotel=h[0];
+    return api('/rest/v1/hotels?select=id,name,logo_url,phone_e164&order=name.asc')
+      .then(function(r){if(r.status===401){logout();throw new Error('session expirée');}return r.json()})
+      .then(function(rows){
+        if(!rows||!rows.length)return;
+        var want=wantedHotel();
+        hotel=rows.filter(function(h){return h.id===want})[0]||rows[0];
+        HOTEL_ID=hotel.id;
         $('.brandbox .hn').textContent=hotel.name||'';
         if(hotel.phone_e164)$('.brandbox .hp span:last-child').textContent=fmtPhone(hotel.phone_e164);
         if(hotel.logo_url)$('.brandbox .logo').innerHTML='<img src="'+hotel.logo_url+'" alt="">';
-      }).catch(function(){});
+      });
   }
   function loadMsgs(){
-    return api('/rest/v1/messages?select=*&order=created_at.asc&limit=500')
+    return api('/rest/v1/messages?select=*&hotel_id=eq.'+HOTEL_ID+'&order=created_at.asc&limit=500')
       .then(function(r){return r.json()})
       .then(function(rows){
         msgs=(rows||[]).map(function(m){
@@ -1148,18 +1227,23 @@
         });
       }).catch(function(){msgs=[]});
   }
+  // L'hôtel se charge EN PREMIER : sans lui on ne sait pas quoi filtrer, et une
+  // liste non filtrée est pire qu'une liste vide.
   function loadCalls(){
-    return api('/rest/v1/calls?select=*&order=started_at.desc&limit=200')
-      .then(function(r){if(r.status===401){logout();throw new Error('session expirée');}return r.json()})
-      .then(function(rows){
-        refreshAdmin();
-        data.length=0;rows.forEach(function(r){data.push(mapRow(r))});
-        return Promise.all([loadHotel(),loadMsgs()]).then(function(){
-          renderCounts();renderRows();
-          var v=visible();
-          if(v.length&&window.matchMedia('(min-width:901px)').matches)openThread(v[0].id);
+    refreshAdmin();
+    return loadHotel().then(function(){
+      if(!HOTEL_ID){data.length=0;msgs=[];renderCounts();renderRows();return null;}
+      return api('/rest/v1/calls?select=*&hotel_id=eq.'+HOTEL_ID+'&order=started_at.desc&limit=200')
+        .then(function(r){if(r.status===401){logout();throw new Error('session expirée');}return r.json()})
+        .then(function(rows){
+          data.length=0;rows.forEach(function(r){data.push(mapRow(r))});
+          return loadMsgs().then(function(){
+            renderCounts();renderRows();
+            var v=visible();
+            if(v.length&&window.matchMedia('(min-width:901px)').matches)openThread(v[0].id);
+          });
         });
-      });
+    });
   }
   function logout(){try{localStorage.removeItem('mylidie_tok')}catch(e){}tok=null;showLogin();}
   // Un seul ecran, trois modes : connexion, mot de passe oublie, choix du mot
@@ -1332,7 +1416,7 @@
     inp.value='';inp.style.height='auto';note.textContent='Envoi…';
     // le webhook N8N revalide le jeton auprès de Supabase avant de faire partir le SMS
     fetch(SMS_OUT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
-      body:JSON.stringify({to:'+'+digits(x.phone),body:v})})
+      body:JSON.stringify({to:'+'+digits(x.phone),body:v,hotel_id:HOTEL_ID})})
       .then(function(r){if(!r.ok)throw new Error();return r.json()})
       .then(function(){note.textContent='✓ SMS envoyé';
         return loadMsgs().then(function(){if(selected)renderDetail();refreshStatuses(3);});})
