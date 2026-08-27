@@ -183,6 +183,21 @@
   .fw input,.fw select{width:100%;padding:9px 11px;border:1px solid var(--line-strong);border-radius:9px;
     background:var(--surface-2);color:var(--ink);font:inherit;font-size:var(--fs-sm)}
   .fw .hint{display:block;font-size:var(--fs-xs);color:var(--ink-faint);margin-top:4px;line-height:1.45}
+  /* Témoins de câblage. Le vert/rouge n'est jamais seul porteur du sens :
+     chaque ligne est doublée d'un texte, et d'un libellé lu par les lecteurs
+     d'écran — un daltonien doit lire la même chose que les autres. */
+  .cabl{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .cabl li{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;border-top:1px solid var(--line)}
+  .cabl li:first-child{border-top:0}
+  .cabl .dot{width:9px;height:9px;border-radius:50%;margin-top:6px;flex:0 0 auto}
+  .cabl li.on .dot{background:var(--info)} .cabl li.off .dot{background:var(--resa)}
+  .cabl li>span:nth-child(2){flex:1;min-width:0}
+  .cabl li>span:nth-child(2) b{display:block;font-size:var(--fs-sm)}
+  .cabl li>span:nth-child(2) .hsub{display:block;word-break:break-word}
+  .cabl .sr{font-size:var(--fs-xs);font-weight:600;white-space:nowrap;align-self:center}
+  .cabl li.on .sr{color:var(--info)} .cabl li.off .sr{color:var(--resa)}
+  .cabbtn{font-variant-numeric:tabular-nums}
+  .cabbtn:not(.full){border-color:color-mix(in srgb,var(--resa) 45%,transparent);color:var(--resa)}
   .warn{background:var(--rappel-bg);border:1px solid color-mix(in srgb,var(--rappel) 35%,transparent);
     border-radius:11px;padding:12px 14px;font-size:var(--fs-sm);color:var(--ink);line-height:1.55;margin-bottom:16px}
   .warn b{display:block;margin-bottom:3px}
@@ -448,10 +463,57 @@
   function setNote(el,txt,ok){el.textContent=txt;el.className='note'+(txt?(ok?' ok':' err'):'')}
 
   // ---- 1. établissements ---------------------------------------------------
+  // ---- témoins de câblage --------------------------------------------------
+  // Un hôtel peut exister en base et ne rien faire : c'est arrivé sur Soléo Prado,
+  // dont la fiche était créée alors que ni l'agent ni le récap n'étaient branchés.
+  // Chaque ligne ci-dessous est un fait LU dans la base, jamais une déclaration.
+  // Ce qui vit chez Twilio ou ElevenLabs n'est pas vérifiable depuis le navigateur
+  // (pas de clé côté client, et ces API refusent le CORS) : ces lignes disent
+  // franchement « à vérifier à la main » au lieu d'afficher un vert mensonger.
+  function cablage(h){
+    var ap=CALLS.filter(function(c){return c.hotel_id===h.id}).length;
+    var sm=MSGS.filter(function(m){return m.hotel_id===h.id&&m.direction==='out'}).length;
+    return [
+      ['Fiche établissement',      true,                              'créée en base'],
+      ['Agent vocal ElevenLabs',   !!h.el_agent_id,                   h.el_agent_id||'aucun identifiant : le récap ne saura pas de quel hôtel vient l\'appel'],
+      ['Numéro de l\'agent',        !!h.phone_e164,                    h.phone_e164||'aucun numéro'],
+      ['Numéro d\'urgence',         !!h.emergency_e164,                h.emergency_e164||'sans lui l\'agent annonce un transfert qu\'il ne peut pas faire'],
+      ['Logo du récapitulatif',    !!h.logo_url,                      h.logo_url?'renseigné':'le mail partira sans logo (il reste lisible)'],
+      ['Destinataires du récap',   !!(h.recap_emails||[]).length,     (h.recap_emails||[]).join(', ')||'personne ne recevra le compte rendu'],
+      ['Accès à l\'application',    !!MEMBRES[h.id],                   MEMBRES[h.id]?MEMBRES[h.id]+' compte(s)':'personne n\'est invité : l\'app s\'ouvrira vide'],
+      ['Expéditeur SMS',           !!h.sms_sender_id,                 h.sms_sender_id||'aucun expéditeur alphanumérique'],
+      ['Chaîne voix vérifiée',     ap>0,                              ap>0?ap+' appel(s) reçu(s)':'aucun appel encore reçu — appelez le numéro pour vérifier'],
+      ['Chaîne SMS vérifiée',      sm>0,                              sm>0?sm+' SMS parti(s)':'aucun SMS encore envoyé']
+    ];
+  }
+  function scoreCablage(h){
+    var l=cablage(h),ok=l.filter(function(x){return x[1]}).length;
+    return {ok:ok,total:l.length};
+  }
+  function voirCablage(id){
+    var h=hotel(id);
+    modal('<div class="sh"><h2>Câblage — '+esc(h.name)+'</h2>'+
+      '<button class="x" id="ovX" aria-label="Fermer">×</button></div>'+
+      '<p class="lead">Ce que la base sait vraiment de cet établissement. Un témoin rouge n\'est pas '+
+      'forcément bloquant — le détail dit ce que ça coûte.</p>'+
+      '<ul class="cabl">'+cablage(h).map(function(x){
+        return '<li class="'+(x[1]?'on':'off')+'"><span class="dot" aria-hidden="true"></span>'+
+          '<span><b>'+esc(x[0])+'</b><span class="hsub">'+esc(x[2])+'</span></span>'+
+          '<span class="sr">'+(x[1]?'fait':'à faire')+'</span></li>';
+      }).join('')+'</ul>'+
+      '<div class="warn" style="margin-top:14px"><b>Trois choses ne sont pas vérifiables d\'ici.</b>'+
+        'Le numéro assigné à l\'agent chez ElevenLabs, le webhook post-appel déclaré au dashboard, '+
+        'et l\'enregistrement de l\'expéditeur SMS chez Twilio : ces API ne répondent pas à un '+
+        'navigateur. Le témoin « chaîne voix vérifiée » est leur seule preuve honnête — il passe au '+
+        'vert quand un vrai appel est arrivé jusqu\'à la base.</div>'+
+      '<div class="acts"><button class="btn primary" id="cbOk">Fermer</button></div>');
+    $('#cbOk').addEventListener('click',fermer);
+  }
+
   function vueClients(){
     var p={deb:minuit(new Date(new Date().setDate(new Date().getDate()-29))),fin:minuit(new Date()),jours:30};
     var lignes=HOTELS.map(function(h){
-      var s=stats([h.id],p);
+      var s=stats([h.id],p),sc=scoreCablage(h);
       var etat='<span class="tag t-'+esc(h.billing_status)+'">'+
         (h.billing_status==='payant'?'Payant':h.billing_status==='test'?'Test':'Inactif')+'</span>'+
         '<div class="hsub">'+(h.billing_status==='payant'
@@ -466,13 +528,15 @@
         '<td class="num">'+esc(h.phone_e164||'—')+
           '<div class="hsub">SMS : '+esc(h.sms_sender_id||'aucun expéditeur')+'</div></td>'+
         '<td class="num">'+s.total+'<div class="hsub">30 derniers jours</div></td>'+
+        '<td class="num"><button class="btn sm cabbtn'+(sc.ok===sc.total?' full':'')+'" data-cab="'+esc(h.id)+'">'+
+          sc.ok+'/'+sc.total+'</button><div class="hsub">'+(sc.ok===sc.total?'tout est branché':(sc.total-sc.ok)+' à faire')+'</div></td>'+
         '<td class="num">'+eur(s.marge)+
           '<div class="hsub">'+(h.billing_status==='payant'?'marge sur 30 j':'aucun revenu')+'</div></td>'+
         '<td class="right" style="white-space:nowrap">'+
           (h.billing_status!=='payant'?'<button class="btn sm" data-iban="'+esc(h.id)+'">Demander l\'IBAN</button> ':'')+
           '<button class="btn sm" data-stat="'+esc(h.id)+'">Stats</button> '+
           '<button class="btn sm primary" data-imp="'+esc(h.id)+'">Ouvrir la vue</button></td></tr>';
-    }).join('')||'<tr><td colspan="6" class="hsub">Aucun établissement.</td></tr>';
+    }).join('')||'<tr><td colspan="7" class="hsub">Aucun établissement.</td></tr>';
 
     page('Établissements',
       'Tous les hôtels de la plateforme. « Ouvrir la vue » ouvre l\'application de réception filtrée '+
@@ -480,13 +544,14 @@
       'son abonnement n\'est pas marqué payant.',
       '<div class="card"><div class="scrollx"><table><thead><tr>'+
         '<th>Établissement</th><th>Facturation</th><th>Numéro de l\'agent</th><th>Appels</th>'+
-        '<th>Marge</th><th></th></tr></thead><tbody>'+lignes+'</tbody></table></div></div>');
+        '<th>Câblage</th><th>Marge</th><th></th></tr></thead><tbody>'+lignes+'</tbody></table></div></div>');
 
     $$('[data-imp]').forEach(function(b){
       b.addEventListener('click',function(){location.href='../?hotel='+encodeURIComponent(b.dataset.imp)})});
     $$('[data-stat]').forEach(function(b){
       b.addEventListener('click',function(){vue='stats';hStat=b.dataset.stat;location.hash='stats';renderNav();render()})});
     $$('[data-iban]').forEach(function(b){b.addEventListener('click',function(){ouvrirIban(b.dataset.iban)})});
+    $$('[data-cab]').forEach(function(b){b.addEventListener('click',function(){voirCablage(b.dataset.cab)})});
   }
 
   // Demande d'IBAN. Le formulaire N8N « Mylidie - Stripe SEPA » (4daYLGc7xEp86IOv)
@@ -938,13 +1003,16 @@
   function charger(){
     return Promise.all([
       api('/rest/v1/hotels?select=id,name,slug,address,phone_e164,sms_sender_id,el_agent_id,'+
+          'emergency_e164,logo_url,recap_emails,'+
           'billing_status,subscription_eur,created_at&order=name.asc').then(function(r){return r.json()}),
       api('/rest/v1/calls?select=id,hotel_id,started_at,duration_secs,from_e164,motif,summary,transcript'+
           '&order=started_at.desc&limit=5000').then(function(r){return r.json()}),
       api('/rest/v1/messages?select=id,hotel_id,direction,body,phone_e164,status,created_at'+
-          '&order=created_at.desc&limit=5000').then(function(r){return r.json()})
+          '&order=created_at.desc&limit=5000').then(function(r){return r.json()}),
+      api('/rest/v1/hotel_members?select=hotel_id,role').then(function(r){return r.json()})
     ]).then(function(x){
       HOTELS=x[0]||[];CALLS=x[1]||[];MSGS=x[2]||[];
+      MEMBRES={};(x[3]||[]).forEach(function(m){MEMBRES[m.hotel_id]=(MEMBRES[m.hotel_id]||0)+1});
       HOTELS.forEach(function(h){if(!(h.id in exH))exH[h.id]=true});
     });
   }

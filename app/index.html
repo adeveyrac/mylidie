@@ -982,6 +982,26 @@
   // vérité, sinon un retour se perd dans une boîte mail. Le webhook N8N
   // revalide le jeton Supabase, comme celui des SMS.
   var FEEDBACK='https://n8n-5tkb.srv1203069.hstgr.cloud/webhook/mylidie-feedback';
+  // Tout envoi vers N8N passe par ici. Deux pieges appris a la main :
+  // - N8N repond **200 avec un corps vide** quand le workflow echoue en route
+  //   (jeton refuse par Supabase, hotel introuvable...). `r.ok` ne suffit donc pas.
+  // - un `fetch` qui n'atteint pas le serveur (reseau coupe, CORS) rejette avec
+  //   une TypeError sans statut : ce n'est pas la meme panne, et ca ne se soigne
+  //   pas pareil.
+  // Avant, les deux finissaient en « Echec de l'envoi. » sans autre indice —
+  // impossible a diagnostiquer depuis le poste d'accueil.
+  function n8nSend(url,payload){
+    return fetch(url,{method:'POST',
+        headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+        body:JSON.stringify(payload)})
+      .then(null,function(){throw new Error('serveur injoignable');})
+      .then(function(r){return r.text().then(function(t){
+        if(r.status===401||r.status===403)throw new Error('session expirée, reconnectez-vous');
+        if(!r.ok)throw new Error('le serveur a refusé ('+r.status+')');
+        if(!t.trim())throw new Error('le traitement a échoué côté serveur');
+        try{return JSON.parse(t)}catch(e){throw new Error('réponse illisible du serveur')}
+      })});
+  }
   var MAX_CAPTURE=5*1024*1024;
   function openFeedback(){
     var ov=$('#feedOv');
@@ -1021,14 +1041,11 @@
           r.readAsDataURL(f);
         }):Promise.resolve(''))
       .then(function(b64){
-        return fetch(FEEDBACK,{method:'POST',
-          headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
-          body:JSON.stringify({subject:sujet,body:texte,capture:b64,
-            capture_name:f?f.name:'',capture_type:f?f.type:'',page_url:location.href})});
+        return n8nSend(FEEDBACK,{subject:sujet,body:texte,capture:b64,
+          capture_name:f?f.name:'',capture_type:f?f.type:'',page_url:location.href});
       })
-      .then(function(r){if(!r.ok)throw new Error();return r.json()})
       .then(function(){setNote(note,'✓ Merci, c\'est envoyé.',true);setTimeout(close,1600);})
-      .catch(function(){setNote(note,'L\'envoi a échoué. Réessayez dans un instant.');})
+      .catch(function(e){setNote(note,'Envoi impossible : '+(e.message||'raison inconnue')+'.');})
       .then(function(){b.disabled=false});
     });
   }
@@ -1309,12 +1326,10 @@
       return;}
     inp.value='';inp.style.height='auto';note.textContent='Envoi…';
     // le webhook N8N revalide le jeton auprès de Supabase avant de faire partir le SMS
-    fetch(SMS_OUT,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
-      body:JSON.stringify({to:'+'+digits(x.phone),body:v,hotel_id:HOTEL_ID})})
-      .then(function(r){if(!r.ok)throw new Error();return r.json()})
+    n8nSend(SMS_OUT,{to:'+'+digits(x.phone),body:v,hotel_id:HOTEL_ID})
       .then(function(){note.textContent='✓ SMS envoyé';
         return loadMsgs().then(function(){if(selected)renderDetail();refreshStatuses(3);});})
-      .catch(function(){fail('Échec de l\'envoi.');inp.value=v;})
+      .catch(function(e){fail(e.message||'Échec de l\'envoi.');inp.value=v;})
       .then(function(){setTimeout(function(){note.textContent=old;note.classList.remove('err');},3000)});
   }
   $('#feedBtn').addEventListener('click',openFeedback);
