@@ -893,12 +893,15 @@
     ['Déclarer le webhook post-appel au dashboard ElevenLabs',
      'il ne se crée pas par API'],
     ['Enregistrer l\'expéditeur SMS alphanumérique chez Twilio',
-     'en France les SMS ne partent pas du numéro — et le client ne peut pas répondre']
+     'en France les SMS ne partent pas du numéro — et le client ne peut pas répondre'],
+    ['Passer un vrai appel sur le numéro',
+     'seule preuve de bout en bout : le témoin « chaîne voix vérifiée » passe au vert quand l\'appel atteint la base']
   ];
   function vueNew(){
     page('Nouvel établissement',
       'Crée la fiche en base et invite le responsable. Le reste du câblage — numéro, agent vocal, '+
-      'workflows — se fait à la main, dans l\'ordre listé plus bas.',
+      'workflows — se fait à la main, dans l\'ordre listé plus bas. Une fois la fiche créée, la '+
+      'colonne « Câblage » de l\'écran Établissements dit, point par point, ce qui est branché.',
 
       '<div class="warn"><b>Le numéro sert à la voix, pas aux SMS.</b>'+
         'En France, aucun numéro Twilio ordinaire n\'a le droit d\'émettre un SMS commercial. '+
