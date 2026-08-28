@@ -59,7 +59,7 @@ nav {
 .nav-links a { text-decoration: none; color: inherit; transition: color 0.2s; }
 .nav-links a:hover { color: var(--ink); }
 .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
-.nav-demo { font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mid); background: none; border: 1px solid var(--border-strong); cursor: pointer; padding: 0.6rem 1.25rem; transition: all 0.2s; font-family: 'Jost', sans-serif; }
+.nav-demo { display: inline-block; text-decoration: none; line-height: 1.2; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mid); background: none; border: 1px solid var(--border-strong); cursor: pointer; padding: 0.6rem 1.25rem; transition: all 0.2s; font-family: 'Jost', sans-serif; }
 .nav-demo:hover { color: var(--gold); }
 .nav-cta { display: inline-block; text-decoration: none; line-height: 1.2; background: var(--ink); color: var(--cream); font-family: 'Jost', sans-serif; font-weight: 400; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.6rem 1.5rem; border: none; cursor: pointer; transition: background 0.2s; }
 .nav-cta:hover { background: var(--gold); }
@@ -314,7 +314,7 @@ footer { background:var(--ink); border-top:1px solid rgba(255,255,255,.08); padd
 @media(max-width:900px){
   nav{padding:0.9rem 1.25rem}
   .nav-links{display:none}
-  .nav-demo{display:none}
+  .nav-demo{font-size:0.75rem;padding:0.55rem 1rem;letter-spacing:0.06em}
   .nav-cta{font-size:0.75rem;padding:0.55rem 1rem;letter-spacing:0.06em}
   .mylidie-logo{gap:10px}
   .mylidie-ring{width:32px;height:32px}
@@ -336,7 +336,6 @@ footer { background:var(--ink); border-top:1px solid rgba(255,255,255,.08); padd
   .compar-col,.compar-cell{border-right:none;border-bottom:1px solid var(--border)}
   .section{padding:4rem 1.5rem}
   nav{padding:0.75rem 1rem;overflow:hidden}
-  .nav-links{display:none}
   .nav-actions{gap:0.4rem}
   .nav-demo{padding:0.5rem 0.7rem;font-size:0.72rem;letter-spacing:0.06em}
   .nav-cta{padding:0.5rem 0.8rem;font-size:0.72rem;letter-spacing:0.06em}
@@ -477,8 +476,8 @@ footer { background:var(--ink); border-top:1px solid rgba(255,255,255,.08); padd
     <a href="#faq">FAQ</a>
   </div>
   <div class="nav-actions">
-    <button class="nav-demo" onclick="gtag('event','cta_click',{button_id:'nav_tester_mylidie',button_location:'nav',button_text:'Tester mylidie',button_type:'tel',priority:2});window.location.href='tel:+33757590436'">Tester mylidie</button>
-    <a class="nav-cta" href="/app/" onclick="gtag('event','cta_click',{button_id:'nav_connexion',button_location:'nav',button_text:'Connexion',button_type:'app',priority:1})">Connexion</a>
+    <a class="nav-demo" href="/app/" onclick="gtag('event','cta_click',{button_id:'nav_connexion',button_location:'nav',button_text:'Connexion',button_type:'app',priority:2})">Connexion</a>
+    <a class="nav-cta" href="#contact" onclick="gtag('event','cta_click',{button_id:'nav_inscription',button_location:'nav',button_text:'Inscription',button_type:'form',priority:1})">S'inscrire</a>
   </div>
 </nav>
 
