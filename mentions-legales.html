@@ -51,6 +51,12 @@
 
     a { color: var(--gold); }
 
+    .tablewrap { overflow-x: auto; margin-bottom: 20px; -webkit-overflow-scrolling: touch; }
+    table.subs { border-collapse: collapse; width: 100%; min-width: 620px; background: #fff; font-size: 0.85rem; }
+    table.subs th, table.subs td { border: 1px solid rgba(0,0,0,0.1); padding: 10px 12px; text-align: left; vertical-align: top; }
+    table.subs th { background: rgba(184,150,62,0.1); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .note-box { background: #fff; border: 1px solid rgba(0,0,0,0.08); border-left: 4px solid var(--gold); border-radius: 4px; padding: 18px 22px; margin-bottom: 20px; }
+
     /* FOOTER */
     footer { background: var(--ink); color: rgba(255,255,255,0.4); text-align: center; padding: 32px 24px; font-size: 0.8rem; }
     footer a { color: rgba(255,255,255,0.45); text-decoration: underline; }
@@ -65,7 +71,7 @@
 
 <header>
   <h1>Mentions légales &amp; Confidentialité</h1>
-  <p>Dernière mise à jour : avril 2026</p>
+  <p>Dernière mise à jour : 28 août 2026</p>
 </header>
 
 <div class="container">
@@ -77,9 +83,10 @@
   </summary>
   <ol style="padding-left:18px;margin-top:12px;">
     <li style="margin-bottom:5px;"><a href="#editeur" style="color:var(--ink);text-decoration:none;font-size:0.9rem;">Éditeur du site</a></li>
-    <li style="margin-bottom:5px;"><a href="#hebergeur" style="color:var(--ink);text-decoration:none;font-size:0.9rem;">Hébergeur</a></li>
+    <li style="margin-bottom:5px;"><a href="#hebergeur" style="color:var(--ink);text-decoration:none;font-size:0.9rem;">Hébergement et sous-traitants</a></li>
     <li style="margin-bottom:5px;"><a href="#propriete" style="color:var(--ink);text-decoration:none;font-size:0.9rem;">Propriété intellectuelle</a></li>
-    <li style="margin-bottom:5px;"><a href="#donnees" style="color:var(--ink);text-decoration:none;font-size:0.9rem;">Données personnelles (RGPD)</a></li>
+    <li style="margin-bottom:5px;"><a href="#donnees" style="color:var(--ink);text-decoration:none;font-size:0.9rem;">Données des visiteurs du site</a></li>
+    <li style="margin-bottom:5px;"><a href="#service" style="color:var(--ink);text-decoration:none;font-size:0.9rem;">Données traitées dans le cadre du Service</a></li>
     <li style="margin-bottom:5px;"><a href="#cookies" style="color:var(--ink);text-decoration:none;font-size:0.9rem;">Cookies</a></li>
     <li style="margin-bottom:5px;"><a href="#responsabilite" style="color:var(--ink);text-decoration:none;font-size:0.9rem;">Limitation de responsabilité</a></li>
     <li style="margin-bottom:5px;"><a href="#contact" style="color:var(--ink);text-decoration:none;font-size:0.9rem;">Contact</a></li>
@@ -101,14 +108,53 @@
   </section>
 
   <section id="hebergeur">
-    <h2>2. Hébergeur</h2>
+    <h2>2. Hébergement et sous-traitants</h2>
+    <h3>Site vitrine mylidie.com</h3>
     <div class="info-box">
-      <strong>Hébergement</strong>
+      <strong>Hébergement du site</strong>
       GitHub, Inc.<br>
       88 Colin P Kelly Jr Street, San Francisco, CA 94107, États-Unis<br>
       <a href="https://pages.github.com" target="_blank" rel="noopener">pages.github.com</a>
     </div>
-    <p>Le site mylidie.com est hébergé via GitHub Pages, service d'hébergement statique de GitHub. Les serveurs sont soumis aux conditions d'utilisation de GitHub.</p>
+    <p>Les pages publiques de mylidie.com sont servies par GitHub&nbsp;Pages, service d'hébergement de
+      fichiers statiques. Aucune donnée d'appel n'y transite.</p>
+
+    <h3>Service Mylidie (agent vocal et application)</h3>
+    <p>Le Service repose sur les prestataires suivants, qui agissent en qualité de sous-traitants
+      ultérieurs. Le lieu indiqué est celui où les données sont hébergées.</p>
+    <div class="tablewrap">
+      <table class="subs">
+        <thead><tr><th>Prestataire</th><th>Rôle</th><th>Hébergement</th><th>Encadrement</th></tr></thead>
+        <tbody>
+          <tr><td>ElevenLabs, Inc. <span style="color:#6B6B6B">(États-Unis)</span></td>
+              <td>Agent vocal&nbsp;: compréhension de la parole, synthèse vocale, enregistrement,
+                  transcription et résumé de l'appel</td>
+              <td>États-Unis</td>
+              <td>EU-US Data Privacy Framework <span style="color:#6B6B6B">(décision d'adéquation)</span></td></tr>
+          <tr><td>Twilio Ireland Limited</td>
+              <td>Numéro de téléphone, acheminement des appels et envoi des SMS</td>
+              <td>Union européenne <span style="color:#6B6B6B">(Irlande)</span></td>
+              <td>Clauses contractuelles types pour les transferts vers le groupe Twilio</td></tr>
+          <tr><td>Supabase</td>
+              <td>Base de données du journal d'appels et application de réception</td>
+              <td>Suisse <span style="color:#6B6B6B">(Zurich)</span></td>
+              <td>Décision d'adéquation de la Commission européenne</td></tr>
+          <tr><td>Hostinger International Ltd</td>
+              <td>Serveur d'automatisation <span style="color:#6B6B6B">(n8n)</span> et messagerie
+                  des comptes rendus</td>
+              <td>France <span style="color:#6B6B6B">(Paris)</span></td>
+              <td>—</td></tr>
+          <tr><td>Stripe Payments Europe, Ltd.</td>
+              <td>Abonnement et prélèvement SEPA. Ne traite que les données du Client
+                  professionnel, jamais celles des appelants</td>
+              <td>Union européenne <span style="color:#6B6B6B">(Irlande)</span></td>
+              <td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Cette liste est tenue à jour. Tout changement de sous-traitant susceptible d'affecter le lieu
+      d'hébergement ou la nature des traitements est porté à la connaissance du Client, qui peut s'y
+      opposer dans les conditions prévues aux <a href="/cgu-cgv.html">CGU&nbsp;&amp;&nbsp;CGV</a>.</p>
   </section>
 
   <section id="propriete">
@@ -118,12 +164,16 @@
   </section>
 
   <section id="donnees">
-    <h2>4. Données personnelles (RGPD)</h2>
-    <p>CHORIE s'engage à protéger la vie privée des utilisateurs du site mylidie.com conformément au Règlement (UE) 2016/679 du 27 avril 2016 (RGPD) et à la loi française Informatique et Libertés.</p>
+    <h2>4. Données des visiteurs du site</h2>
+    <p>Cette section ne concerne que <strong>la navigation sur le site mylidie.com</strong>. Les données
+      traitées lors des appels téléphoniques reçus par l'agent vocal font l'objet de la
+      <a href="#service">section 5</a>, dont les règles sont différentes.</p>
+    <p>CHORIE s'engage à protéger la vie privée des utilisateurs du site mylidie.com conformément au
+      Règlement (UE) 2016/679 du 27 avril 2016 (RGPD) et à la loi française Informatique et Libertés.</p>
 
     <h3>Responsable du traitement</h3>
     <p>CHORIE – 4 rue du Petit Saint‑Esprit, 13100 Aix‑en‑Provence<br>
-    Contact : via le formulaire disponible sur mylidie.com</p>
+    Contact : amaury@mylidie.com — ou le formulaire disponible sur mylidie.com</p>
 
     <h3>Données collectées</h3>
     <p>Dans le cadre de votre navigation, CHORIE peut collecter les données suivantes :</p>
@@ -154,8 +204,95 @@
     <p>Pour exercer ces droits, contactez-nous via le formulaire de contact sur mylidie.com. Vous pouvez également adresser une réclamation à la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>).</p>
   </section>
 
+  
+  <section id="service">
+    <h2>5. Données traitées dans le cadre du Service</h2>
+
+    <div class="note-box">
+      <p style="margin:0">Le Service Mylidie répond aux appels téléphoniques d'un établissement,
+        les enregistre, les transcrit et en produit un compte rendu. Les personnes concernées sont
+        donc <strong>les appelants</strong> — clients, fournisseurs ou tiers — et non les seuls
+        utilisateurs de l'application.</p>
+    </div>
+
+    <h3>Qui est responsable de quoi</h3>
+    <p>L'établissement qui souscrit au Service est <strong>responsable de traitement</strong>&nbsp;:
+      c'est lui qui décide de faire répondre ses appels par un agent vocal et qui en définit la
+      finalité. CHORIE intervient comme <strong>sous-traitant</strong> au sens de l'article 28 du
+      RGPD, et n'agit que sur instruction de l'établissement. Les prestataires listés en
+      <a href="#hebergeur">section 2</a> sont des sous-traitants ultérieurs.</p>
+
+    <h3>Données traitées</h3>
+    <ul>
+      <li>numéro de téléphone de l'appelant, date, heure et durée de l'appel&nbsp;;</li>
+      <li>identité et informations communiquées spontanément par l'appelant pendant la conversation
+        (nom, dates de séjour, motif de la demande)&nbsp;;</li>
+      <li><strong>enregistrement audio de l'appel</strong>, sa transcription écrite et son résumé
+        automatique&nbsp;;</li>
+      <li>SMS envoyés à l'appelant depuis le Service, le cas échéant.</li>
+    </ul>
+    <p>Aucune donnée bancaire, aucune donnée de santé et aucune donnée dite sensible au sens de
+      l'article&nbsp;9 du RGPD n'est demandée par l'agent vocal. Si un appelant en communique
+      spontanément, elles se retrouvent dans l'enregistrement et la transcription&nbsp;: c'est la
+      raison pour laquelle l'accès au journal d'appels est restreint aux comptes nommés autorisés
+      par l'établissement.</p>
+
+    <h3>Information de l'appelant</h3>
+    <p>L'agent vocal annonce l'enregistrement <strong>dès sa première phrase</strong>, avant tout
+      échange, par une formule du type&nbsp;: «&nbsp;Votre conversation est susceptible d'être
+      enregistrée afin d'améliorer le service.&nbsp;» L'appelant qui ne souhaite pas être enregistré
+      peut mettre fin à l'appel et joindre l'établissement par un autre moyen.</p>
+
+    <h3>Finalités et base légale</h3>
+    <ul>
+      <li>répondre à la demande de l'appelant et en assurer le suivi par l'établissement&nbsp;;</li>
+      <li>conserver une trace fidèle de l'échange, l'agent vocal pouvant se tromper&nbsp;;</li>
+      <li>améliorer la qualité des réponses de l'agent.</li>
+    </ul>
+    <p>La base légale est <strong>l'intérêt légitime</strong> de l'établissement à traiter ses appels
+      entrants et à en garder une trace exploitable, ainsi que, le cas échéant, l'exécution de
+      mesures précontractuelles à la demande de l'appelant (demande de réservation).</p>
+
+    <h3>Durées de conservation</h3>
+    <ul>
+      <li>enregistrements, transcriptions, résumés et journal d'appels&nbsp;: pendant la durée du
+        contrat, puis supprimés ou anonymisés dans un délai de <strong>quatre-vingt-dix (90)
+        jours</strong> après son terme, sauf obligation légale contraire&nbsp;;</li>
+      <li>demandes de contact reçues via le site&nbsp;: trois (3) ans à compter du dernier
+        contact&nbsp;;</li>
+      <li>données de facturation&nbsp;: dix (10) ans, conformément aux obligations comptables.</li>
+    </ul>
+
+    <h3>Transferts hors de l'Union européenne</h3>
+    <p>Le traitement de la parole par l'agent vocal est réalisé par <strong>ElevenLabs, Inc. aux
+      États-Unis</strong>&nbsp;: l'enregistrement, sa transcription et son résumé y sont traités et
+      stockés. Ce transfert est encadré par la certification d'ElevenLabs au
+      <em>EU-US Data Privacy Framework</em>, reconnu adéquat par la Commission européenne. La base de
+      données du journal d'appels est hébergée <strong>en Suisse</strong>, pays bénéficiant d'une
+      décision d'adéquation. Les autres traitements ont lieu dans l'Union européenne.</p>
+
+    <h3>Ce que CHORIE ne fait pas</h3>
+    <ul>
+      <li>les enregistrements et transcriptions ne sont <strong>ni vendus, ni cédés, ni utilisés à
+        des fins publicitaires</strong>&nbsp;;</li>
+      <li>ils ne sont <strong>pas utilisés par CHORIE pour entraîner des modèles</strong>
+        d'intelligence artificielle&nbsp;;</li>
+      <li>l'agent vocal ne prend <strong>aucune décision automatisée</strong> produisant des effets
+        juridiques&nbsp;: il transmet la demande à un humain, qui décide.</li>
+    </ul>
+
+    <h3>Exercer vos droits</h3>
+    <p>Un appelant peut demander l'accès, la rectification, l'effacement ou la limitation des données
+      le concernant, ainsi que s'opposer au traitement. Ces demandes s'adressent <strong>à
+      l'établissement appelé</strong>, qui est responsable de traitement. Elles peuvent également
+      être adressées à CHORIE à <a href="mailto:amaury@mylidie.com">amaury@mylidie.com</a>&nbsp;:
+      CHORIE les transmet alors sans délai à l'établissement concerné et l'assiste pour y répondre.</p>
+    <p>Toute personne peut par ailleurs introduire une réclamation auprès de la
+      <a href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a>.</p>
+  </section>
+
   <section id="cookies">
-    <h2>5. Cookies</h2>
+    <h2>6. Cookies</h2>
     <p>Le site mylidie.com utilise des cookies pour améliorer votre expérience de navigation.</p>
 
     <h3>Cookies analytiques</h3>
@@ -171,17 +308,18 @@
   </section>
 
   <section id="responsabilite">
-    <h2>6. Limitation de responsabilité</h2>
+    <h2>7. Limitation de responsabilité</h2>
     <p>CHORIE s'efforce d'assurer l'exactitude et la mise à jour des informations diffusées sur le site mylidie.com, mais ne peut garantir l'exhaustivité ou l'absence d'erreur de ces informations.</p>
     <p>CHORIE ne saurait être tenu responsable des dommages directs ou indirects résultant de l'utilisation du site ou de l'impossibilité d'y accéder.</p>
     <p>Des liens hypertextes peuvent renvoyer vers des sites tiers. CHORIE n'assume aucune responsabilité quant au contenu de ces sites externes.</p>
   </section>
 
   <section id="contact">
-    <h2>7. Contact</h2>
+    <h2>8. Contact</h2>
     <div class="info-box">
       <strong>Pour toute question relative aux mentions légales ou à vos données personnelles</strong>
-      Formulaire de contact disponible sur <a href="https://mylidie.com">mylidie.com</a><br>
+      <a href="mailto:amaury@mylidie.com">amaury@mylidie.com</a><br>
+      ou le formulaire de contact disponible sur <a href="https://mylidie.com">mylidie.com</a><br>
       CHORIE – 4 rue du Petit Saint‑Esprit, 13100 Aix‑en‑Provence
     </div>
   </section>
