@@ -10,16 +10,16 @@
 <body>
 <style>
   :root{
-    --bg:#eceae2; --surface:#ffffff; --surface-2:#f5f3ec; --surface-3:#efece2;
-    --ink:#24231c; --ink-soft:#5c5a4e; --ink-faint:#928f80;
-    --line:#e6e2d6; --line-strong:#d8d3c4;
+    --bg:#f4f2ea; --surface:#ffffff; --surface-2:#ebe8de; --surface-3:#e2ded1;
+    --ink:#24231c; --ink-soft:#5c5a4e; --ink-faint:#7d7a6c;
+    --line:#e0dcd0; --line-strong:#cdc7b6;
     --brand:#3a3a28; --brand-2:#4d4c36; --btn-bg:#3a3a28; --btn-fg:#fff;
     --resa:#c0392b; --resa-bg:#fbeae7; --resa-line:#e7b7ae;
     --info:#2f7d5b; --info-bg:#e7f2ec; --info-line:#b0d4c2;
     --annul:#5b6b7a; --annul-bg:#eef1f4; --annul-line:#ccd6de;
     --rappel:#b5850f; --rappel-bg:#fbf1d8; --rappel-line:#e8cf93;
     --inconnu:#6d4b9f; --inconnu-bg:#efe9f6; --inconnu-line:#d3c2e6;
-    --urgence:#d9480f; --urgence-bg:#fdece3; --urgence-line:#f3c2a4;
+    --urgence:#d9480f; --urgence-bg:#fdece3; --urgence-line:#f3c2a4; --miss:#c62828; --miss-bg:#fbeceb; --miss-line:#eebbb8;
     --bubble-out:#3a3a28; --bubble-out-fg:#f5f3ea;
     --shadow:0 1px 2px rgba(40,38,28,.05),0 6px 18px rgba(40,38,28,.06);
     --fs-xs:11px; --fs-sm:13px; --fs-base:14px; --fs-lg:16px; --fs-xl:19px; --fs-2xl:24px;
@@ -27,33 +27,33 @@
     --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,ui-serif,serif;
   }
   @media (prefers-color-scheme:dark){:root{
-    --bg:#131209; --surface:#201e18; --surface-2:#29271f; --surface-3:#2f2c22;
-    --ink:#f2efe5; --ink-soft:#bcb8a8; --ink-faint:#867f6d; --line:#322f25; --line-strong:#3d3a2e;
+    --bg:#1c1a12; --surface:#26241c; --surface-2:#2f2d24; --surface-3:#37342a;
+    --ink:#f2efe5; --ink-soft:#bcb8a8; --ink-faint:#9b9382; --line:#3a372b; --line-strong:#474334;
     --brand:#cdbb8e; --brand-2:#d8c89e; --btn-bg:#cbb98d; --btn-fg:#231f17;
     --resa:#e8776b; --resa-bg:#38211d; --resa-line:#5a332c; --info:#5cbd90; --info-bg:#15332a; --info-line:#28503f;
     --annul:#9fb0bf; --annul-bg:#232a30; --annul-line:#3a454e;
     --rappel:#e5bd52; --rappel-bg:#332a14; --rappel-line:#544527; --inconnu:#b79ae0; --inconnu-bg:#2c2338; --inconnu-line:#463a5c;
-    --urgence:#f0885c; --urgence-bg:#3a2116; --urgence-line:#5e3722;
+    --urgence:#f0885c; --urgence-bg:#3a2116; --urgence-line:#5e3722; --miss:#f0736a; --miss-bg:#3a1d1c; --miss-line:#5c2f2c;
     --bubble-out:#cbb98d; --bubble-out-fg:#231f17; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.35);
   }}
   :root[data-theme="light"]{
-    --bg:#eceae2; --surface:#fff; --surface-2:#f5f3ec; --surface-3:#efece2;
-    --ink:#24231c; --ink-soft:#5c5a4e; --ink-faint:#928f80; --line:#e6e2d6; --line-strong:#d8d3c4;
+    --bg:#f4f2ea; --surface:#fff; --surface-2:#ebe8de; --surface-3:#e2ded1;
+    --ink:#24231c; --ink-soft:#5c5a4e; --ink-faint:#7d7a6c; --line:#e0dcd0; --line-strong:#cdc7b6;
     --brand:#3a3a28; --brand-2:#4d4c36; --btn-bg:#3a3a28; --btn-fg:#fff;
     --resa:#c0392b; --resa-bg:#fbeae7; --resa-line:#e7b7ae; --info:#2f7d5b; --info-bg:#e7f2ec; --info-line:#b0d4c2;
     --annul:#5b6b7a; --annul-bg:#eef1f4; --annul-line:#ccd6de;
     --rappel:#b5850f; --rappel-bg:#fbf1d8; --rappel-line:#e8cf93; --inconnu:#6d4b9f; --inconnu-bg:#efe9f6; --inconnu-line:#d3c2e6;
-    --urgence:#d9480f; --urgence-bg:#fdece3; --urgence-line:#f3c2a4;
+    --urgence:#d9480f; --urgence-bg:#fdece3; --urgence-line:#f3c2a4; --miss:#c62828; --miss-bg:#fbeceb; --miss-line:#eebbb8;
     --bubble-out:#3a3a28; --bubble-out-fg:#f5f3ea; --shadow:0 1px 2px rgba(40,38,28,.05),0 6px 18px rgba(40,38,28,.06);
   }
   :root[data-theme="dark"]{
-    --bg:#131209; --surface:#201e18; --surface-2:#29271f; --surface-3:#2f2c22;
-    --ink:#f2efe5; --ink-soft:#bcb8a8; --ink-faint:#867f6d; --line:#322f25; --line-strong:#3d3a2e;
+    --bg:#1c1a12; --surface:#26241c; --surface-2:#2f2d24; --surface-3:#37342a;
+    --ink:#f2efe5; --ink-soft:#bcb8a8; --ink-faint:#9b9382; --line:#3a372b; --line-strong:#474334;
     --brand:#cdbb8e; --brand-2:#d8c89e; --btn-bg:#cbb98d; --btn-fg:#231f17;
     --resa:#e8776b; --resa-bg:#38211d; --resa-line:#5a332c; --info:#5cbd90; --info-bg:#15332a; --info-line:#28503f;
     --annul:#9fb0bf; --annul-bg:#232a30; --annul-line:#3a454e;
     --rappel:#e5bd52; --rappel-bg:#332a14; --rappel-line:#544527; --inconnu:#b79ae0; --inconnu-bg:#2c2338; --inconnu-line:#463a5c;
-    --urgence:#f0885c; --urgence-bg:#3a2116; --urgence-line:#5e3722;
+    --urgence:#f0885c; --urgence-bg:#3a2116; --urgence-line:#5e3722; --miss:#f0736a; --miss-bg:#3a1d1c; --miss-line:#5c2f2c;
     --bubble-out:#cbb98d; --bubble-out-fg:#231f17; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.35);
   }
 
@@ -250,20 +250,36 @@
 
   /* ---- fil de discussion : appels (dépliables) + SMS, dans l'ordre chronologique ---- */
   .tl{display:flex;flex-direction:column;gap:10px;padding-bottom:6px}
-  .tl-day{align-self:center;font-size:var(--fs-xs);color:var(--ink-faint);background:var(--surface-3);
-    padding:3px 12px;border-radius:999px;margin:8px 0 2px}
+  .tl-day{align-self:center;font-size:var(--fs-sm);font-weight:600;color:var(--ink-soft);
+    background:var(--surface-3);padding:4px 14px;border-radius:999px;margin:10px 0 2px}
   /* Un appel se lit comme un message recu : ancre a gauche, largeur de bulle.
      Deplie, il s'elargit pour laisser respirer infos/transcription — sans bouger
      son bord gauche, la carte grandit depuis son point d'ancrage. */
   /* Carte d'appel : un bouton qui pousse la vue detail. Plus d'accordeon —
      un appel deplie faisait plusieurs ecrans au milieu du fil. */
-  .tl-call{align-self:flex-start;width:100%;max-width:78%;display:block;text-align:left;
+  /* Un appel porte son en-tete au-dessus de la carte, comme un SMS porte le sien :
+     la date seule ne disait pas que le telephone avait sonne dans le vide. */
+  .callwrap{display:flex;flex-direction:column;gap:3px;align-self:flex-start;width:100%;max-width:78%}
+  .callh{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:0 4px;
+    font-size:var(--fs-sm);font-weight:600;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .callh .miss{display:inline-flex;align-items:center;gap:4px;font-weight:700;color:var(--miss)}
+  .callh .by,.callh .at{color:var(--ink-soft)}
+  /* Le trait « Nouveau » : pose une seule fois, devant le premier element non lu
+     a l'ouverture du fil. Il disparait a la visite suivante. */
+  .tl-new{display:flex;align-items:center;gap:10px;margin:8px 0 0;
+    font-size:var(--fs-sm);font-weight:700;color:var(--info)}
+  .tl-new::after{content:"";flex:1;height:1px;background:var(--info);opacity:.55}
+  /* L'action suggeree se lit sans deplier : c'est elle qui dit quoi faire. */
+  .tl-act{display:block;margin:0 15px 11px;padding:6px 10px;border-radius:9px;
+    background:var(--inconnu-bg);border:1px solid var(--inconnu-line);color:var(--inconnu);
+    font-size:var(--fs-sm);font-weight:600;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tl-call{width:100%;display:block;text-align:left;
     font:inherit;color:var(--ink);cursor:pointer;padding:0;
     background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
   .tl-call:hover,.tl-call:active{background:var(--surface-2)}
   .tl-call:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
   .tlh{display:flex;align-items:center;gap:10px;width:100%;padding:12px 15px}
-  .tlh .tld{font-size:var(--fs-sm);font-variant-numeric:tabular-nums;color:var(--ink-soft);flex:0 0 auto}
   .tlh .tlu{margin-left:auto;font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums}
   .tlh .chev{color:var(--ink-faint);font-size:15px;flex:0 0 auto}
 
@@ -286,9 +302,10 @@
   .sms{display:flex;flex-direction:column;gap:3px;max-width:78%}
   .sms.in{align-self:flex-start;align-items:flex-start}
   .sms.out{align-self:flex-end;align-items:flex-end}
-  .smsh{font-size:var(--fs-xs);color:var(--ink-faint);padding:0 4px;font-variant-numeric:tabular-nums}
+  .smsh{font-size:var(--fs-sm);font-weight:600;color:var(--ink-soft);padding:0 4px;
+    font-variant-numeric:tabular-nums}
   .tl .m{max-width:100%;padding:9px 13px;border-radius:13px;font-size:var(--fs-sm);line-height:1.5;white-space:pre-wrap}
-  .tl .m.in{background:var(--surface-2);border:1px solid var(--line)}
+  .tl .m.in{background:var(--surface);border:1px solid var(--line)}
   .tl .m.out{background:var(--brand);color:#f5f3ea}
   :root[data-theme="dark"] .tl .m.out{background:var(--brand-2)}
   .player{display:flex;flex-direction:column;align-items:stretch;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-top:8px}
@@ -331,8 +348,11 @@
     border-radius:12px;padding:11px 14px;font-family:var(--sans);font-size:var(--fs-sm);max-height:120px;line-height:1.45}
   .composer textarea:focus{outline:2px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:1px}
   .composer .send{width:42px;height:42px;border-radius:11px;background:var(--btn-bg);color:var(--btn-fg);border:none;cursor:pointer;font-size:16px;flex:0 0 auto}
-  .composer .cnote{font-size:var(--fs-xs);color:var(--ink-faint);margin:0 0 8px}
-  .composer .cwarn{font-size:var(--fs-xs);color:var(--ink-faint);margin:8px 0 0;line-height:1.35}
+  .composer .cnote{font-size:var(--fs-sm);font-weight:600;color:var(--ink-soft);margin:0 0 8px}
+  .composer .cwarn{font-size:var(--fs-sm);font-weight:600;color:var(--ink-soft);margin:8px 0 0;line-height:1.4}
+  /* « Écrire un message… » est un libellé, pas du texte grisé : le navigateur
+     applique sinon sa propre opacité et il repasse sous le seuil de lisibilité. */
+  .composer textarea::placeholder{color:var(--ink-soft);font-weight:600;opacity:1}
 
   /* Le feedback part de l'appui, pas du survol : sur la tablette d'accueil il n'y a pas de survol. */
   .row:active,.navitem:active,.ltab:active,.tlh:active,.mi:active,.memberline:active,.brandbox:active{background:var(--surface-3)}
@@ -391,7 +411,10 @@
     .info-grid{grid-template-columns:1fr}
     .det-body,.composer{padding-left:15px;padding-right:15px}
     /* une bulle a 78% est trop etroite sur un ecran de telephone */
-    .tl-call,.sms{max-width:94%}
+    .callwrap,.sms{max-width:94%}
+    /* sur 390px, « pris par votre Réceptionniste IA » repoussait la date
+       sur une 2e ligne a chaque appel : l'essentiel est « manque » + l'heure. */
+    .callh .by{display:none}
   }
 
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -552,6 +575,9 @@
 
   // selected = la discussion ouverte ; openId = l'appel ouvert par-dessus (ou null)
   var filter='all',query='',tab='tous',selected=null,openId=null;
+  // Horodatage du 1er element non lu au moment ou le fil s'est ouvert : c'est
+  // la ou se pose le trait « Nouveau ». null = rien de neuf a signaler.
+  var newFrom=null;
 
   // Mode live : rempli => l'app lit les vrais appels dans Supabase (login requis).
   // Vide => maquette de démo, elle tourne sur le tableau `data` ci-dessus. La clé
@@ -682,6 +708,21 @@
     items.sort(function(a,b){return a.ts-b.ts});
     return items;
   }
+  // Reperes de jour du fil, facon WhatsApp : sans eux, deux appels a trois
+  // jours d'ecart se lisent comme s'ils s'etaient suivis.
+  function dayKey(ts){var d=new Date(ts);return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()}
+  function dayLabel(ts){
+    var d=new Date(ts),now=new Date();
+    if(dayKey(ts)===dayKey(now.getTime()))return "Aujourd'hui";
+    if(dayKey(ts)===dayKey(now.getTime()-864e5))return 'Hier';
+    var o={day:'numeric',month:'long'};
+    if(d.getFullYear()!==now.getFullYear())o.year='numeric';
+    return d.toLocaleDateString('fr-FR',o);
+  }
+  // Fleche entrante barree, comme un appel manque sur iPhone.
+  var MISS_SVG='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+    'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
+    '<path d="M19 5L7 17"/><path d="M7 8.5V17h8.5"/></svg>';
   function callBodyHTML(x){
     var beta=betaFor(x),multi=x.attempts&&x.attempts.length>1;
     var info='<div class="di"><span class="k">Type de demande</span><span class="v">'+LABEL[x.motif]+'</span></div>';
@@ -724,24 +765,42 @@
   function threadHTML(x){
     var items=timelineFor(x);
     if(!items.length)return '<div class="d-none">Rien à afficher pour ce correspondant.</div>';
+    var lastDay=null,newDone=false;
     return '<div class="tl">'+items.map(function(it){
+      // Ce qui se pose AVANT l'élément : le repère de jour, puis « Nouveau ».
+      var pre='';
+      if(it.ts&&dayKey(it.ts)!==lastDay){
+        lastDay=dayKey(it.ts);
+        pre+='<div class="tl-day">'+esc(dayLabel(it.ts))+'</div>';
+      }
+      if(newFrom!==null&&!newDone&&it.ts>=newFrom){
+        newDone=true;
+        pre+='<div class="tl-new">Nouveau</div>';
+      }
       if(it.k==='sms'){
         var m=it.m;
         var out=m.direction!=='in';
-        return '<div class="sms '+(out?'out':'in')+'">'+
+        return pre+'<div class="sms '+(out?'out':'in')+'">'+
                '<div class="smsh">'+(out?'SMS envoyé':'SMS reçu')+' · '+esc(m.at)+
                (out&&m.status?' · '+esc(SMSST[m.status]||m.status):'')+'</div>'+
                '<div class="m '+(out?'out':'in')+'">'+esc(m.body)+'</div></div>';
       }
       var c=it.c;
+      // betaFor() échappe déjà ce qu'il interpole : ne pas ré-échapper ici.
+      var act=betaFor(c);
       // un <button> plutot qu'un <div> cliquable : atteignable au clavier
-      return '<button class="tl-call" data-go="'+c.id+'">'+
-        '<span class="tlh"><span class="tld">'+esc(c.d)+'</span>'+
+      return pre+'<div class="callwrap">'+
+        '<div class="callh"><span class="miss">'+MISS_SVG+'Appel manqué</span>'+
+        '<span class="by">pris par votre Réceptionniste IA ·</span>'+
+        '<span class="at">'+esc(c.d)+'</span></div>'+
+        '<button class="tl-call" data-go="'+c.id+'">'+
+        '<span class="tlh">'+
         '<span class="pill '+c.motif+'">'+LABEL[c.motif]+'</span>'+
         '<span class="tlu">'+esc(c.noMessage?'sans message':(c.dur||''))+'</span>'+
         '<span class="chev">›</span></span>'+
+        (act?'<span class="tl-act">✨ À faire : '+act[0]+'</span>':'')+
         '<span class="tl-sumh">Résumé de l\'appel</span>'+
-        '<span class="tl-sum">'+esc(c.summary)+'</span></button>';
+        '<span class="tl-sum">'+esc(c.summary)+'</span></button></div>';
     }).join('')+'</div>';
   }
   // Vue poussee d'un appel : le resume complet, puis les memes sections que la carte.
@@ -788,7 +847,12 @@
   function openThread(id,byUser){
     var x=data.find(function(d){return d.id===id});if(!x)return;
     selected=id;openId=null;
-    if(byUser)markRead(x);
+    var hist=historyFor(x),un=hist.filter(function(c){return c.unread});
+    // Se calculer AVANT markRead : après, il n'y a plus rien à repérer.
+    newFrom=(byUser&&un.length)?Math.min.apply(null,un.map(tsOf)):null;
+    // Ouvrir le fil, c'est lire tout le fil : la liste n'affiche qu'un point par
+    // correspondant, pas un par appel — en marquer un seul laissait le point allumé.
+    if(byUser)hist.forEach(markRead);
     document.body.classList.add('detail');
     renderDetail();renderRows();renderCounts();
   }
