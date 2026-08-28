@@ -1,0 +1,1423 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Mylidie App</title>
+<link rel="icon" href="/favicon.svg">
+</head>
+<body>
+<style>
+  :root{
+    --bg:#f4f2ea; --surface:#ffffff; --surface-2:#ebe8de; --surface-3:#e2ded1;
+    --ink:#24231c; --ink-soft:#5c5a4e; --ink-faint:#7d7a6c;
+    --line:#e0dcd0; --line-strong:#cdc7b6;
+    --brand:#3a3a28; --brand-2:#4d4c36; --btn-bg:#3a3a28; --btn-fg:#fff;
+    --resa:#c0392b; --resa-bg:#fbeae7; --resa-line:#e7b7ae;
+    --info:#2f7d5b; --info-bg:#e7f2ec; --info-line:#b0d4c2;
+    --annul:#5b6b7a; --annul-bg:#eef1f4; --annul-line:#ccd6de;
+    --rappel:#b5850f; --rappel-bg:#fbf1d8; --rappel-line:#e8cf93;
+    --inconnu:#6d4b9f; --inconnu-bg:#efe9f6; --inconnu-line:#d3c2e6;
+    --urgence:#d9480f; --urgence-bg:#fdece3; --urgence-line:#f3c2a4; --miss:#c62828; --miss-bg:#fbeceb; --miss-line:#eebbb8;
+    --bubble-out:#3a3a28; --bubble-out-fg:#f5f3ea;
+    --shadow:0 1px 2px rgba(40,38,28,.05),0 6px 18px rgba(40,38,28,.06);
+    --fs-xs:11px; --fs-sm:13px; --fs-base:14px; --fs-lg:16px; --fs-xl:19px; --fs-2xl:24px;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,ui-serif,serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#1c1a12; --surface:#26241c; --surface-2:#2f2d24; --surface-3:#37342a;
+    --ink:#f2efe5; --ink-soft:#bcb8a8; --ink-faint:#9b9382; --line:#3a372b; --line-strong:#474334;
+    --brand:#cdbb8e; --brand-2:#d8c89e; --btn-bg:#cbb98d; --btn-fg:#231f17;
+    --resa:#e8776b; --resa-bg:#38211d; --resa-line:#5a332c; --info:#5cbd90; --info-bg:#15332a; --info-line:#28503f;
+    --annul:#9fb0bf; --annul-bg:#232a30; --annul-line:#3a454e;
+    --rappel:#e5bd52; --rappel-bg:#332a14; --rappel-line:#544527; --inconnu:#b79ae0; --inconnu-bg:#2c2338; --inconnu-line:#463a5c;
+    --urgence:#f0885c; --urgence-bg:#3a2116; --urgence-line:#5e3722; --miss:#f0736a; --miss-bg:#3a1d1c; --miss-line:#5c2f2c;
+    --bubble-out:#cbb98d; --bubble-out-fg:#231f17; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.35);
+  }}
+  :root[data-theme="light"]{
+    --bg:#f4f2ea; --surface:#fff; --surface-2:#ebe8de; --surface-3:#e2ded1;
+    --ink:#24231c; --ink-soft:#5c5a4e; --ink-faint:#7d7a6c; --line:#e0dcd0; --line-strong:#cdc7b6;
+    --brand:#3a3a28; --brand-2:#4d4c36; --btn-bg:#3a3a28; --btn-fg:#fff;
+    --resa:#c0392b; --resa-bg:#fbeae7; --resa-line:#e7b7ae; --info:#2f7d5b; --info-bg:#e7f2ec; --info-line:#b0d4c2;
+    --annul:#5b6b7a; --annul-bg:#eef1f4; --annul-line:#ccd6de;
+    --rappel:#b5850f; --rappel-bg:#fbf1d8; --rappel-line:#e8cf93; --inconnu:#6d4b9f; --inconnu-bg:#efe9f6; --inconnu-line:#d3c2e6;
+    --urgence:#d9480f; --urgence-bg:#fdece3; --urgence-line:#f3c2a4; --miss:#c62828; --miss-bg:#fbeceb; --miss-line:#eebbb8;
+    --bubble-out:#3a3a28; --bubble-out-fg:#f5f3ea; --shadow:0 1px 2px rgba(40,38,28,.05),0 6px 18px rgba(40,38,28,.06);
+  }
+  :root[data-theme="dark"]{
+    --bg:#1c1a12; --surface:#26241c; --surface-2:#2f2d24; --surface-3:#37342a;
+    --ink:#f2efe5; --ink-soft:#bcb8a8; --ink-faint:#9b9382; --line:#3a372b; --line-strong:#474334;
+    --brand:#cdbb8e; --brand-2:#d8c89e; --btn-bg:#cbb98d; --btn-fg:#231f17;
+    --resa:#e8776b; --resa-bg:#38211d; --resa-line:#5a332c; --info:#5cbd90; --info-bg:#15332a; --info-line:#28503f;
+    --annul:#9fb0bf; --annul-bg:#232a30; --annul-line:#3a454e;
+    --rappel:#e5bd52; --rappel-bg:#332a14; --rappel-line:#544527; --inconnu:#b79ae0; --inconnu-bg:#2c2338; --inconnu-line:#463a5c;
+    --urgence:#f0885c; --urgence-bg:#3a2116; --urgence-line:#5e3722; --miss:#f0736a; --miss-bg:#3a1d1c; --miss-line:#5c2f2c;
+    --bubble-out:#cbb98d; --bubble-out-fg:#231f17; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs-base);-webkit-font-smoothing:antialiased;}
+  .scrollwrap{overflow-x:auto;}
+  .workspace{display:grid;grid-template-columns:264px 372px minmax(0,1fr);height:100dvh;min-width:1040px;background:var(--bg);}
+  .col{min-height:0;display:flex;flex-direction:column;}
+  .side{background:var(--surface);border-right:1px solid var(--line);}
+  .list{background:var(--bg);border-right:1px solid var(--line);}
+  .detail{background:var(--bg);}
+
+  /* ---- left ---- */
+  .brandbox{padding:16px 16px 14px;border-bottom:1px solid var(--line);display:flex;gap:11px;align-items:center;cursor:pointer;}
+  .brandbox:hover{background:var(--surface-2)}
+  .logo img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block}
+  .logo{width:40px;height:40px;border-radius:11px;background:var(--brand);color:#f5f3ea;display:grid;place-items:center;overflow:hidden;
+    font-family:var(--serif);font-style:italic;font-size:20px;flex:0 0 auto;}
+  @media(prefers-color-scheme:dark){.logo{background:var(--btn-bg);color:var(--btn-fg)}}
+  :root[data-theme="dark"] .logo{background:var(--btn-bg);color:var(--btn-fg)}
+  .brandbox .bx{flex:1;min-width:0}
+  .brandbox .hn{font-weight:700;font-size:var(--fs-base);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .brandbox .hp{font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:5px;margin-top:2px;}
+  .brandbox .hp .fr{font-size:12px}
+  .brandbox .chev{color:var(--ink-faint);font-size:15px}
+
+  .searchbox{padding:12px 14px;}
+  .searchbox input{width:100%;padding:9px 12px 9px 32px;border-radius:9px;border:1px solid var(--line-strong);
+    background:var(--surface-2);color:var(--ink);font-family:var(--sans);font-size:var(--fs-sm);
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='none' stroke='%23928f80' stroke-width='2' viewBox='0 0 24 24'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4-4'/></svg>");
+    background-repeat:no-repeat;background-position:10px center;}
+  .searchbox input:focus{outline:2px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:1px}
+
+  .navlbl{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);padding:6px 18px 6px;}
+  .nav{padding:0 10px;display:flex;flex-direction:column;gap:2px;}
+  .navitem{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;border:none;background:transparent;
+    color:var(--ink-soft);font-family:var(--sans);font-size:var(--fs-sm);cursor:pointer;text-align:left;width:100%;}
+  .navitem:hover{background:var(--surface-2)}
+  .navitem[aria-current="true"]{background:var(--surface-3);color:var(--ink);font-weight:600;}
+  .navitem .dot{width:9px;height:9px;border-radius:3px;flex:0 0 auto;}
+  .navitem .lbl{flex:1}
+  .navitem .cnt{font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums;
+    background:var(--surface-3);padding:1px 7px;border-radius:999px;}
+  .navitem[aria-current="true"] .cnt{background:var(--surface)}
+  .d-resa{background:var(--resa)} .d-info{background:var(--info)} .d-annulation{background:var(--annul)}
+  .d-rappel{background:var(--rappel)} .d-inconnu{background:var(--inconnu)} .d-all{background:var(--ink-faint)}
+  .d-urgence{background:var(--urgence)}
+
+  .side-foot{margin-top:auto;border-top:1px solid var(--line);padding:12px 14px;}
+  .feedbtn{width:100%;margin-bottom:10px;padding:8px 10px;border:1px dashed var(--line-strong);
+    border-radius:9px;background:none;color:var(--ink-soft);font:inherit;font-size:var(--fs-sm);
+    cursor:pointer;text-align:left;transition:transform 100ms ease-out}
+  .feedbtn:hover{background:var(--surface-2);color:var(--ink)}
+  .feedbtn:active{transform:scale(.98)}
+  .feedbtn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .usermenu{position:relative;margin-top:11px}
+  .memberline{display:flex;align-items:center;gap:9px;width:100%;padding:6px;border:0;border-radius:10px;
+    background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer;}
+  .memberline:hover{background:var(--surface-2)}
+  .memberline .mav{width:28px;height:28px;border-radius:50%;background:var(--brand);color:#f5f3ea;display:grid;place-items:center;font-size:var(--fs-xs);font-weight:700;flex:0 0 auto}
+  @media(prefers-color-scheme:dark){.memberline .mav{background:var(--btn-bg);color:var(--btn-fg)}}
+  :root[data-theme="dark"] .memberline .mav{background:var(--btn-bg);color:var(--btn-fg)}
+  .memberline .mtxt{flex:1;min-width:0}
+  .memberline .mn{font-size:var(--fs-sm);display:block} .memberline .mv{font-size:var(--fs-xs);color:var(--ink-faint);display:block}
+  .memberline .chev{color:var(--ink-faint);font-size:14px}
+  .menu{position:absolute;bottom:calc(100% + 6px);left:0;right:0;z-index:20;background:var(--surface);
+    border:1px solid var(--line-strong);border-radius:11px;box-shadow:var(--shadow);padding:5px;
+    display:flex;flex-direction:column;gap:2px}
+  .menu[hidden]{display:none}
+  .mi{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:0;background:none;color:var(--ink);
+    font:inherit;font-size:var(--fs-sm);padding:9px 10px;border-radius:8px;cursor:pointer}
+  .mi:hover{background:var(--surface-2)}
+  .mi.danger{color:var(--resa)}
+  .mi[hidden]{display:none}
+
+  /* ---- administration (reserve au compte plateforme) ---- */
+  .modal{position:fixed;inset:0;z-index:60;background:rgba(20,19,12,.45);
+    display:flex;align-items:flex-start;justify-content:center;padding:5vh 16px;overflow-y:auto}
+  .modal[hidden]{display:none}
+  .sheet{background:var(--surface);border:1px solid var(--line-strong);border-radius:16px;
+    box-shadow:0 20px 60px rgba(0,0,0,.28);width:520px;max-width:100%;padding:20px 22px 22px}
+  .sheet h2{font-size:var(--fs-lg);margin:0;letter-spacing:-.2px}
+  .sheet .sh{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+  .sheet .sh .x{margin-left:auto;border:0;background:none;color:var(--ink-faint);font-size:22px;
+    line-height:1;cursor:pointer;padding:2px 6px;border-radius:8px;font-family:inherit}
+  .sheet .x:hover{background:var(--surface-2);color:var(--ink)}
+  .sheet .lead{font-size:var(--fs-sm);color:var(--ink-soft);margin:0 0 16px;line-height:1.5}
+  .sheet fieldset{border:1px solid var(--line);border-radius:12px;padding:14px 15px 16px;margin:0 0 14px}
+  .sheet legend{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.6px;
+    color:var(--ink-faint);padding:0 6px;font-weight:600}
+  .fld{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+  .fld label{font-size:var(--fs-xs);color:var(--ink-soft)}
+  .fld input,.fld select,.fld textarea{padding:9px 11px;border:1px solid var(--line-strong);border-radius:9px;
+    background:var(--surface-2);color:var(--ink);font:inherit;font-size:var(--fs-sm)}
+  .fld textarea{resize:vertical;min-height:96px;line-height:1.45}
+  .fld input:focus,.fld select:focus,.fld textarea:focus{outline:2px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:1px}
+  .fld .hint{font-size:var(--fs-xs);color:var(--ink-faint)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+  .sheet .go{padding:10px 14px;border:0;border-radius:9px;background:var(--btn-bg);color:var(--btn-fg);
+    font:inherit;font-size:var(--fs-sm);font-weight:600;cursor:pointer;transition:transform 100ms ease-out}
+  .sheet .go:active{transform:scale(.98)}
+  .sheet .go[disabled]{opacity:.55;cursor:default}
+  .sheet .go.ghost{background:var(--surface-2);color:var(--ink);border:1px solid var(--line-strong)}
+  .cfacts{display:flex;gap:9px;justify-content:flex-end;margin-top:16px}
+  .note{font-size:var(--fs-sm);margin:9px 0 0;min-height:17px;line-height:1.45}
+  .note.err{color:var(--resa)} .note.ok{color:var(--info)}
+  .sheet h2.bad{color:var(--resa)}
+  .composer .cnote.err{color:var(--resa);font-weight:600}
+  .linkout{width:100%;margin-top:8px;padding:9px 11px;border:1px solid var(--line-strong);
+    border-radius:9px;background:var(--surface-2);color:var(--ink-soft);font:inherit;
+    font-size:var(--fs-xs);cursor:pointer}
+  @media (max-width:900px){.row2{grid-template-columns:1fr}}
+
+  /* ---- middle ---- */
+  .list-head{padding:16px 18px 10px;}
+  .list-head .lt{display:flex;align-items:center;gap:8px;font-size:var(--fs-xl);font-weight:700;letter-spacing:-.3px;}
+  .btag{background:var(--inconnu);color:#fff;font-size:10px;padding:2px 8px;border-radius:999px;font-weight:700;
+    letter-spacing:.4px;text-transform:uppercase;flex:0 0 auto}
+  @media(prefers-color-scheme:dark){.btag{color:#231f17}}
+  :root[data-theme="dark"] .btag{color:#231f17}
+  .tabs{display:flex;gap:6px;margin-top:12px;}
+  .ltab{border:none;background:transparent;color:var(--ink-faint);font-size:var(--fs-sm);font-weight:600;padding:5px 12px;
+    border-radius:999px;cursor:pointer;font-family:var(--sans);}
+  .ltab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+  .archbtn{margin-left:8px;border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink-soft);
+  border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer;font-family:inherit}
+.archbtn:hover{background:var(--surface-3);color:var(--ink)}
+.archbtn:focus-visible,.cpy:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.archtag{margin-left:8px;border-radius:8px;padding:6px 11px;font-size:12px;
+  background:var(--surface-3);color:var(--ink-faint);border:1px solid var(--line)}
+/* Suppression définitive : discrète (elle ne concerne que l'administration),
+   mais rouge — la seule action de l'app qui ne se rattrape pas. */
+.delbtn{margin-left:6px;border:1px solid transparent;background:none;color:var(--resa);
+  cursor:pointer;padding:7px;border-radius:8px;line-height:0;font-family:inherit}
+.delbtn:hover{background:var(--resa-bg)}
+.delbtn:active{transform:scale(.94)}
+.delbtn:focus-visible{outline:2px solid var(--resa);outline-offset:2px}
+.rows{flex:1;overflow-y:auto;padding:4px 10px 20px;}
+  .grouplbl{font-size:var(--fs-xs);color:var(--ink-faint);padding:12px 8px 6px;font-weight:600;}
+  .row{display:flex;gap:12px;align-items:center;padding:11px 10px;border-radius:11px;cursor:pointer;}
+  .row:hover{background:var(--surface-2)}
+  .row[aria-selected="true"]{background:var(--surface);box-shadow:var(--shadow)}
+  .rav{width:40px;height:40px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;color:#fff;font-weight:650;font-size:var(--fs-sm);letter-spacing:.3px;}
+  .rmeta{flex:1;min-width:0}
+  .rl1{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+  .rn{font-weight:650;font-size:var(--fs-base);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .rt{font-size:var(--fs-xs);color:var(--ink-faint);white-space:nowrap;flex:0 0 auto}
+  .rl2{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:var(--fs-sm);color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rl2 .mdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+  .unread{width:9px;height:9px;border-radius:50%;background:var(--rappel);flex:0 0 auto}
+  .list-empty,.detail-empty{color:var(--ink-faint);text-align:center;padding:60px 24px;font-size:var(--fs-sm)}
+
+  /* ---- right ---- */
+  .det-head{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line);background:var(--surface);}
+  .det-head .dav{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:650;font-size:var(--fs-sm);flex:0 0 auto}
+  .det-head .dmeta{min-width:0}
+  .det-head .dn{font-weight:700;font-size:var(--fs-lg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .det-head .dp{font-size:var(--fs-sm);color:var(--ink-faint);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:4px}
+  .dback{flex:0 0 auto;width:32px;height:32px;display:grid;place-items:center;cursor:pointer;
+    border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);
+    border-radius:9px;font:inherit;font-size:19px;line-height:1;transition:transform 100ms ease-out}
+  .dback:hover{background:var(--surface-3)}
+  .dback:active{transform:scale(.96)}
+  .dback:focus-visible,.burger:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .dback.mob,.burger{display:none}
+  .det-head .archbtn,.det-head .archtag{margin-left:auto}
+  .det-head .archtag+.archbtn{margin-left:0}
+  .cpy{border:0;background:none;padding:2px;line-height:0;color:var(--ink-faint);cursor:pointer;
+    opacity:0;transition:opacity .12s}
+  .det-head .dp:hover .cpy,.cpy:focus-visible{opacity:1}
+  /* tactile : pas de survol possible, l'icône reste visible en permanence */
+  @media (hover:none){.cpy{opacity:1}}
+  .cpy:hover{color:var(--ink)}
+  .cpy.ok{opacity:1;color:var(--info)}
+  .det-body{flex:1;overflow-y:auto;padding:22px 22px 10px;max-width:820px;width:100%;margin:0 auto;
+    display:flex;flex-direction:column;}
+  /* un fil court se pose en bas, comme une messagerie ; long, il defile normalement */
+  .det-body>.tl{margin-top:auto}
+
+  .beta{background:var(--inconnu-bg);border:1px solid var(--inconnu-line);border-radius:14px;padding:15px 18px;margin-bottom:20px;}
+  .beta .bh{display:flex;align-items:center;gap:8px;color:var(--inconnu);font-weight:700;font-size:var(--fs-sm);margin-bottom:10px}
+  .beta .btag{background:var(--inconnu);color:#fff;font-size:10px;padding:1px 7px;border-radius:999px;font-weight:700}
+  @media(prefers-color-scheme:dark){.beta .btag{color:#231f17}}
+  .beta ol{margin:0;padding-left:20px;color:var(--ink);font-size:var(--fs-sm);line-height:1.6}
+  .beta li{margin-bottom:5px}
+
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-xs);font-weight:600;padding:4px 11px;border-radius:999px}
+  .pill.resa{background:var(--resa-bg);color:var(--resa);border:1px solid var(--resa-line)}
+  .pill.info{background:var(--info-bg);color:var(--info);border:1px solid var(--info-line)}
+  .pill.annulation{background:var(--annul-bg);color:var(--annul);border:1px solid var(--annul-line)}
+  .pill.rappel{background:var(--rappel-bg);color:var(--rappel);border:1px solid var(--rappel-line)}
+  .pill.inconnu{background:var(--inconnu-bg);color:var(--inconnu);border:1px solid var(--inconnu-line)}
+  .pill.urgence{background:var(--urgence-bg);color:var(--urgence);border:1px solid var(--urgence-line)}
+
+  /* ---- fil de discussion : appels (dépliables) + SMS, dans l'ordre chronologique ---- */
+  .tl{display:flex;flex-direction:column;gap:10px;padding-bottom:6px}
+  .tl-day{align-self:center;font-size:var(--fs-sm);font-weight:600;color:var(--ink-soft);
+    background:var(--surface-3);padding:4px 14px;border-radius:999px;margin:10px 0 2px}
+  /* Un appel se lit comme un message recu : ancre a gauche, largeur de bulle.
+     Deplie, il s'elargit pour laisser respirer infos/transcription — sans bouger
+     son bord gauche, la carte grandit depuis son point d'ancrage. */
+  /* Carte d'appel : un bouton qui pousse la vue detail. Plus d'accordeon —
+     un appel deplie faisait plusieurs ecrans au milieu du fil. */
+  /* Un appel porte son en-tete au-dessus de la carte, comme un SMS porte le sien :
+     la date seule ne disait pas que le telephone avait sonne dans le vide. */
+  .callwrap{display:flex;flex-direction:column;gap:3px;align-self:flex-start;width:100%;max-width:78%}
+  .callh{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:0 4px;
+    font-size:var(--fs-sm);color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .callh .miss{display:inline-flex;align-items:center;gap:4px;font-weight:700;color:var(--miss)}
+  .callh .by,.callh .at{color:var(--ink-faint)}
+  /* Le trait « Nouveau » : pose une seule fois, devant le premier element non lu
+     a l'ouverture du fil. Il disparait a la visite suivante. */
+  .tl-new{display:flex;align-items:center;gap:10px;margin:8px 0 0;
+    font-size:var(--fs-sm);font-weight:700;color:var(--info)}
+  .tl-new::after{content:"";flex:1;height:1px;background:var(--info);opacity:.55}
+  /* L'action suggeree se lit sans deplier : c'est elle qui dit quoi faire. */
+  .tl-act{display:block;margin:0 15px 11px;padding:6px 10px;border-radius:9px;
+    background:var(--inconnu-bg);border:1px solid var(--inconnu-line);color:var(--inconnu);
+    font-size:var(--fs-sm);font-weight:600;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tl-call{width:100%;display:block;text-align:left;
+    font:inherit;color:var(--ink);cursor:pointer;padding:0;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+  .tl-call:hover,.tl-call:active{background:var(--surface-2)}
+  .tl-call:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .tlh{display:flex;align-items:center;gap:10px;width:100%;padding:12px 15px}
+  .tlh .tlu{margin-left:auto;font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums}
+  .tlh .chev{color:var(--ink-faint);font-size:15px;flex:0 0 auto}
+
+  .tl-sumh{display:block;padding:0 15px 5px;font-size:var(--fs-sm);font-weight:700;color:var(--ink)}
+  .tl-sum{padding:0 15px 13px;font-size:var(--fs-sm);color:var(--ink-soft);line-height:1.5}
+  /* overflow:hidden coupe au bord de la boîte de padding : avec un padding-bas,
+     la 3e ligne bavait dedans au lieu d'être coupée. En marge, la coupe tombe
+     pile à la fin de la 2e ligne. */
+  .tl-sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    overflow:hidden;padding-bottom:0;margin-bottom:13px}
+
+  .tl-body{padding:13px 15px 16px;border-top:1px solid var(--line)}
+  /* la meme fabrique de sections, mais en pleine vue : ni cadre ni filet */
+  .callview .tl-body{padding:0;border-top:0}
+  .callview .tl-body>.tl-sub:first-child{margin-top:18px}
+  .tl-sub{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);margin:18px 2px 9px}
+  .tl-body>.tl-sub:first-child{margin-top:0}
+  /* Un SMS = son en-tête (« SMS envoyé · date ») au-dessus de sa bulle.
+     Le wrapper porte l'alignement et la largeur, la bulle remplit. */
+  .sms{display:flex;flex-direction:column;gap:3px;max-width:78%}
+  .sms.in{align-self:flex-start;align-items:flex-start}
+  .sms.out{align-self:flex-end;align-items:flex-end}
+  .smsh{font-size:var(--fs-sm);font-weight:600;color:var(--ink-soft);padding:0 4px;
+    font-variant-numeric:tabular-nums}
+  .tl .m{max-width:100%;padding:9px 13px;border-radius:13px;font-size:var(--fs-sm);line-height:1.5;white-space:pre-wrap}
+  .tl .m.in{background:var(--surface);border:1px solid var(--line)}
+  .tl .m.out{background:var(--brand);color:#f5f3ea}
+  :root[data-theme="dark"] .tl .m.out{background:var(--brand-2)}
+  .player{display:flex;flex-direction:column;align-items:stretch;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-top:8px}
+  .plh{font-size:var(--fs-xs);color:var(--ink-faint);font-weight:600}
+  .plc{display:flex;align-items:center;gap:12px}
+  .player .pp{width:34px;height:34px;border-radius:50%;background:var(--btn-bg);color:var(--btn-fg);border:none;display:grid;place-items:center;cursor:pointer;font-size:13px;flex:0 0 auto}
+  /* <input type=range> plutot qu'une barre maison : le glissement, le clavier
+     et le tactile sont geres par le navigateur, et accent-color suffit a le
+     mettre aux couleurs de la marque. */
+  .player .track{flex:1;min-width:60px;margin:0;accent-color:var(--brand);cursor:pointer}
+  .player .track:disabled{cursor:default;opacity:.45}
+  .player .sk{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);border-radius:7px;
+              padding:3px 7px;font-size:var(--fs-xs);cursor:pointer;font-variant-numeric:tabular-nums;
+              flex:0 0 auto;font-family:inherit;transition:transform 100ms ease-out}
+  .player .sk:active{transform:scale(.96)}
+  .player .track:focus-visible,.player .spd:focus-visible,.player .pp:focus-visible,.player .dl:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  @media(prefers-color-scheme:dark){.player .track{accent-color:var(--brand-2)}}
+  .player .dur{font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums}
+  .player .dl{color:var(--ink-faint);cursor:pointer;line-height:0;text-decoration:none;flex:0 0 auto;padding:2px}
+  .player .dl:hover{color:var(--ink)}
+  .player .dl.busy{opacity:.5;pointer-events:none}
+  .player .spd{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);border-radius:7px;
+               padding:3px 7px;font-size:var(--fs-xs);cursor:pointer;font-variant-numeric:tabular-nums;flex:0 0 auto}
+
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 20px}
+  .info-grid .di{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:var(--fs-sm)}
+  .info-grid .di .k{color:var(--ink-faint)} .info-grid .di .v{color:var(--ink);font-weight:600;text-align:right}
+  .summary{font-size:var(--fs-base);line-height:1.6;color:var(--ink)}
+  .tr{display:flex;flex-direction:column;gap:9px}
+  .b{max-width:80%;padding:10px 14px;border-radius:15px;font-size:var(--fs-sm);line-height:1.5;box-shadow:var(--shadow)}
+  .b .who{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;opacity:.6;margin-bottom:3px}
+  .b.agent{align-self:flex-start;background:var(--surface-2);color:var(--ink);border-bottom-left-radius:5px}
+  .b.client{align-self:flex-end;background:var(--bubble-out);color:var(--bubble-out-fg);border-bottom-right-radius:5px}
+  .d-none{color:var(--ink-faint);font-style:italic;text-align:center;padding:16px}
+  /* même largeur que les cartes du détail (.det-body), coins arrondis */
+  .composer{padding:4px 22px 18px;max-width:820px;width:100%;margin:0 auto;}
+  .composer .cbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:12px 14px}
+  .composer .cm{display:flex;gap:10px;align-items:flex-end}
+  .composer textarea{flex:1;resize:none;border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);
+    border-radius:12px;padding:11px 14px;font-family:var(--sans);font-size:var(--fs-sm);max-height:120px;line-height:1.45}
+  .composer textarea:focus{outline:2px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:1px}
+  .composer .send{width:42px;height:42px;border-radius:11px;background:var(--btn-bg);color:var(--btn-fg);border:none;cursor:pointer;font-size:16px;flex:0 0 auto}
+  .composer .cnote{font-size:var(--fs-xs);color:var(--ink-faint);margin:0 0 8px}
+  .composer .cwarn{font-size:var(--fs-xs);color:var(--ink-faint);margin:8px 0 0;line-height:1.35}
+
+  /* Le feedback part de l'appui, pas du survol : sur la tablette d'accueil il n'y a pas de survol. */
+  .row:active,.navitem:active,.ltab:active,.tlh:active,.mi:active,.memberline:active,.brandbox:active{background:var(--surface-3)}
+  .send,.pp,.archbtn,.spd{transition:transform 100ms ease-out}
+  .send:active,.pp:active,.archbtn:active,.spd:active{transform:scale(.96)}
+
+  /* ---- ecran de connexion ----
+     Le logo est un PNG a fond opaque #fdfcf9 : l'ecran se cale sur cette teinte
+     pour qu'il s'y fonde, et reste clair quel que soit le theme. */
+  #loginOv{position:fixed;inset:0;z-index:99;background:#fdfcf9;color:#24231c;padding:24px;
+    display:flex;align-items:center;justify-content:center;font-family:var(--sans)}
+  .authbox{width:340px;max-width:100%;display:flex;flex-direction:column;gap:11px}
+  .authlogo{width:220px;max-width:72%;align-self:center;margin-bottom:6px;display:block}
+  .authbox h1{font-size:17px;font-weight:700;margin:0;text-align:center;letter-spacing:-.2px}
+  .authbox .sub{font-size:13px;color:#5c5a4e;margin:0 0 4px;text-align:center;line-height:1.5}
+  .authbox input{padding:12px 13px;border:1px solid #d8d3c4;border-radius:9px;font:inherit;
+    font-size:14px;background:#fff;color:#24231c}
+  .authbox input:focus{outline:2px solid rgba(58,58,40,.35);outline-offset:1px}
+  .authbox .main{padding:12px;border:0;border-radius:9px;background:#3a3a28;color:#fff;
+    font:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:transform 100ms ease-out}
+  .authbox .main:active{transform:scale(.98)}
+  .authbox .link{background:none;border:0;color:#5c5a4e;font:inherit;font-size:13px;
+    cursor:pointer;text-decoration:underline;padding:4px;align-self:center}
+  .authbox .link:hover{color:#24231c}
+  .authmsg{font-size:13px;margin:0;min-height:18px;text-align:center;line-height:1.4}
+  .authmsg.err{color:#c0392b}
+  .authmsg.ok{color:#2f7d5b}
+
+  /* ---- telephone : une seule colonne, les vues s'empilent ---- */
+  @media (max-width:900px){
+    .scrollwrap{overflow-x:hidden}
+    .workspace{grid-template-columns:minmax(0,1fr);min-width:0}
+    /* la colonne de gauche devient un tiroir : recherche, motifs, compte */
+    .side{position:fixed;top:0;bottom:0;left:0;width:min(86vw,320px);z-index:40;
+      transform:translateX(-100%);transition:transform .25s ease;box-shadow:0 0 40px rgba(0,0,0,.25)}
+    body.drawer .side{transform:none}
+    .scrim{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;
+      transition:opacity .25s ease}
+    body.drawer .scrim{opacity:1;pointer-events:auto}
+    .burger{display:grid;place-items:center;width:32px;height:32px;flex:0 0 auto;cursor:pointer;
+      border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);
+      border-radius:9px;font:inherit;font-size:15px;line-height:1;margin-right:2px}
+    /* liste et detail ne coexistent pas : on en montre une a la fois */
+    .list{border-right:0}
+    body.detail .list{display:none}
+    body:not(.detail) .detail{display:none}
+    .dback.mob{display:grid}
+    .det-head{padding:12px 14px;gap:9px}
+    .det-head>.pill{display:none}
+    /* « Désarchiver » dit deja que la discussion est archivee : l'etiquette en
+       double poussait le numero du client hors de l'ecran */
+    .det-head .archtag{display:none}
+    .det-head .archtag+.archbtn{margin-left:auto}
+    .det-head .dp{white-space:nowrap}
+    /* deux colonnes d'infos sur 390px : chaque libelle passait sur deux lignes */
+    .info-grid{grid-template-columns:1fr}
+    .det-body,.composer{padding-left:15px;padding-right:15px}
+    /* une bulle a 78% est trop etroite sur un ecran de telephone */
+    .callwrap,.sms{max-width:94%}
+    /* sur 390px, « pris par votre Réceptionniste IA » repoussait la date
+       sur une 2e ligne a chaque appel : l'essentiel est « manque » + l'heure. */
+    .callh .by{display:none}
+  }
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="alertOv" hidden></div>
+<div class="modal" id="feedOv" hidden></div>
+<div class="scrollwrap">
+<div class="workspace">
+  <!-- LEFT -->
+  <aside class="col side">
+    <div class="brandbox" title="Profil de l'hôtel">
+      <div class="logo">M</div>
+      <div class="bx">
+        <div class="hn">Hôtel Saint-Énogat</div>
+        <div class="hp"><span class="fr">🇫🇷</span><span>+33 5 63 47 12 08</span></div>
+      </div>
+      <span class="chev">⌄</span>
+    </div>
+    <div class="searchbox">
+      <input id="search" type="search" placeholder="Chercher un nom, un numéro, « animaux »…">
+    </div>
+    <div class="navlbl">Motif d'appel</div>
+    <div class="nav" id="nav">
+      <button class="navitem" data-f="all" aria-current="true"><span class="dot d-all"></span><span class="lbl">Tous</span><span class="cnt" data-c="all"></span></button>
+      <button class="navitem" data-f="urgence"><span class="dot d-urgence"></span><span class="lbl">Urgences</span><span class="cnt" data-c="urgence"></span></button>
+      <button class="navitem" data-f="resa"><span class="dot d-resa"></span><span class="lbl">Réservation</span><span class="cnt" data-c="resa"></span></button>
+      <button class="navitem" data-f="info"><span class="dot d-info"></span><span class="lbl">Information</span><span class="cnt" data-c="info"></span></button>
+      <button class="navitem" data-f="annulation"><span class="dot d-annulation"></span><span class="lbl">Annulation</span><span class="cnt" data-c="annulation"></span></button>
+      <button class="navitem" data-f="rappel"><span class="dot d-rappel"></span><span class="lbl">Demande de rappel</span><span class="cnt" data-c="rappel"></span></button>
+      <button class="navitem" data-f="inconnu"><span class="dot d-inconnu"></span><span class="lbl">Inconnu</span><span class="cnt" data-c="inconnu"></span></button>
+    </div>
+    <div class="side-foot">
+      <button class="feedbtn" id="feedBtn">✎ Un souci ? Dites-le-nous</button>
+      <div class="usermenu">
+        <button class="memberline" id="userBtn" aria-haspopup="true" aria-expanded="false">
+          <span class="mav">AV</span>
+          <span class="mtxt"><span class="mn">Amaury De Veyrac</span><span class="mv">Vous · réception</span></span>
+          <span class="chev">⌄</span>
+        </button>
+        <div class="menu" id="userMenu" hidden>
+          <button class="mi" id="themeBtn">🌗 Basculer clair / sombre</button>
+          <button class="mi" id="adminBtn" hidden>⚙ Administration</button>
+          <button class="mi danger" id="logoutBtn">⏻ Déconnexion</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MIDDLE -->
+  <section class="col list">
+    <div class="list-head">
+      <div class="lt"><button class="burger" id="burger" aria-label="Filtres et compte">☰</button>Discussions <span class="btag" title="Version bêta — l'app évolue encore, signalez ce qui coince">Bêta</span></div>
+      <div class="tabs" id="tabs">
+        <button class="ltab" aria-selected="true" data-t="tous">Tous</button>
+        <button class="ltab" aria-selected="false" data-t="nonlus">Non lus</button>
+        <button class="ltab" aria-selected="false" data-t="archives">Archivés</button>
+      </div>
+    </div>
+    <div class="rows" id="rows"></div>
+  </section>
+
+  <!-- RIGHT -->
+  <section class="col detail" id="detailCol">
+    <div class="detail-empty" id="detailEmpty">Sélectionnez une conversation pour voir le détail.</div>
+    <div class="col" id="detailInner" style="display:none;height:100%">
+      <div class="det-head" id="detHead"></div>
+      <div class="det-body" id="detBody"></div>
+      <div class="composer" id="composer">
+        <div class="cbox">
+          <p class="cnote">Envoyer un sms</p>
+          <div class="cm">
+            <textarea id="cInput" rows="1" placeholder="Écrire un message…"></textarea>
+            <button class="send" id="cSend" aria-label="Envoyer">➤</button>
+          </div>
+          <p class="cwarn">Le client ne peut pas répondre à ce SMS. Une mention ajoutée à la fin du message le lui indique et l'invite à appeler l'hôtel.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</div>
+
+<script>
+(function(){
+  var LABEL={urgence:'Urgence',resa:'Réservation',info:'Information',annulation:'Annulation',rappel:'Demande de rappel',inconnu:'Inconnu'};
+  var COLOR={urgence:'#d9480f',resa:'#c0392b',info:'#2f7d5b',annulation:'#5b6b7a',rappel:'#b5850f',inconnu:'#6d4b9f'};
+  var data=[
+    {id:'c0',motif:'urgence',name:'Chambre 214 · M. Ferrand',phone:'+33 6 90 33 12 45',grp:'Cette semaine',when:'07h',d:'27/07 · 07h58',
+     unread:true,dur:'0 m 54 s',
+     summary:"Fuite d'eau sous le lavabo de la chambre 214. Le client demande une intervention rapide avant son départ à 9h.",
+     transcript:[
+       {r:'agent',x:"Hôtel Saint-Énogat, bonjour."},
+       {r:'client',x:"Bonjour, il y a une fuite d'eau sous le lavabo de ma chambre, la 214, ça coule par terre."},
+       {r:'agent',x:"Je suis désolé pour ce désagrément. Je transmets immédiatement à la maintenance pour une intervention rapide."}
+     ]},
+    {id:'c1',motif:'inconnu',name:'Appelant non identifié',phone:'+33 6 88 12 90 44',grp:'Cette semaine',when:'ven.',d:'26/07',
+     unread:true,noMessage:true,attempts:['13h07','13h17','13h19'],dur:'',
+     summary:"Aucun message laissé. A raccroché dès le décroché de l'agent, à trois reprises.",transcript:[]},
+    {id:'c2',motif:'resa',name:'Sophie Bénard',phone:'+33 6 44 90 11 07',grp:'Cette semaine',when:'ven.',d:'26/07 · 10h12',
+     unread:true,dur:'1 m 52 s',dates:'14 → 16 février',resa:'Oui',
+     summary:"Réservation 2 nuits du 14 au 16 février, chambre double, arrivée tardive vers 22h.",
+     transcript:[
+       {r:'agent',x:"Bonjour, vous êtes bien à l'Hôtel Saint-Énogat, comment puis-je vous aider ?"},
+       {r:'client',x:"Bonjour, je voudrais réserver une chambre double pour deux nuits."},
+       {r:'agent',x:"Avec plaisir. Pour quelles dates ?"},
+       {r:'client',x:"Du 14 au 16 février. On arrivera vers 22h."},
+       {r:'agent',x:"C'est noté, l'arrivée tardive est possible avec un code. Je confirme la réservation."}
+     ]},
+    {id:'c3',motif:'rappel',name:'Julien Marchand',phone:'+33 6 71 04 22 18',grp:'Cette semaine',when:'jeu.',d:'25/07 · 18h47',
+     dur:'0 m 38 s',summary:"Souhaite être rappelé pour modifier sa réservation de janvier (ajouter une nuit).",
+     transcript:[
+       {r:'agent',x:"Hôtel Saint-Énogat, bonjour."},
+       {r:'client',x:"Bonjour, j'ai une réservation en janvier et je voudrais ajouter une nuit. Vous pouvez me rappeler ?"},
+       {r:'agent',x:"Bien sûr, je transmets à la réception qui vous rappellera."}
+     ]},
+    {id:'c4',motif:'info',name:'Marc Lefèvre',phone:'+33 7 82 55 41 30',grp:'Cette semaine',when:'jeu.',d:'25/07 · 09h39',
+     dur:'0 m 47 s',summary:"Demande les horaires du petit-déjeuner et si le parking est gratuit.",
+     transcript:[
+       {r:'agent',x:"Hôtel Saint-Énogat, bonjour, que puis-je pour vous ?"},
+       {r:'client',x:"Le petit-déjeuner est servi à partir de quelle heure ? Et le parking est gratuit ?"},
+       {r:'agent',x:"Le petit-déjeuner est servi de 7h à 10h. Le parking privé extérieur est gratuit."}
+     ]},
+    {id:'c5',motif:'annulation',name:'Nathalie Girard',phone:'+33 6 24 55 71 09',grp:'Plus ancien',when:'24 juil.',d:'24/07 · 17h20',
+     dur:'1 m 03 s',dates:'nuit du 2 août',resa:'Annulée',
+     summary:"Annule sa réservation de la nuit du 2 août pour raison personnelle, demande confirmation par SMS.",
+     transcript:[
+       {r:'agent',x:"Hôtel Saint-Énogat, bonjour."},
+       {r:'client',x:"Bonjour, je dois annuler ma réservation du 2 août malheureusement."},
+       {r:'agent',x:"C'est bien noté, votre réservation du 2 août est annulée. Vous recevrez une confirmation par SMS."}
+     ]},
+    {id:'c6',motif:'info',name:'Claire Dubois',phone:'+33 6 12 88 63 45',grp:'Plus ancien',when:'24 juil.',d:'24/07 · 16h05',
+     dur:'1 m 09 s',summary:"Question sur l'acceptation des animaux et le supplément appliqué.",
+     transcript:[
+       {r:'agent',x:"Hôtel Saint-Énogat, bonjour."},
+       {r:'client',x:"Est-ce que vous acceptez les animaux ? J'ai un petit chien."},
+       {r:'agent',x:"Oui, les animaux sont acceptés avec un supplément de 5 euros par nuit."}
+     ]},
+    {id:'c7',motif:'inconnu',name:'Appelant non identifié',phone:'Numéro masqué',grp:'Plus ancien',when:'23 juil.',d:'23/07 · 22h05',
+     noMessage:true,attempts:['22h05'],dur:'',summary:"Aucun message laissé. A raccroché pendant le message d'accueil.",transcript:[]}
+  ];
+
+  var $=function(s,r){return (r||document).querySelector(s)},
+      $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))},
+      esc=function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')};
+
+  // Clair par defaut : une reception est un lieu eclaire, et le sombre
+  // surprenait a la premiere ouverture. Le choix de l'utilisateur est retenu.
+  var theme='light';
+  try{theme=localStorage.getItem('mylidie_theme')||'light'}catch(e){}
+  document.documentElement.setAttribute('data-theme',theme);
+  $('#themeBtn').addEventListener('click',function(){
+    theme=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',theme);
+    try{localStorage.setItem('mylidie_theme',theme)}catch(e){}
+  });
+
+  // selected = la discussion ouverte ; openId = l'appel ouvert par-dessus (ou null)
+  var filter='all',query='',tab='tous',selected=null,openId=null;
+  // Horodatage du 1er element non lu au moment ou le fil s'est ouvert : c'est
+  // la ou se pose le trait « Nouveau ». null = rien de neuf a signaler.
+  var newFrom=null;
+
+  // Mode live : rempli => l'app lit les vrais appels dans Supabase (login requis).
+  // Vide => maquette de démo, elle tourne sur le tableau `data` ci-dessus. La clé
+  // anon est publique par construction : c'est RLS qui décide ce que voit le compte.
+  var SUPA={url:'https://gyimzmgctbhqjspsujcp.supabase.co',anon:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5aW16bWdjdGJocWpzcHN1amNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2MzY1MjMsImV4cCI6MjEwMzIxMjUyM30.EDBBGlKHhi0b2kaEGO7Le0nx3EUopsmt9X7EyyLcZE0'};
+  var LIVE=!!SUPA.url, tok=null, msgs=[], hotel=null, HOTEL_ID='';
+  // Le fil SMS est rattaché au numéro : on compare les chiffres seuls
+  // (+33 6 90… et 0690… désignent le même correspondant).
+  function msgsFor(x){
+    var dp=digits(x.phone);if(!dp)return [];
+    var tail=dp.slice(-9);
+    return msgs.filter(function(m){return digits(m.phone_e164).slice(-9)===tail});
+  }
+  function api(path,opt){
+    opt=opt||{};opt.headers=Object.assign({apikey:SUPA.anon,Authorization:'Bearer '+tok,
+      'Content-Type':'application/json'},opt.headers||{});
+    return fetch(SUPA.url+path,opt);
+  }
+
+  function counts(){var src=data.filter(function(x){return query||tab==='archives'?true:!x.archived});var c={all:src.length,urgence:0,resa:0,info:0,annulation:0,rappel:0,inconnu:0};src.forEach(function(x){c[x.motif]++});return c;}
+  function renderCounts(){var c=counts();$$('[data-c]').forEach(function(el){el.textContent=c[el.dataset.c]});}
+  function initials(n){var p=n.split(' ');return ((p[0]||'?')[0]+((p[1]||'')[0]||'')).toUpperCase();}
+  function digits(s){return String(s||'').replace(/\D/g,'');}
+  function matchQuery(x){
+    if(!query)return true;var q=query.toLowerCase();
+    // recherche par numéro : on ignore espaces et indicatif (0690… trouve +33 6 90…)
+    var dq=digits(q);
+    if(dq.length>=3){
+      var dp=digits(x.phone);
+      if(dp&&(dp.indexOf(dq)>=0||dp.indexOf(dq.replace(/^0/,'33'))>=0))return true;
+    }
+    if(x.name.toLowerCase().indexOf(q)>=0)return true;
+    if((x.summary||'').toLowerCase().indexOf(q)>=0)return true;
+    return (x.transcript||[]).some(function(m){return m.x.toLowerCase().indexOf(q)>=0});
+  }
+  function groupKey(x){var d=digits(x.phone);return d?d.slice(-9):'seul:'+x.id;}
+  // Une discussion = un correspondant. Les appels visibles sont déjà triés du plus
+  // récent au plus ancien : la tête de groupe est donc le dernier appel.
+  function groupsOf(list){
+    var seen={},out=[];
+    list.forEach(function(x){
+      var k=groupKey(x);
+      if(seen[k]){seen[k].items.push(x);return;}
+      seen[k]={head:x,items:[x]};out.push(seen[k]);
+    });
+    return out;
+  }
+  // tous les appels du même correspondant, visibles ou non (pour le fil du détail)
+  function historyFor(x){
+    var k=groupKey(x);
+    return data.filter(function(d){return groupKey(d)===k});
+  }
+  function visible(){
+    return data.filter(function(x){
+      if(filter!=='all'&&x.motif!==filter)return false;
+      // une recherche active balaie tout, y compris les archivés
+      if(!query){
+        if(tab==='archives'){ if(!x.archived)return false; }
+        else if(x.archived)return false;
+        if(tab==='nonlus'&&!x.unread)return false;
+      }
+      return matchQuery(x);
+    });
+  }
+  function renderRows(){
+    var wrap=$('#rows'),grps=groupsOf(visible()),keep=wrap.scrollTop;
+    if(!grps.length){wrap.innerHTML='<div class="list-empty">'+(query?'Aucun résultat.':tab==='archives'?'Aucune discussion archivée.':'Aucune discussion.')+'</div>';return;}
+    var html='',lastGrp=null;
+    grps.forEach(function(g){
+      var x=g.head;
+      if(x.grp!==lastGrp){html+='<div class="grouplbl">'+x.grp+'</div>';lastGrp=x.grp;}
+      var isMasked=x.phone==='Numéro masqué';
+      var sub=isMasked?'A raccroché · '+LABEL[x.motif]:LABEL[x.motif]+(x.dur?' · '+x.dur:'');
+      if(g.items.length>1)sub+=' · '+g.items.length+' appels';
+      var unread=g.items.some(function(i){return i.unread});
+      var sel=g.items.some(function(i){return i.id===selected});
+      html+='<div class="row" data-id="'+x.id+'"'+(sel?' aria-selected="true"':'')+'>'+
+        '<div class="rav" style="background:'+COLOR[x.motif]+'">'+esc(initials(x.name))+'</div>'+
+        '<div class="rmeta"><div class="rl1"><span class="rn">'+esc(x.name)+'</span><span class="rt">'+x.when+'</span></div>'+
+        '<div class="rl2"><span class="mdot" style="background:'+COLOR[x.motif]+'"></span>'+esc(sub)+'</div></div>'+
+        (unread?'<span class="unread"></span>':'')+'</div>';
+    });
+    wrap.innerHTML=html;wrap.scrollTop=keep;
+    $$('.row',wrap).forEach(function(el){el.addEventListener('click',function(){openThread(el.dataset.id,true)});});
+  }
+
+  function betaFor(x){
+    if(x.motif==='urgence')return ['Traiter en priorité la demande urgente de '+esc(x.name)+'.','Prévenir la maintenance ou le responsable de garde selon le motif signalé.'];
+    if(x.motif==='resa')return ['Confirmer à la réception la réservation de '+esc(x.name)+(x.dates?' ('+esc(x.dates)+')':'')+'.','Vérifier la disponibilité et préparer la chambre pour une arrivée tardive.'];
+    if(x.motif==='rappel')return ['Rappeler '+esc(x.name)+' au '+esc(x.phone)+' pour traiter sa demande.','Vérifier la réservation concernée avant de rappeler.'];
+    if(x.motif==='annulation')return ['Confirmer l\'annulation par SMS à '+esc(x.name)+'.','Libérer la chambre concernée dans le planning.'];
+    return null;
+  }
+  // Le glyphe unicode s'affichait en tofu (rectangle barre) sur iOS : un SVG
+  // se dessine partout pareil.
+  var DL_SVG='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+
+    '<path d="M12 3v11"/><path d="M7.5 10l4.5 4.5 4.5-4.5"/><path d="M4.5 20h15"/></svg>';
+  var COPY_SVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '+
+    'stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/>'+
+    '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  function detHeadHTML(x){
+    return '<button class="dback mob" id="dbackList" aria-label="Retour à la liste">‹</button>'+
+      '<div class="dav" style="background:'+COLOR[x.motif]+'">'+esc(initials(x.name))+'</div>'+
+      '<div class="dmeta"><div class="dn">'+esc(x.name)+'</div>'+
+      '<div class="dp"><span>'+esc(x.phone)+'</span>'+
+      (digits(x.phone).length>=6
+        ? '<button class="cpy" title="Copier le numéro" aria-label="Copier le numéro" data-n="'+esc(x.phone)+'">'+COPY_SVG+'</button>'
+        : '')+'</div></div>'+
+      '<span class="pill '+x.motif+'" style="margin-left:14px">'+LABEL[x.motif]+'</span>'+
+      (x.archived
+        ? '<span class="archtag" title="Archivée le '+esc(x.archivedAt||'')+'">Archivée</span>'+
+          '<button class="archbtn" id="archBtn">Désarchiver</button>'
+        : '<button class="archbtn" id="archBtn" title="Masque la discussion de la boîte — réversible à tout moment">Archiver</button>');
+  }
+  // Horodatage du fil. En live il vient de la base ; en démo on le reconstruit
+  // depuis le libellé « 27/07 · 07h58 » (année courante, suffisant pour trier).
+  function tsOf(x){
+    if(x.ts)return x.ts;
+    var m=/(\d{1,2})\/(\d{1,2})(?:\D+(\d{1,2})h(\d{2}))?/.exec(x.d||'');
+    x.ts=m?new Date(new Date().getFullYear(),+m[2]-1,+m[1],+(m[3]||0),+(m[4]||0)).getTime():0;
+    return x.ts;
+  }
+  // Un fil = un correspondant : ses appels ET ses SMS, du plus ancien au plus récent.
+  function timelineFor(x){
+    var items=historyFor(x).map(function(c){return {k:'call',ts:tsOf(c),c:c}})
+      .concat(msgsFor(x).map(function(m){return {k:'sms',ts:m.ts||0,m:m}}));
+    items.sort(function(a,b){return a.ts-b.ts});
+    return items;
+  }
+  // Reperes de jour du fil, facon WhatsApp : sans eux, deux appels a trois
+  // jours d'ecart se lisent comme s'ils s'etaient suivis.
+  function dayKey(ts){var d=new Date(ts);return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()}
+  function dayLabel(ts){
+    var d=new Date(ts),now=new Date();
+    if(dayKey(ts)===dayKey(now.getTime()))return "Aujourd'hui";
+    if(dayKey(ts)===dayKey(now.getTime()-864e5))return 'Hier';
+    var o={day:'numeric',month:'long'};
+    if(d.getFullYear()!==now.getFullYear())o.year='numeric';
+    return d.toLocaleDateString('fr-FR',o);
+  }
+  // Fleche entrante barree, comme un appel manque sur iPhone.
+  var MISS_SVG='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+    'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
+    '<path d="M19 5L7 17"/><path d="M7 8.5V17h8.5"/></svg>';
+  function callBodyHTML(x){
+    var beta=betaFor(x),multi=x.attempts&&x.attempts.length>1;
+    var info='<div class="di"><span class="k">Type de demande</span><span class="v">'+LABEL[x.motif]+'</span></div>';
+    if(x.dates)info+='<div class="di"><span class="k">Dates séjour</span><span class="v">'+esc(x.dates)+'</span></div>';
+    if(x.resa)info+='<div class="di"><span class="k">Réservation</span><span class="v">'+esc(x.resa)+'</span></div>';
+    info+='<div class="di"><span class="k">Numéro</span><span class="v">'+esc(x.phone)+'</span></div>';
+    info+='<div class="di"><span class="k">Durée</span><span class="v">'+(x.dur||'—')+'</span></div>';
+    info+='<div class="di"><span class="k">Reçu</span><span class="v">'+esc(x.d)+'</span></div>';
+    if(multi)info+='<div class="di"><span class="k">Appels répétés</span><span class="v" style="color:var(--inconnu)">'+x.attempts.length+'× — '+x.attempts.join(', ')+'</span></div>';
+    // Les commandes qui exigent un vrai fichier (vitesse, téléchargement) ne
+    // s'affichent que s'il y en a un : pas de bouton qui ne fait rien. Le
+    // curseur, lui, reste visible mais desactive tant que la lecture n'a pas
+    // charge cet enregistrement — play() l'active.
+    var player=!x.noMessage?'<div class="player">'+
+      '<div class="plh">Géré par votre Réceptionniste IA</div>'+
+      '<div class="plc">'+
+        '<button class="pp" aria-label="Lire l\'enregistrement">▶</button>'+
+        '<input type="range" class="track" min="0" max="1000" value="0" step="1" disabled '+
+          'aria-label="Position dans l\'enregistrement">'+
+        '<span class="dur">0:00 / '+durMS(x.dur)+'</span>'+
+        (x.audio
+          ? '<button class="spd" title="Vitesse de lecture">'+rateLabel()+'</button>'+
+            '<a class="dl" href="'+esc(x.audio)+'" download title="Télécharger l\'enregistrement" aria-label="Télécharger l\'enregistrement">'+DL_SVG+'</a>'
+          : '')+
+      '</div></div>':'';
+    var tr=(x.transcript&&x.transcript.length)
+      ? '<div class="tr">'+x.transcript.map(function(m){return '<div class="b '+m.r+'"><div class="who">'+(m.r==='agent'?'Agent IA':'Client')+'</div>'+esc(m.x)+'</div>'}).join('')+'</div>'
+      : '<div class="d-none">Aucun échange — l\'appelant a raccroché sans laisser de message.</div>';
+    return '<div class="tl-body">'+
+      '<div class="tl-sub">Enregistrement</div>'+(player||'<div class="d-none">Pas d\'enregistrement exploitable.</div>')+
+      '<div class="tl-sub">Informations</div><div class="info-grid">'+info+'</div>'+
+      '<div class="tl-sub">Transcription</div>'+tr+
+      (beta?'<div class="beta" style="margin:20px 0 0"><div class="bh">✨ Avant votre prochain appel <span class="btag">Bêta</span></div><ol>'+
+        beta.map(function(b){return '<li>'+b+'</li>'}).join('')+'</ol></div>':'')+
+      '</div>';
+  }
+  // Twilio renvoie ses statuts en anglais ; la reception lit du francais.
+  var SMSST={queued:'en attente',accepted:'en attente',sending:'envoi en cours',
+    sent:'envoyé',delivered:'reçu',read:'lu',undelivered:'non délivré',failed:'échec'};
+  function threadHTML(x){
+    var items=timelineFor(x);
+    if(!items.length)return '<div class="d-none">Rien à afficher pour ce correspondant.</div>';
+    var lastDay=null,newDone=false;
+    return '<div class="tl">'+items.map(function(it){
+      // Ce qui se pose AVANT l'élément : le repère de jour, puis « Nouveau ».
+      var pre='';
+      if(it.ts&&dayKey(it.ts)!==lastDay){
+        lastDay=dayKey(it.ts);
+        pre+='<div class="tl-day">'+esc(dayLabel(it.ts))+'</div>';
+      }
+      if(newFrom!==null&&!newDone&&it.ts>=newFrom){
+        newDone=true;
+        pre+='<div class="tl-new">Nouveau</div>';
+      }
+      if(it.k==='sms'){
+        var m=it.m;
+        var out=m.direction!=='in';
+        return pre+'<div class="sms '+(out?'out':'in')+'">'+
+               '<div class="smsh">'+(out?'SMS envoyé':'SMS reçu')+' · '+esc(m.at)+
+               (out&&m.status?' · '+esc(SMSST[m.status]||m.status):'')+'</div>'+
+               '<div class="m '+(out?'out':'in')+'">'+esc(m.body)+'</div></div>';
+      }
+      var c=it.c;
+      // betaFor() échappe déjà ce qu'il interpole : ne pas ré-échapper ici.
+      var act=betaFor(c);
+      // un <button> plutot qu'un <div> cliquable : atteignable au clavier
+      return pre+'<div class="callwrap">'+
+        '<div class="callh"><span class="miss">'+MISS_SVG+'Appel manqué</span>'+
+        '<span class="by">pris par votre Réceptionniste IA ·</span>'+
+        '<span class="at">'+esc(c.d)+'</span></div>'+
+        '<button class="tl-call" data-go="'+c.id+'">'+
+        '<span class="tlh">'+
+        '<span class="pill '+c.motif+'">'+LABEL[c.motif]+'</span>'+
+        '<span class="tlu">'+esc(c.noMessage?'sans message':(c.dur||''))+'</span>'+
+        '<span class="chev">›</span></span>'+
+        (act?'<span class="tl-act">✨ À faire : '+act[0]+'</span>':'')+
+        '<span class="tl-sumh">Résumé de l\'appel</span>'+
+        '<span class="tl-sum">'+esc(c.summary)+'</span></button></div>';
+    }).join('')+'</div>';
+  }
+  // Vue poussee d'un appel : le resume complet, puis les memes sections que la carte.
+  function callViewHTML(c){
+    return '<div class="callview">'+
+      '<div class="tl-sub">Résumé de l\'appel</div>'+
+      '<div class="summary">'+esc(c.summary)+'</div>'+
+      callBodyHTML(c)+'</div>';
+  }
+  function callHeadHTML(c){
+    return '<button class="dback" id="dbackThread" aria-label="Retour à la discussion" title="Retour à la discussion">‹</button>'+
+      '<div class="dmeta"><div class="dn">Appel du '+esc(c.d)+'</div>'+
+      '<div class="dp"><span>'+esc(c.name)+'</span></div></div>'+
+      '<span class="pill '+c.motif+'" style="margin-left:14px">'+LABEL[c.motif]+'</span>'+
+      // Suppression définitive : administration seule, et seulement ici, dans le
+      // détail d'UN appel. Jamais sur une carte de la liste ni sur l'en-tête du
+      // fil — un fil regroupe plusieurs appels, on ne saurait pas ce qu'on efface.
+      (isAdmin()
+        ? '<button class="delbtn" id="delBtn" style="margin-left:auto" '+
+          'title="Supprimer définitivement cet appel" '+
+          'aria-label="Supprimer définitivement cet appel">'+TRASH_SVG+'</button>'
+        : '');
+  }
+  var TRASH_SVG='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+    'stroke-width="2" stroke-linecap="round"><path d="M4 6h16M9 6V4h6v2M7 6l1 14h8l1-14"/></svg>';
+  function durMS(d){if(!d)return '0:00';var m=/(\d+)\s*m\s*(\d+)/.exec(d);if(m)return m[1]+':'+('0'+m[2]).slice(-2);var s=/(\d+)\s*s/.exec(d);return s?'0:'+('0'+s[1]).slice(-2):'0:00';}
+
+  function copyPhone(e){
+    var b=e.currentTarget,ok=function(){
+      b.classList.add('ok');b.title='Numéro copié';
+      setTimeout(function(){b.classList.remove('ok');b.title='Copier le numéro'},1500);
+    };
+    if(navigator.clipboard&&navigator.clipboard.writeText)
+      navigator.clipboard.writeText(b.dataset.n||'').then(ok,function(){b.title='Copie impossible'});
+    else b.title='Copie impossible';
+  }
+  function markRead(x){
+    if(!x.unread)return;
+    patchCall(x.id,{read_at:new Date().toISOString()});
+    x.unread=false;
+  }
+  // Ouvrir une discussion depuis la liste. `byUser` est faux a l'ouverture
+  // automatique : on n'a pas le droit de marquer « lu » ce que personne n'a lu.
+  function openThread(id,byUser){
+    var x=data.find(function(d){return d.id===id});if(!x)return;
+    selected=id;openId=null;
+    var hist=historyFor(x),un=hist.filter(function(c){return c.unread});
+    // Se calculer AVANT markRead : après, il n'y a plus rien à repérer.
+    newFrom=(byUser&&un.length)?Math.min.apply(null,un.map(tsOf)):null;
+    // Ouvrir le fil, c'est lire tout le fil : la liste n'affiche qu'un point par
+    // correspondant, pas un par appel — en marquer un seul laissait le point allumé.
+    if(byUser)hist.forEach(markRead);
+    document.body.classList.add('detail');
+    renderDetail();renderRows();renderCounts();
+  }
+  // Ouvrir un appel : une vue par-dessus le fil, avec retour.
+  function openCall(id){
+    var c=data.find(function(d){return d.id===id});if(!c)return;
+    openId=id;markRead(c);
+    renderDetail();renderRows();renderCounts();
+  }
+  function renderDetail(){
+    var x=data.find(function(d){return d.id===selected});if(!x)return;
+    var c=openId?data.find(function(d){return d.id===openId}):null;
+    $('#detailEmpty').style.display='none';$('#detailInner').style.display='flex';
+    $('#detHead').innerHTML=c?callHeadHTML(c):detHeadHTML(x);
+    var body=$('#detBody');body.innerHTML=c?callViewHTML(c):threadHTML(x);
+    // une vue poussee s'ouvre en haut ; un fil s'ouvre sur son dernier message
+    body.scrollTop=c?0:body.scrollHeight;
+    $('#composer').style.display=c?'none':'';
+    var cp=$('#detHead .cpy');
+    if(cp)cp.addEventListener('click',copyPhone);
+    var bt=$('#dbackThread');
+    if(bt)bt.addEventListener('click',function(){openId=null;renderDetail();renderRows();});
+    var bl=$('#dbackList');
+    if(bl)bl.addEventListener('click',function(){document.body.classList.remove('detail')});
+    var db=$('#delBtn');
+    if(db)db.addEventListener('click',function(){bindDelete(c)});
+
+    if(!c){
+      $$('#detBody .tl-call').forEach(function(el){
+        el.addEventListener('click',function(){openCall(el.dataset.go)});
+      });
+      return bindArchive(x);
+    }
+    var pp=$('#detBody .player .pp');
+    if(pp)pp.addEventListener('click',function(){
+      if(c.audio)play($('#detBody .player'),c.audio);else simPlay($('#detBody .player'));
+    });
+    var sp=$('#detBody .spd');
+    if(sp)sp.addEventListener('click',function(){
+      rate=RATES[(RATES.indexOf(rate)+1)%RATES.length];
+      sp.textContent=rateLabel();
+      if(au)au.playbackRate=rate;
+    });
+    // `au` est partagé entre les appels : on ne pilote que si c'est bien
+    // l'enregistrement affiché qui est chargé, sinon on déplacerait un autre appel.
+    // Le curseur n'est actif qu'une fois cet enregistrement chargé, donc pas de
+    // garde silencieuse ici : ce qui est cliquable fait quelque chose.
+    var tk=$('#detBody .player .track');
+    if(tk)tk.addEventListener('input',function(){
+      if(au&&au.duration)au.currentTime=tk.value/1000*au.duration;
+    });
+    var dl=$('#detBody .player .dl');
+    if(dl)dl.addEventListener('click',function(e){
+      e.preventDefault();
+      var url=dl.getAttribute('href');
+      dl.classList.add('busy');
+      fetch(url).then(function(r){if(!r.ok)throw 0;return r.blob()}).then(function(b){
+        var u=URL.createObjectURL(b),a=document.createElement('a');
+        a.href=u;a.download='appel-'+String(c.d||'').replace(/[^0-9]+/g,'-').replace(/^-|-$/g,'')+'.mp3';
+        document.body.appendChild(a);a.click();a.remove();
+        setTimeout(function(){URL.revokeObjectURL(u)},1000);
+      }).catch(function(){
+        // hote sans CORS : on retombe sur l'ouverture, au moins le fichier est joignable
+        window.open(url,'_blank','noopener');
+      }).then(function(){dl.classList.remove('busy')});
+    });
+  }
+  // Contrairement à l'archivage, la suppression ne se rattrape pas : la ligne
+  // part de la base, l'enregistrement et la transcription avec elle. D'où la
+  // question, et d'où le fait qu'on ne retire l'appel de l'écran qu'une fois la
+  // base d'accord — l'app a déjà menti une fois en peignant un succès trop tôt.
+  function bindDelete(c){
+    confirmBox('Supprimer définitivement ?',
+      'Voulez-vous vraiment supprimer définitivement ce message ? '+
+      'Le résumé, la transcription et l\'enregistrement seront perdus.',
+      function(){
+        api('/rest/v1/calls?id=eq.'+c.id,{method:'DELETE',headers:{Prefer:'return=minimal'}})
+          .then(function(r){
+            if(!r.ok)throw new Error();
+            var i=data.findIndex(function(d){return d.id===c.id});
+            if(i>=0)data.splice(i,1);
+            if(selected===c.id)selected=(data[0]||{}).id||null;
+            openId=null;
+            if(selected)renderDetail();else{
+              $('#detailEmpty').style.display='';$('#detailInner').style.display='none';}
+            renderRows();renderCounts();
+          })
+          .catch(function(){alertBox('Suppression impossible',
+            'L\'appel n\'a pas pu être supprimé. Réessayez dans un instant.')});
+      });
+  }
+  function bindArchive(x){
+    var ab=$('#archBtn');
+    if(ab)ab.addEventListener('click',function(){
+      // Archiver est réversible : la ligne reste, `archived_at` repasse à null.
+      // Un bouton qui fait l'aller-retour vaut mieux qu'un confirm() qui annonce
+      // du définitif ; le meme bouton sert d'annulation, sans fenêtre de quelques
+      // secondes à rater.
+      var on=!x.archived;
+      x.archived=on;
+      x.archivedAt=on?new Date().toLocaleDateString('fr-FR'):'';
+      patchCall(x.id,{archived_at:on?new Date().toISOString():null});
+      renderDetail();renderRows();renderCounts();
+    });
+  }
+  // Lecture réelle : l'URL pointe le proxy N8N qui rejoue l'audio ElevenLabs.
+  // Ce proxy IGNORE les requêtes Range : il renvoie 200 + le fichier entier au
+  // lieu d'un 206, et pas d'Accept-Ranges. Impossible de se déplacer dans un
+  // flux servi comme ça — Chrome relance la lecture au début à chaque seek.
+  // On télécharge donc l'enregistrement en entier (~1 Mo pour 1 min) et on lit
+  // depuis un blob, où le déplacement est instantané et purement local.
+  // ponytail: si un jour le proxy gère Range, on peut revenir à new Audio(url).
+  var au=null,auUrl=null,rate=1,blobs={};
+  var RATES=[1,1.5,2];
+  function rateLabel(){return String(rate).replace('.',',')+'×';}
+  function mmss(t){t=Math.floor(t||0);return Math.floor(t/60)+':'+('0'+(t%60)).slice(-2);}
+  function play(pl,url){
+    if(!pl)return;
+    var tk=$('.track',pl),pp=$('.pp',pl),lbl=$('.dur',pl);
+    if(au&&auUrl===url){if(au.paused){au.play();pp.textContent='❚❚';}else{au.pause();pp.textContent='▶';}return;}
+    if(au)au.pause();
+    pp.textContent='…';
+    function fail(){pp.textContent='▶';lbl.textContent='indisponible';}
+    // Un enregistrement déjà téléchargé n'est pas redemandé au serveur.
+    (blobs[url]
+      ? Promise.resolve(blobs[url])
+      : fetch(url).then(function(r){if(!r.ok)throw 0;return r.blob()})
+                  .then(function(b){return blobs[url]=URL.createObjectURL(b)})
+    ).then(function(src){
+      au=new Audio(src);auUrl=url;au.playbackRate=rate;
+      au.addEventListener('timeupdate',function(){
+        // Pendant un glissement, 'input' vient deja de poser currentTime : on
+        // reecrit la meme position, le pouce ne saute pas.
+        if(au.duration)tk.value=au.currentTime/au.duration*1000;
+        lbl.textContent=mmss(au.currentTime)+' / '+mmss(au.duration);
+      });
+      au.addEventListener('loadedmetadata',function(){tk.disabled=false});
+      au.addEventListener('playing',function(){pp.textContent='❚❚'});
+      au.addEventListener('ended',function(){pp.textContent='▶';tk.value=0;});
+      au.addEventListener('error',fail);
+      au.play().catch(fail);
+    }).catch(fail);
+  }
+  // ponytail: maquette pour les appels sans fichier audio. Le curseur reste
+  // desactive — il n'y a rien a parcourir.
+  function simPlay(pl){if(!pl)return;var tk=$('.track',pl),pp=$('.pp',pl);pp.textContent='❚❚';var w=0;
+    var iv=setInterval(function(){w+=20;tk.value=Math.min(1000,w);if(w>=1000){clearInterval(iv);pp.textContent='▶';tk.value=0;}},70);}
+
+
+  // Une erreur dans la petite ligne grise du composeur passe inapercue.
+  // Reutilise .modal/.sheet de l'administration : rien de nouveau a styler.
+  // Même feuille que alertBox, deux boutons. « Non » est le choix par défaut :
+  // c'est lui qui prend le focus, pas l'action irréversible.
+  function confirmBox(titre,texte,oui){
+    var ov=$('#alertOv');
+    ov.innerHTML='<div class="sheet" role="alertdialog" aria-modal="true">'+
+      '<div class="sh"><h2 class="bad">'+esc(titre)+'</h2>'+
+        '<button class="x" id="alX" aria-label="Fermer">×</button></div>'+
+      '<p class="lead">'+esc(texte)+'</p>'+
+      '<div class="cfacts"><button class="go ghost" id="alNon">Non</button>'+
+      '<button class="go" id="alOui">Oui</button></div></div>';
+    ov.hidden=false;
+    function close(){ov.hidden=true;document.removeEventListener('keydown',onKey);}
+    function onKey(e){if(e.key==='Escape')close();}
+    $('#alX').addEventListener('click',close);
+    $('#alNon').addEventListener('click',close);
+    $('#alOui').addEventListener('click',function(){close();oui();});
+    ov.addEventListener('click',function(e){if(e.target===ov)close();});
+    document.addEventListener('keydown',onKey);
+    $('#alNon').focus();
+  }
+  function alertBox(titre,texte){
+    var ov=$('#alertOv');
+    ov.innerHTML='<div class="sheet" role="alertdialog" aria-modal="true">'+
+      '<div class="sh"><h2 class="bad">'+esc(titre)+'</h2>'+
+        '<button class="x" id="alX" aria-label="Fermer">×</button></div>'+
+      '<p class="lead">'+esc(texte)+'</p>'+
+      '<button class="go" id="alOk">J\'ai compris</button></div>';
+    ov.hidden=false;
+    function close(){ov.hidden=true;document.removeEventListener('keydown',onKey);}
+    function onKey(e){if(e.key==='Escape')close();}
+    $('#alX').addEventListener('click',close);
+    $('#alOk').addEventListener('click',close);
+    ov.addEventListener('click',function(e){if(e.target===ov)close();});
+    document.addEventListener('keydown',onKey);
+    $('#alOk').focus();
+  }
+
+  // ---------------- retours bêta ----------------
+  // Le mail n'est qu'une alerte : la ligne dans `feedback` est la source de
+  // vérité, sinon un retour se perd dans une boîte mail. Le webhook N8N
+  // revalide le jeton Supabase, comme celui des SMS.
+  var FEEDBACK='https://n8n-5tkb.srv1203069.hstgr.cloud/webhook/mylidie-feedback';
+  // Tout envoi vers N8N passe par ici. Deux pieges appris a la main :
+  // - N8N repond **200 avec un corps vide** quand le workflow echoue en route
+  //   (jeton refuse par Supabase, hotel introuvable...). `r.ok` ne suffit donc pas.
+  // - un `fetch` qui n'atteint pas le serveur (reseau coupe, CORS) rejette avec
+  //   une TypeError sans statut : ce n'est pas la meme panne, et ca ne se soigne
+  //   pas pareil.
+  // Avant, les deux finissaient en « Echec de l'envoi. » sans autre indice —
+  // impossible a diagnostiquer depuis le poste d'accueil.
+  function n8nSend(url,payload){
+    return fetch(url,{method:'POST',
+        headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+        body:JSON.stringify(payload)})
+      .then(null,function(){throw new Error('serveur injoignable');})
+      .then(function(r){return r.text().then(function(t){
+        if(r.status===401||r.status===403)throw new Error('session expirée, reconnectez-vous');
+        if(!r.ok)throw new Error('le serveur a refusé ('+r.status+')');
+        if(!t.trim())throw new Error('le traitement a échoué côté serveur');
+        try{return JSON.parse(t)}catch(e){throw new Error('réponse illisible du serveur')}
+      })});
+  }
+  var MAX_CAPTURE=5*1024*1024;
+  function openFeedback(){
+    var ov=$('#feedOv');
+    ov.innerHTML='<div class="sheet">'+
+      '<div class="sh"><h2>Un souci ? Dites-le-nous</h2>'+
+        '<button class="x" id="fbX" aria-label="Fermer">×</button></div>'+
+      '<p class="lead">L\'application est en version bêta. Décrivez ce qui cloche ou ce qui '+
+        'vous manque — chaque retour est lu.</p>'+
+      fld('fbSubject','Objet','Le bouton X ne répond pas','',true)+
+      '<div class="fld"><label for="fbBody">Ce qui s\'est passé</label>'+
+        '<textarea id="fbBody" placeholder="Ce que vous faisiez, ce que vous attendiez, ce qui est arrivé."></textarea></div>'+
+      '<div class="fld"><label for="fbFile">Capture d\'écran (facultatif)</label>'+
+        '<input type="file" id="fbFile" accept="image/*">'+
+        '<span class="hint">5 Mo maximum. Une image vaut souvent mieux qu\'un paragraphe.</span></div>'+
+      '<button class="go" id="fbGo">Envoyer</button>'+
+      '<p class="note" id="fbNote"></p></div>';
+    ov.hidden=false;
+    function close(){ov.hidden=true;document.removeEventListener('keydown',onKey);}
+    function onKey(e){if(e.key==='Escape')close();}
+    $('#fbX').addEventListener('click',close);
+    ov.addEventListener('click',function(e){if(e.target===ov)close();});
+    document.addEventListener('keydown',onKey);
+    $('#fbSubject').focus();
+
+    $('#fbGo').addEventListener('click',function(){
+      var b=this,note=$('#fbNote'),sujet=$('#fbSubject').value.trim(),texte=$('#fbBody').value.trim();
+      if(!sujet){setNote(note,'Un objet, même court, aide à s\'y retrouver.');return;}
+      if(!LIVE){setNote(note,'✓ Envoyé (maquette : rien n\'est parti).',true);return;}
+      var f=$('#fbFile').files[0];
+      if(f&&f.size>MAX_CAPTURE){setNote(note,'Capture trop lourde ('+Math.round(f.size/1048576)+' Mo). 5 Mo maximum.');return;}
+      setNote(note,'Envoi…');b.disabled=true;
+      // FileReader donne "data:image/png;base64,XXXX" : on ne garde que XXXX.
+      (f?new Promise(function(res){
+          var r=new FileReader();
+          r.onload=function(){res(String(r.result).split(',')[1]||'')};
+          r.onerror=function(){res('')};
+          r.readAsDataURL(f);
+        }):Promise.resolve(''))
+      .then(function(b64){
+        return n8nSend(FEEDBACK,{subject:sujet,body:texte,capture:b64,
+          capture_name:f?f.name:'',capture_type:f?f.type:'',page_url:location.href});
+      })
+      .then(function(){setNote(note,'✓ Merci, c\'est envoyé.',true);setTimeout(close,1600);})
+      .catch(function(e){setNote(note,'Envoi impossible : '+(e.message||'raison inconnue')+'.');})
+      .then(function(){b.disabled=false});
+    });
+  }
+
+  // ---------------- administration ----------------
+  // Reservee au compte plateforme. L'app etant du JS public, elle ne cree rien
+  // elle-meme : elle appelle la fonction `admin`, seule detentrice de la cle de
+  // service, qui revalide le jeton avant d'agir.
+  function jwtPayload(t){
+    try{
+      var p=String(t||'').split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+      return JSON.parse(atob(p+(p.length%4?'===='.slice(p.length%4):'')))||{};
+    }catch(e){return {}}
+  }
+  function isAdmin(){
+    var m=jwtPayload(tok).app_metadata;
+    return !!(m&&m.mylidie_admin===true);
+  }
+  function refreshAdmin(){var b=$('#adminBtn');if(b)b.hidden=!isAdmin();}
+  function fld(id,label,ph,hint,req){
+    return '<div class="fld"><label for="'+id+'">'+label+(req?' *':'')+'</label>'+
+      '<input id="'+id+'" placeholder="'+(ph||'')+'">'+
+      (hint?'<span class="hint">'+hint+'</span>':'')+'</div>';
+  }
+  function setNote(el,txt,ok){
+    el.textContent=txt;el.className='note'+(txt?(ok?' ok':' err'):'');
+  }
+  // --------- mode live : login, chargement, écriture ---------
+  function fmtPhone(p){
+    if(!p)return 'Numéro masqué';
+    var m=/^\+33(\d)(\d{2})(\d{2})(\d{2})(\d{2})$/.exec(p);
+    return m?'+33 '+m[1]+' '+m[2]+' '+m[3]+' '+m[4]+' '+m[5]:p;
+  }
+  function fmtDur(sec){sec=sec||0;return sec>=60?Math.floor(sec/60)+' m '+(sec%60)+' s':sec+' s';}
+  function mapRow(r){
+    var d=new Date(r.started_at),now=new Date();
+    var jour=d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+    var heure=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}).replace(':','h');
+    var ecoule=(now-d)/86400000;
+    var ex=r.extracted||{},gv=function(k){return (ex[k]&&ex[k].value)?String(ex[k].value):''};
+    var tr=(r.transcript||[]).filter(function(t){return t.message})
+      .map(function(t){return {r:t.role==='agent'?'agent':'client',x:t.message}});
+    return {id:r.id,motif:r.motif||'inconnu',
+      name:gv('nom_client')||'Appelant non identifié',
+      phone:fmtPhone(r.from_e164),
+      grp:ecoule<7?'Cette semaine':'Plus ancien',
+      when:ecoule<1?heure:(ecoule<7?d.toLocaleDateString('fr-FR',{weekday:'short'}):jour),
+      d:jour+' · '+heure,
+      unread:!r.read_at,archived:!!r.archived_at,
+      archivedAt:r.archived_at?new Date(r.archived_at).toLocaleDateString('fr-FR'):'',
+      dur:fmtDur(r.duration_secs),summary:r.summary||'(pas de résumé)',
+      transcript:tr,noMessage:tr.length===0,audio:r.recording_url||'',
+      dates:gv('dates_sejour'),resa:gv('reservation_prise')};
+  }
+  // Un compte peut appartenir à plusieurs établissements — un administrateur
+  // plateforme les voit tous (is_platform_admin passe la RLS). Sans choix
+  // explicite, `calls?select=*` renvoyait les appels de TOUS les hôtels dans la
+  // même boîte, sans que rien ne le signale. On fixe donc un établissement
+  // courant, et toutes les lectures passent par lui.
+  // `?hotel=<uuid>` : la console d'administration s'en sert pour ouvrir la vue
+  // d'un hôtel donné. Un uuid inconnu retombe sur le premier, jamais sur « tous ».
+  function wantedHotel(){
+    var m=/[?&]hotel=([0-9a-fA-F-]{36})/.exec(location.search);
+    return m?m[1].toLowerCase():'';
+  }
+  function loadHotel(){
+    return api('/rest/v1/hotels?select=id,name,logo_url,phone_e164&order=name.asc')
+      .then(function(r){if(r.status===401){logout();throw new Error('session expirée');}return r.json()})
+      .then(function(rows){
+        if(!rows||!rows.length)return;
+        var want=wantedHotel();
+        hotel=rows.filter(function(h){return h.id===want})[0]||rows[0];
+        HOTEL_ID=hotel.id;
+        $('.brandbox .hn').textContent=hotel.name||'';
+        if(hotel.phone_e164)$('.brandbox .hp span:last-child').textContent=fmtPhone(hotel.phone_e164);
+        if(hotel.logo_url)$('.brandbox .logo').innerHTML='<img src="'+hotel.logo_url+'" alt="">';
+      });
+  }
+  function loadMsgs(){
+    return api('/rest/v1/messages?select=*&hotel_id=eq.'+HOTEL_ID+'&order=created_at.asc&limit=500')
+      .then(function(r){return r.json()})
+      .then(function(rows){
+        msgs=(rows||[]).map(function(m){
+          // Sans ts, timelineFor() retombait sur 0 et collait tous les SMS en
+          // haut du fil, avant des appels bien plus anciens.
+          return {direction:m.direction,body:m.body,status:m.status,phone_e164:m.phone_e164||'',
+                  ts:new Date(m.created_at).getTime(),
+                  at:new Date(m.created_at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',
+                       hour:'2-digit',minute:'2-digit'}).replace(':','h').replace(', ',' à ')};
+        });
+      }).catch(function(){msgs=[]});
+  }
+  // L'hôtel se charge EN PREMIER : sans lui on ne sait pas quoi filtrer, et une
+  // liste non filtrée est pire qu'une liste vide.
+  function loadCalls(){
+    refreshAdmin();
+    return loadHotel().then(function(){
+      if(!HOTEL_ID){data.length=0;msgs=[];renderCounts();renderRows();return null;}
+      return api('/rest/v1/calls?select=*&hotel_id=eq.'+HOTEL_ID+'&order=started_at.desc&limit=200')
+        .then(function(r){if(r.status===401){logout();throw new Error('session expirée');}return r.json()})
+        .then(function(rows){
+          data.length=0;rows.forEach(function(r){data.push(mapRow(r))});
+          return loadMsgs().then(function(){
+            renderCounts();renderRows();
+            var v=visible();
+            if(v.length&&window.matchMedia('(min-width:901px)').matches)openThread(v[0].id);
+          });
+        });
+    });
+  }
+  function logout(){try{localStorage.removeItem('mylidie_tok')}catch(e){}tok=null;showLogin();}
+  // Un seul ecran, trois modes : connexion, mot de passe oublie, choix du mot
+  // de passe (arrivee depuis le lien recu par mail — invitation ou reinitialisation).
+  var AUTH_LOGO='/mylidie-logo.png',lastMail='';
+  var AUTH={
+    login:{h:'Réception Mylidie',
+      sub:'Connectez-vous pour voir les appels de votre établissement.',
+      btn:'Se connecter',
+      fields:'<input id="aMail" type="email" required placeholder="Adresse e-mail" autocomplete="username">'+
+             '<input id="aPass" type="password" required placeholder="Mot de passe" autocomplete="current-password">',
+      links:'<button type="button" class="link" data-go="forgot">Mot de passe oublié ?</button>'},
+    forgot:{h:'Mot de passe oublié',
+      sub:'Indiquez votre adresse e-mail : vous recevrez un lien pour choisir un nouveau mot de passe.',
+      btn:'Envoyer le lien',
+      fields:'<input id="aMail" type="email" required placeholder="Adresse e-mail" autocomplete="username">',
+      links:'<button type="button" class="link" data-go="login">Retour à la connexion</button>'},
+    newpass:{h:'Choisissez votre mot de passe',
+      sub:'Au moins 8 caractères. Il vous servira à chaque connexion.',
+      btn:'Enregistrer et entrer',
+      fields:'<input id="aPass" type="password" required minlength="8" placeholder="Nouveau mot de passe" autocomplete="new-password">',
+      links:''}
+  };
+  function authScreen(mode,msg,good){
+    var el=document.getElementById('loginOv');
+    if(!el){el=document.createElement('div');el.id='loginOv';document.body.appendChild(el);}
+    el.style.display='flex';
+    var f=AUTH[mode];
+    el.innerHTML='<form class="authbox" id="authF" novalidate>'+
+      '<img class="authlogo" src="'+AUTH_LOGO+'" alt="Mylidie">'+
+      '<h1>'+f.h+'</h1><div class="sub">'+f.sub+'</div>'+f.fields+
+      '<button type="submit" class="main">'+f.btn+'</button>'+
+      '<p class="authmsg '+(good?'ok':'err')+'" id="aMsg">'+esc(msg||'')+'</p>'+f.links+'</form>';
+    var mi=document.getElementById('aMail');
+    if(mi){if(lastMail)mi.value=lastMail;mi.focus();}
+    else{var pi=document.getElementById('aPass');if(pi)pi.focus();}
+    $$('#loginOv .link').forEach(function(b){
+      b.addEventListener('click',function(){authScreen(b.dataset.go)});
+    });
+    document.getElementById('authF').addEventListener('submit',function(e){
+      e.preventDefault();submitAuth(mode);
+    });
+  }
+  function hideAuth(){var el=document.getElementById('loginOv');if(el)el.remove();}
+  function showLogin(msg){authScreen('login',msg);}
+  function submitAuth(mode){
+    var msg=document.getElementById('aMsg'),
+        mail=document.getElementById('aMail'),
+        pass=document.getElementById('aPass');
+    if(mail)lastMail=mail.value.trim();
+    if(mail&&!lastMail){authScreen(mode,'Indiquez votre adresse e-mail.');return;}
+    msg.className='authmsg';
+
+    if(mode==='login'){
+      if(!pass.value){authScreen('login','Indiquez votre mot de passe.');return;}
+      msg.textContent='Connexion…';
+      fetch(SUPA.url+'/auth/v1/token?grant_type=password',{method:'POST',
+        headers:{apikey:SUPA.anon,'Content-Type':'application/json'},
+        body:JSON.stringify({email:lastMail,password:pass.value})})
+      .then(function(r){return r.json()})
+      .then(function(j){
+        if(!j.access_token){authScreen('login','Identifiants incorrects.');return;}
+        tok=j.access_token;try{localStorage.setItem('mylidie_tok',tok)}catch(e){}
+        hideAuth();loadCalls();
+      }).catch(function(){authScreen('login','Connexion impossible.')});
+      return;
+    }
+
+    if(mode==='forgot'){
+      msg.textContent='Envoi…';
+      // Meme reponse quoi qu'il arrive : annoncer « adresse inconnue »
+      // revelerait qui possede un compte.
+      fetch(SUPA.url+'/auth/v1/recover',{method:'POST',
+        headers:{apikey:SUPA.anon,'Content-Type':'application/json'},
+        body:JSON.stringify({email:lastMail,redirect_to:location.origin+location.pathname})})
+      .then(function(){authScreen('forgot',
+        'Si un compte existe pour cette adresse, le lien vient de partir. Pensez à regarder les indésirables.',true)})
+      .catch(function(){authScreen('forgot','Envoi impossible, réessayez dans un instant.')});
+      return;
+    }
+
+    // newpass : `tok` vient du lien recu par mail, pas d'une saisie
+    if(pass.value.length<8){authScreen('newpass','Le mot de passe doit faire au moins 8 caractères.');return;}
+    msg.textContent='Enregistrement…';
+    fetch(SUPA.url+'/auth/v1/user',{method:'PUT',
+      headers:{apikey:SUPA.anon,Authorization:'Bearer '+tok,'Content-Type':'application/json'},
+      body:JSON.stringify({password:pass.value})})
+    .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
+    .then(function(res){
+      if(!res.ok){
+        authScreen('newpass',res.j.msg||res.j.error_description||
+          'Ce lien a expiré. Demandez-en un nouveau depuis « Mot de passe oublié ».');
+        return;
+      }
+      try{localStorage.setItem('mylidie_tok',tok)}catch(e){}
+      hideAuth();loadCalls();
+    }).catch(function(){authScreen('newpass','Enregistrement impossible.')});
+  }
+  function hashParams(){
+    var o={},h=(location.hash||'').replace(/^#/,'');
+    h.split('&').forEach(function(kv){var i=kv.indexOf('=');
+      if(i>0)o[decodeURIComponent(kv.slice(0,i))]=decodeURIComponent(kv.slice(i+1));});
+    return o;
+  }
+  function patchCall(id,body){
+    if(!LIVE)return;
+    api('/rest/v1/calls?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},
+      body:JSON.stringify(body)}).catch(function(){});
+  }
+
+  // Le menu ne s'ouvrait jamais : la déconnexion et le thème étaient injoignables.
+  var uBtn=$('#userBtn'),uMenu=$('#userMenu');
+  function openMenu(on){uMenu.hidden=!on;uBtn.setAttribute('aria-expanded',on?'true':'false');}
+  uBtn.addEventListener('click',function(e){e.stopPropagation();openMenu(uMenu.hidden);});
+  document.addEventListener('click',function(e){if(!e.target.closest('.usermenu'))openMenu(false);});
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Escape')return;
+    openMenu(false);
+    if(document.body.classList.contains('drawer'))drawer(false);
+    else if(openId){openId=null;renderDetail();renderRows();}
+    else document.body.classList.remove('detail');
+  });
+  // en démo il n'y a pas de session à fermer : pas de bouton mort
+  // La console d'administration est une page a part (/app/admin/), pas une
+  // modale : meme origine, donc meme jeton — rien a repasser au login.
+  $('#adminBtn').addEventListener('click',function(){openMenu(false);location.href='admin/';});
+  if(LIVE)$('#logoutBtn').addEventListener('click',function(){openMenu(false);logout();});
+  else $('#logoutBtn').remove();
+
+  function drawer(on){document.body.classList.toggle('drawer',on);}
+  $('#burger').addEventListener('click',function(e){e.stopPropagation();drawer(!document.body.classList.contains('drawer'));});
+  $('#scrim').addEventListener('click',function(){drawer(false)});
+
+  $('#nav').addEventListener('click',function(e){var b=e.target.closest('.navitem');if(!b)return;
+    filter=b.dataset.f;$$('.navitem').forEach(function(x){x.setAttribute('aria-current',x===b?'true':'false')});
+    drawer(false);renderRows();});
+  $('#tabs').addEventListener('click',function(e){var b=e.target.closest('.ltab');if(!b)return;
+    tab=b.dataset.t;$$('.ltab').forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false')});renderRows();renderCounts();});
+  $('#search').addEventListener('input',function(){query=this.value.trim();renderRows();renderCounts();});
+
+  var SMS_OUT='https://n8n-5tkb.srv1203069.hstgr.cloud/webhook/mylidie-sms-out';
+  // Au retour de l'envoi le SMS est encore "en attente" : Twilio ne fait que
+  // l'accepter. La livraison arrive 1 a 10 s plus tard par le callback, et
+  // rien ne rechargeait le fil — le statut restait fige. On recharge 3 fois.
+  function refreshStatuses(n){
+    if(n<=0)return;
+    setTimeout(function(){
+      loadMsgs().then(function(){if(selected)renderDetail();refreshStatuses(n-1);});
+    },4000);
+  }
+  function sendMsg(){
+    var inp=$('#cInput'),v=inp.value.trim();if(!v)return;
+    var note=$('.composer .cnote'),old='Envoyer un sms';
+    var x=data.find(function(d){return d.id===selected});
+    if(!LIVE){inp.value='';inp.style.height='auto';
+      note.textContent='✓ Message envoyé';setTimeout(function(){note.textContent=old},2000);return;}
+    function fail(txt){
+      note.textContent=txt;note.classList.add('err');
+      setTimeout(function(){note.textContent=old;note.classList.remove('err');},4000);
+    }
+    if(!x||digits(x.phone).length<6){fail('Numéro inconnu, envoi impossible.');return;}
+    // En France seuls les 06/07 recoivent des SMS ; Twilio rejette les fixes
+    // (01-05, 09) avec « cannot be a landline ». Autant le dire tout de suite.
+    var dg=digits(x.phone);
+    if(dg.indexOf('33')===0&&!/^33[67]/.test(dg)){
+      alertBox('Ligne fixe',
+        'Le '+x.phone+' est une ligne fixe : elle ne peut pas recevoir de SMS. '+
+        'Seuls les numéros mobiles (06 et 07) en reçoivent. Rappelez ce client par téléphone.');
+      return;}
+    inp.value='';inp.style.height='auto';note.textContent='Envoi…';
+    // le webhook N8N revalide le jeton auprès de Supabase avant de faire partir le SMS
+    n8nSend(SMS_OUT,{to:'+'+digits(x.phone),body:v,hotel_id:HOTEL_ID})
+      .then(function(){note.textContent='✓ SMS envoyé';
+        return loadMsgs().then(function(){if(selected)renderDetail();refreshStatuses(3);});})
+      .catch(function(e){fail(e.message||'Échec de l\'envoi.');inp.value=v;})
+      .then(function(){setTimeout(function(){note.textContent=old;note.classList.remove('err');},3000)});
+  }
+  $('#feedBtn').addEventListener('click',openFeedback);
+  $('#cSend').addEventListener('click',sendMsg);
+  $('#cInput').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(120,this.scrollHeight)+'px'});
+  $('#cInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
+
+  if(LIVE){
+    data.length=0;
+    var hp=hashParams();
+    renderCounts();renderRows();
+    if((hp.type==='recovery'||hp.type==='invite')&&hp.access_token){
+      // On sort le jeton de la barre d'adresse avant toute chose : il ne doit
+      // pas rester dans l'historique ni partir dans un referer.
+      tok=hp.access_token;
+      try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+      authScreen('newpass');
+    }else{
+      try{tok=localStorage.getItem('mylidie_tok')}catch(e){}
+      if(tok)loadCalls().catch(function(){});else showLogin();
+    }
+  }else{
+    renderCounts();renderRows();
+    if(window.matchMedia('(min-width:901px)').matches)openThread('c2');
+  }
+})();
+</script>
+
+</body>
+</html>
