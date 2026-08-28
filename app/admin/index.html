@@ -343,7 +343,12 @@
       headers:{apikey:SUPA.anon,Authorization:'Bearer '+tok(),'Content-Type':'application/json'},
       body:JSON.stringify(payload)})
       .then(function(r){return r.json().catch(function(){return {}}).then(function(j){
-        if(!r.ok)throw new Error(j.error||'Erreur inattendue.');return j;})});
+        // Le jeton dure une heure et rien ne le renouvelle. Passé ce délai la passerelle
+        // Supabase répond {code,message} — sans champ `error` — et l'écran affichait
+        // « Erreur inattendue » pour une simple session périmée. Même geste que api().
+        if(r.status===401){gate('Session expirée','Reconnectez-vous à l\'application de réception, puis revenez ici.');
+          throw new Error('401');}
+        if(!r.ok)throw new Error(j.error||j.message||'Erreur inattendue.');return j;})});
   }
   function jwtPayload(t){
     try{
@@ -506,8 +511,43 @@
         'et l\'enregistrement de l\'expéditeur SMS chez Twilio : ces API ne répondent pas à un '+
         'navigateur. Le témoin « chaîne voix vérifiée » est leur seule preuve honnête — il passe au '+
         'vert quand un vrai appel est arrivé jusqu\'à la base.</div>'+
-      '<div class="acts"><button class="btn primary" id="cbOk">Fermer</button></div>');
+      // Les deux seuls champs qu'on rattrape souvent après coup : le récap part
+      // dans le vide sans destinataire, et sans numéro d'urgence l'agent annonce
+      // un transfert impossible. Le reste (numéro, agent EL) se change chez le
+      // fournisseur avant la base — pas de champ ici, ce serait un vert mensonger.
+      '<div class="row2" style="margin-top:16px">'+
+        '<div class="fw"><label for="cbMails">Destinataires du récapitulatif</label>'+
+          '<input id="cbMails" value="'+esc((h.recap_emails||[]).join(', '))+'" '+
+          'placeholder="contact@hotel.fr, vous@mylidie.com">'+
+          '<span class="hint">séparés par des virgules — ils reçoivent le compte rendu de chaque appel</span></div>'+
+        '<div class="fw"><label for="cbUrg">Numéro d\'urgence</label>'+
+          '<input id="cbUrg" value="'+esc(h.emergency_e164||'')+'" placeholder="+33650953697">'+
+          '<span class="hint">format international — vers qui l\'agent transfère un appel urgent</span></div>'+
+      '</div>'+
+      '<div class="acts"><button class="btn" id="cbOk">Fermer</button>'+
+      '<button class="btn primary" id="cbGo">Enregistrer</button></div>'+
+      '<p class="note" id="cbNote"></p>');
     $('#cbOk').addEventListener('click',fermer);
+    $('#cbGo').addEventListener('click',function(){
+      var b=this,note=$('#cbNote');
+      var mails=$('#cbMails').value.split(',').map(function(s){return s.trim()}).filter(Boolean);
+      var urg=$('#cbUrg').value.trim().replace(/[ .]/g,'');
+      var faux=mails.filter(function(m){return !/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(m)});
+      if(faux.length){setNote(note,'Adresse e-mail invalide : '+faux[0]);return}
+      if(urg&&!/^\+\d{6,15}$/.test(urg)){
+        setNote(note,'Le numéro d\'urgence doit être au format international, par exemple +33650953697.');return}
+      setNote(note,'Enregistrement…');b.disabled=true;
+      api('/rest/v1/hotels?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=representation'},
+        body:JSON.stringify({recap_emails:mails,emergency_e164:urg||null})})
+        .then(function(r){return r.json()})
+        .then(function(rows){
+          // RLS refuse en silence : 200 avec zéro ligne. Le dire, sinon on croit
+          // avoir enregistré. (Corrigé en base par la migration 010.)
+          if(!rows||!rows.length)throw new Error('Modification refusée : ce compte n\'a pas le droit d\'écrire sur cet établissement.');
+          Object.assign(h,rows[0]);render();voirCablage(id);
+        })
+        .catch(function(e){setNote(note,e.message||'Enregistrement impossible.');b.disabled=false});
+    });
   }
 
   function vueClients(){
