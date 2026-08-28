@@ -61,7 +61,7 @@ nav {
 .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
 .nav-demo { font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mid); background: none; border: 1px solid var(--border-strong); cursor: pointer; padding: 0.6rem 1.25rem; transition: all 0.2s; font-family: 'Jost', sans-serif; }
 .nav-demo:hover { color: var(--gold); }
-.nav-cta { background: var(--ink); color: var(--cream); font-family: 'Jost', sans-serif; font-weight: 400; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.6rem 1.5rem; border: none; cursor: pointer; transition: background 0.2s; }
+.nav-cta { display: inline-block; text-decoration: none; line-height: 1.2; background: var(--ink); color: var(--cream); font-family: 'Jost', sans-serif; font-weight: 400; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.6rem 1.5rem; border: none; cursor: pointer; transition: background 0.2s; }
 .nav-cta:hover { background: var(--gold); }
 
 /* ── LOGO MYLIDIE ── */
@@ -478,7 +478,7 @@ footer { background:var(--ink); border-top:1px solid rgba(255,255,255,.08); padd
   </div>
   <div class="nav-actions">
     <button class="nav-demo" onclick="gtag('event','cta_click',{button_id:'nav_tester_mylidie',button_location:'nav',button_text:'Tester mylidie',button_type:'tel',priority:2});window.location.href='tel:+33757590436'">Tester mylidie</button>
-    <button class="nav-cta" onclick="gtag('event','cta_click',{button_id:'nav_demander_demo',button_location:'nav',button_text:'Demander une démo',button_type:'calendly',priority:1});window.open('https://calendly.com/adeveyrac/20min','_blank')">Demander une démo</button>
+    <a class="nav-cta" href="/app/" onclick="gtag('event','cta_click',{button_id:'nav_connexion',button_location:'nav',button_text:'Connexion',button_type:'app',priority:1})">Connexion</a>
   </div>
 </nav>
 
