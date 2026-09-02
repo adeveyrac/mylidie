@@ -2,6 +2,16 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>
+// Les mails Supabase sans `redirect_to` explicite — invitation ou mot de passe
+// oublie envoyes depuis le dashboard — retombent sur la Site URL, c'est-a-dire
+// ici. Le jeton arrivait donc sur la vitrine, qui n'a rien pour le traiter : le
+// client voyait la page d'accueil et croyait son lien mort. On le repasse a
+// l'app, qui sait afficher « Choisissez votre mot de passe ». En tete de <head>
+// pour qu'aucun pixel de la vitrine ne s'affiche au passage.
+(function(){var h=location.hash||'';
+  if(/[#&](access_token|error_code|error)=/.test(h))location.replace('/app/'+h);})();
+</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
