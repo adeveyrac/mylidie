@@ -481,8 +481,8 @@
       <button class="feedbtn" id="feedBtn">✎ Un souci ? Dites-le-nous</button>
       <div class="usermenu">
         <button class="memberline" id="userBtn" aria-haspopup="true" aria-expanded="false">
-          <span class="mav">AV</span>
-          <span class="mtxt"><span class="mn">Amaury De Veyrac</span><span class="mv">Vous · réception</span></span>
+          <span class="mav" id="uAv">AV</span>
+          <span class="mtxt"><span class="mn" id="uName">Amaury De Veyrac</span><span class="mv" id="uMail">Vous · réception</span></span>
           <span class="chev">⌄</span>
         </button>
         <div class="menu" id="userMenu" hidden>
@@ -629,7 +629,13 @@
 
   function counts(){var src=data.filter(function(x){return query||tab==='archives'?true:!x.archived});var c={all:src.length,urgence:0,resa:0,info:0,annulation:0,rappel:0,inconnu:0};src.forEach(function(x){c[x.motif]++});return c;}
   function renderCounts(){var c=counts();$$('[data-c]').forEach(function(el){el.textContent=c[el.dataset.c]});}
-  function initials(n){var p=n.split(' ');return ((p[0]||'?')[0]+((p[1]||'')[0]||'')).toUpperCase();}
+  // Les particules sautent : « Pierre de Kerautem » donnait PD, ce qui se lit mal
+  // sur un avatar. On prend la 1re lettre des deux premiers vrais mots.
+  function initials(n){
+    var p=String(n||'').split(/\s+/).filter(function(w){
+      return w&&!/^(de|du|des|d'|le|la|von|van|di)$/i.test(w)});
+    return ((p[0]||'?')[0]+((p[1]||'')[0]||'')).toUpperCase();
+  }
   function digits(s){return String(s||'').replace(/\D/g,'');}
   function matchQuery(x){
     if(!query)return true;var q=query.toLowerCase();
@@ -1210,6 +1216,17 @@
     return !!(m&&m.mylidie_admin===true);
   }
   function refreshAdmin(){var b=$('#adminBtn');if(b)b.hidden=!isAdmin();}
+  // Le pied de colonne portait un nom en dur : tout le monde se voyait
+  // « Amaury De Veyrac ». Nom et adresse sortent du jeton deja en main — aucun
+  // appel de plus. `full_name` est pose a l'invitation ; sans lui on retombe sur
+  // l'adresse, jamais sur le nom de quelqu'un d'autre.
+  function refreshMe(){
+    var p=jwtPayload(tok),mail=p.email||'',
+        nom=(p.user_metadata&&p.user_metadata.full_name)||mail.split('@')[0]||'Vous';
+    $('#uName').textContent=nom;
+    $('#uMail').textContent=mail;
+    $('#uAv').textContent=initials(nom);
+  }
   function fld(id,label,ph,hint,req){
     return '<div class="fld"><label for="'+id+'">'+label+(req?' *':'')+'</label>'+
       '<input id="'+id+'" placeholder="'+(ph||'')+'">'+
@@ -1286,7 +1303,7 @@
   // L'hôtel se charge EN PREMIER : sans lui on ne sait pas quoi filtrer, et une
   // liste non filtrée est pire qu'une liste vide.
   function loadCalls(){
-    refreshAdmin();
+    refreshAdmin();refreshMe();
     return loadHotel().then(function(){
       if(!HOTEL_ID){data.length=0;msgs=[];renderCounts();renderRows();return null;}
       return api('/rest/v1/calls?select=*&hotel_id=eq.'+HOTEL_ID+'&order=started_at.desc&limit=200')
@@ -1487,7 +1504,13 @@
     data.length=0;
     var hp=hashParams();
     renderCounts();renderRows();
-    if((hp.type==='recovery'||hp.type==='invite')&&hp.access_token){
+    if(hp.error||hp.error_code){
+      // Lien deja utilise ou perime : Supabase renvoie #error=... sans jeton.
+      // On l'ignorait, et le client tombait sur l'ecran de connexion nu — il
+      // croyait le lien mort sans savoir qu'il devait en demander un autre.
+      try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+      showLogin('Ce lien a expiré ou a déjà servi. Demandez-en un nouveau avec « Mot de passe oublié ? ».');
+    }else if((hp.type==='recovery'||hp.type==='invite')&&hp.access_token){
       // On sort le jeton de la barre d'adresse avant toute chose : il ne doit
       // pas rester dans l'historique ni partir dans un referer.
       tok=hp.access_token;
