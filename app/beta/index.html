@@ -629,7 +629,13 @@
 
   function counts(){var src=data.filter(function(x){return query||tab==='archives'?true:!x.archived});var c={all:src.length,urgence:0,resa:0,info:0,annulation:0,rappel:0,inconnu:0};src.forEach(function(x){c[x.motif]++});return c;}
   function renderCounts(){var c=counts();$$('[data-c]').forEach(function(el){el.textContent=c[el.dataset.c]});}
-  function initials(n){var p=n.split(' ');return ((p[0]||'?')[0]+((p[1]||'')[0]||'')).toUpperCase();}
+  // Les particules sautent : « Pierre de Kerautem » donnait PD, ce qui se lit mal
+  // sur un avatar. On prend la 1re lettre des deux premiers vrais mots.
+  function initials(n){
+    var p=String(n||'').split(/\s+/).filter(function(w){
+      return w&&!/^(de|du|des|d'|le|la|von|van|di)$/i.test(w)});
+    return ((p[0]||'?')[0]+((p[1]||'')[0]||'')).toUpperCase();
+  }
   function digits(s){return String(s||'').replace(/\D/g,'');}
   function matchQuery(x){
     if(!query)return true;var q=query.toLowerCase();
