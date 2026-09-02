@@ -129,6 +129,34 @@
   .mi.danger{color:var(--resa)}
   .mi[hidden]{display:none}
 
+  /* ---- fiche etablissement (lecture seule) ---- */
+  .sheet.wide{width:840px}
+  .ro{display:flex;gap:11px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line);
+    border-radius:11px;padding:12px 14px;font-size:var(--fs-sm);line-height:1.55;margin-bottom:16px}
+  .ro b{display:block;margin-bottom:2px}
+  .maj{font-size:var(--fs-xs);color:var(--ink-faint);margin:0 0 14px}
+  .sec{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+  .sec>summary{list-style:none;cursor:pointer;padding:12px 15px;display:flex;align-items:center;gap:10px;
+    font-size:var(--fs-sm);font-weight:600}
+  .sec>summary::-webkit-details-marker{display:none}
+  .sec>summary:hover{background:var(--surface-2)}
+  .sec>summary .ar{color:var(--ink-faint);font-size:12px;width:12px;flex:0 0 auto}
+  .sec[open]>summary .ar{transform:rotate(90deg)}
+  .sec>summary .cn{margin-left:auto;font-size:var(--fs-xs);color:var(--ink-faint);font-weight:400}
+  .sec .cont{padding:2px 15px 14px 37px;border-top:1px solid var(--line)}
+  .sec ul{margin:12px 0 0;padding-left:17px;font-size:var(--fs-sm);line-height:1.65;color:var(--ink-soft)}
+  .sec li{margin-bottom:5px}
+  .sec li.dit{list-style:none;margin:9px 0 9px -17px;font-style:italic;color:var(--ink);
+    border-left:2px solid var(--line-strong);padding-left:11px}
+  .secfoot{margin-top:12px;display:flex;justify-content:flex-end}
+  .nonconf{border:1px solid var(--line);background:var(--rappel-bg);border-radius:12px;
+    padding:14px 16px;margin-top:18px;font-size:var(--fs-sm);line-height:1.6}
+  .nonconf b{display:block;margin-bottom:4px}
+  .nonconf ul{color:var(--ink-soft);margin:8px 0 0;padding-left:17px}
+  .minibtn{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);
+    border-radius:9px;padding:4px 9px;font:inherit;font-size:var(--fs-xs);cursor:pointer}
+  .minibtn:hover{background:var(--surface-3)}
+
   /* ---- administration (reserve au compte plateforme) ---- */
   .modal{position:fixed;inset:0;z-index:60;background:rgba(20,19,12,.45);
     display:flex;align-items:flex-start;justify-content:center;padding:5vh 16px;overflow-y:auto}
@@ -423,6 +451,7 @@
 <div class="scrim" id="scrim"></div>
 <div class="modal" id="alertOv" hidden></div>
 <div class="modal" id="feedOv" hidden></div>
+<div class="modal" id="infosOv" hidden></div>
 <div class="scrollwrap">
 <div class="workspace">
   <!-- LEFT -->
@@ -457,6 +486,7 @@
           <span class="chev">⌄</span>
         </button>
         <div class="menu" id="userMenu" hidden>
+          <button class="mi" id="infosBtn">🏨 Informations de l'hôtel</button>
           <button class="mi" id="themeBtn">🌗 Basculer clair / sombre</button>
           <button class="mi" id="adminBtn" hidden>⚙ Administration</button>
           <button class="mi danger" id="logoutBtn">⏻ Déconnexion</button>
@@ -1067,7 +1097,7 @@
       })});
   }
   var MAX_CAPTURE=5*1024*1024;
-  function openFeedback(){
+  function openFeedback(sujet){
     var ov=$('#feedOv');
     ov.innerHTML='<div class="sheet">'+
       '<div class="sh"><h2>Un souci ? Dites-le-nous</h2>'+
@@ -1088,7 +1118,8 @@
     $('#fbX').addEventListener('click',close);
     ov.addEventListener('click',function(e){if(e.target===ov)close();});
     document.addEventListener('keydown',onKey);
-    $('#fbSubject').focus();
+    if(typeof sujet==='string'&&sujet)$('#fbSubject').value=sujet;
+    ($('#fbSubject').value?$('#fbBody'):$('#fbSubject')).focus();
 
     $('#fbGo').addEventListener('click',function(){
       var b=this,note=$('#fbNote'),sujet=$('#fbSubject').value.trim(),texte=$('#fbBody').value.trim();
@@ -1112,6 +1143,56 @@
       .catch(function(e){setNote(note,'Envoi impossible : '+(e.message||'raison inconnue')+'.');})
       .then(function(){b.disabled=false});
     });
+  }
+
+  // ---------------- fiche etablissement ----------------
+  // Lecture seule, et volontairement : la source de verite est le prompt ElevenLabs.
+  // `hotels.infos` est ecrit par prompts/deploy_prompt.py a chaque mise en ligne, donc
+  // l'ecran ne peut pas deriver de ce que l'agent dit vraiment. Une correction ne se
+  // saisit pas ici : elle part par le formulaire de retour, qui existe deja.
+  function openInfos(){
+    var ov=$('#infosOv'), inf=(hotel&&hotel.infos)||null;
+    var corps = !inf ? '<p class="lead">La fiche n\'a pas encore été publiée pour cet '+
+        'établissement. Elle apparaîtra au prochain déploiement du prompt.</p>'
+      : (inf.sections||[]).map(function(s,i){
+          return '<details class="sec"><summary><span class="ar">›</span>'+esc(s.titre)+
+            '<span class="cn">'+s.items.length+' information'+(s.items.length>1?'s':'')+'</span></summary>'+
+            '<div class="cont"><ul>'+s.items.map(function(it){
+              return '<li'+(it.dit?' class="dit"':'')+'>'+esc(it.texte)+'</li>'}).join('')+'</ul>'+
+            '<div class="secfoot"><button class="minibtn" data-sec="'+esc(s.titre)+
+            '">Signaler une correction</button></div></div></details>';
+        }).join('')+
+        ((inf.non_confirme||[]).length
+          ? '<div class="nonconf"><b>Ce que l\'agent refuse de répondre</b>'+
+            'Sur ces sujets il ne devine jamais : il dit qu\'il n\'a pas l\'information et vous '+
+            'rappelez. Vous voulez qu\'il sache répondre ? Signalez-le, on l\'ajoute.'+
+            '<ul>'+inf.non_confirme.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'+
+            '<div class="secfoot"><button class="minibtn" data-sec="Informations non confirmées">'+
+            'Signaler une correction</button></div></div>'
+          : '');
+    ov.innerHTML='<div class="sheet wide"><div class="sh"><h2>Informations de l\'établissement</h2>'+
+      '<button class="x" id="inX" aria-label="Fermer">×</button></div>'+
+      '<p class="lead">Tout ce que l\'agent sait dire au téléphone sur votre hôtel.</p>'+
+      '<div class="ro"><span>🔒</span><span><b>Lecture seule</b>Une erreur, une information qui '+
+      'manque ? Signalez-la : on corrige l\'agent et vous recevez une confirmation.</span></div>'+
+      (inf&&inf.maj?'<p class="maj">Mis à jour le '+esc(dateFr(inf.maj))+'</p>':'')+
+      corps+'</div>';
+    ov.hidden=false;
+    function close(){ov.hidden=true;document.removeEventListener('keydown',onKey);}
+    function onKey(e){if(e.key==='Escape')close();}
+    $('#inX').addEventListener('click',close);
+    ov.addEventListener('click',function(e){if(e.target===ov)close();});
+    document.addEventListener('keydown',onKey);
+    // Un seul canal de retour dans l'app : on rouvre celui du bouton « Un souci ? »,
+    // objet pre-rempli avec la section. Rien de nouveau a brancher cote N8N.
+    Array.prototype.forEach.call(ov.querySelectorAll('[data-sec]'),function(b){
+      b.addEventListener('click',function(){
+        close();openFeedback('Correction fiche — '+b.dataset.sec);});
+    });
+  }
+  function dateFr(iso){
+    var d=new Date(iso);
+    return isNaN(d)?iso:d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
   }
 
   // ---------------- administration ----------------
@@ -1176,7 +1257,7 @@
     return m?m[1].toLowerCase():'';
   }
   function loadHotel(){
-    return api('/rest/v1/hotels?select=id,name,logo_url,phone_e164&order=name.asc')
+    return api('/rest/v1/hotels?select=id,name,logo_url,phone_e164,infos,infos_maj&order=name.asc')
       .then(function(r){if(r.status===401){logout();throw new Error('session expirée');}return r.json()})
       .then(function(rows){
         if(!rows||!rows.length)return;
@@ -1344,6 +1425,7 @@
   // en démo il n'y a pas de session à fermer : pas de bouton mort
   // La console d'administration est une page a part (/app/admin/), pas une
   // modale : meme origine, donc meme jeton — rien a repasser au login.
+  $('#infosBtn').addEventListener('click',function(){openMenu(false);openInfos();});
   $('#adminBtn').addEventListener('click',function(){openMenu(false);location.href='admin/';});
   if(LIVE)$('#logoutBtn').addEventListener('click',function(){openMenu(false);logout();});
   else $('#logoutBtn').remove();
