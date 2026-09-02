@@ -981,6 +981,8 @@
             '<option value="owner">Responsable</option><option value="staff">Réception</option>'+
             '</select></div>'+
         '</div>'+
+        '<div class="fw"><label for="ivName">Nom et prénom</label><input id="ivName" placeholder="Pierre de Kerautem">'+
+          '<span class="hint">affiché dans l\'app, en bas de la colonne de gauche</span></div>'+
         '<div class="fw"><label for="ivMail">Adresse e-mail</label><input id="ivMail" placeholder="contact@hotel.fr">'+
           '<span class="hint">reçoit un lien pour créer son mot de passe</span></div>'+
         '<button class="btn primary" id="ivGo">Envoyer l\'invitation</button>'+
@@ -1017,14 +1019,15 @@
       var b=this,note=$('#ivNote'),sel=$('#ivHotel'),lk=$('#ivLink');
       if(!sel.value){setNote(note,'Créez d\'abord un établissement.');return}
       setNote(note,'Envoi…');b.disabled=true;lk.hidden=true;
-      adminCall({action:'invite',email:$('#ivMail').value,hotel_id:sel.value,role:$('#ivRole').value})
+      adminCall({action:'invite',email:$('#ivMail').value,full_name:$('#ivName').value,
+                 hotel_id:sel.value,role:$('#ivRole').value})
       .then(function(j){
         setNote(note,(j.invited
           ? '✓ Invitation envoyée. La personne choisit son mot de passe depuis l\'e-mail.'
           : '✓ Ce compte existait déjà : il est maintenant rattaché à cet établissement.')+
           (j.link?' Si l\'e-mail n\'arrive pas, transmettez ce lien (valable 1 h) :':''),true);
         if(j.link){lk.value=j.link;lk.hidden=false;}
-        $('#ivMail').value='';
+        $('#ivMail').value='';$('#ivName').value='';
       })
       .catch(function(e){setNote(note,e.message)})
       .then(function(){b.disabled=false});
