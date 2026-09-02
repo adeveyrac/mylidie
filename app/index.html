@@ -1207,8 +1207,12 @@
   // service, qui revalide le jeton avant d'agir.
   function jwtPayload(t){
     try{
-      var p=String(t||'').split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
-      return JSON.parse(atob(p+(p.length%4?'===='.slice(p.length%4):'')))||{};
+      var p=String(t||'').split('.')[1].replace(/-/g,'+').replace(/_/g,'/'),
+          b=atob(p+(p.length%4?'===='.slice(p.length%4):''));
+      // atob rend des octets, pas du texte : « Réception » sortait « RÃ©ception ».
+      // Le jeton est de l'UTF-8, on le decode comme tel.
+      return JSON.parse(new TextDecoder().decode(
+        Uint8Array.from(b,function(c){return c.charCodeAt(0)})))||{};
     }catch(e){return {}}
   }
   function isAdmin(){
