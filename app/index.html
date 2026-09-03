@@ -232,6 +232,13 @@
   .rl2{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:var(--fs-sm);color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .rl2 .mdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
   .unread{width:9px;height:9px;border-radius:50%;background:var(--rappel);flex:0 0 auto}
+  /* Signal « déjà appelé ». La puce porte l'information : elle ne doit jamais être
+     la partie tronquée. C'est le libellé du motif qui s'abrège avant elle. */
+  .rl2 .rsub{min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .chip{flex:0 0 auto;font-size:var(--fs-xs);font-weight:650;padding:2px 8px;border-radius:999px;border:1px solid}
+  .chip.hot{color:var(--miss);background:var(--miss-bg);border-color:var(--miss-line)}
+  .chip.warm{color:var(--rappel);background:var(--rappel-bg);border-color:var(--rappel-line)}
+  .chip.cool{color:var(--ink-faint);background:var(--surface-2);border-color:var(--line-strong);font-weight:500}
   .list-empty,.detail-empty{color:var(--ink-faint);text-align:center;padding:60px 24px;font-size:var(--fs-sm)}
 
   /* ---- right ---- */
@@ -687,13 +694,17 @@
       if(x.grp!==lastGrp){html+='<div class="grouplbl">'+x.grp+'</div>';lastGrp=x.grp;}
       var isMasked=x.phone==='Numéro masqué';
       var sub=isMasked?'A raccroché · '+LABEL[x.motif]:LABEL[x.motif]+(x.dur?' · '+x.dur:'');
-      if(g.items.length>1)sub+=' · '+g.items.length+' appels';
+      var sg=rappelOf(x);
+      // sans signal on garde l'ancien compteur : une info affichee ne doit pas disparaitre
+      if(!sg&&g.items.length>1)sub+=' · '+g.items.length+' appels';
       var unread=g.items.some(function(i){return i.unread});
       var sel=g.items.some(function(i){return i.id===selected});
       html+='<div class="row" data-id="'+x.id+'"'+(sel?' aria-selected="true"':'')+'>'+
         '<div class="rav" style="background:'+COLOR[x.motif]+'">'+esc(initials(x.name))+'</div>'+
         '<div class="rmeta"><div class="rl1"><span class="rn">'+esc(x.name)+'</span><span class="rt">'+x.when+'</span></div>'+
-        '<div class="rl2"><span class="mdot" style="background:'+COLOR[x.motif]+'"></span>'+esc(sub)+'</div></div>'+
+        '<div class="rl2"><span class="mdot" style="background:'+COLOR[x.motif]+'"></span>'+
+          '<span class="rsub">'+esc(sub)+'</span>'+
+          (sg?'<span class="chip '+sg.cls+'">'+esc(sg.txt)+'</span>':'')+'</div></div>'+
         (unread?'<span class="unread"></span>':'')+'</div>';
     });
     wrap.innerHTML=html;wrap.scrollTop=keep;
@@ -754,6 +765,27 @@
     var o={day:'numeric',month:'long'};
     if(d.getFullYear()!==now.getFullYear())o.year='numeric';
     return d.toLocaleDateString('fr-FR',o);
+  }
+  function hhmm(ts){return new Date(ts).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}).replace(':','h');}
+  // Signal « deja appele ». Une seule question : est-ce que cette personne cherche
+  // a joindre quelqu'un maintenant ? Trois intensites, pas six.
+  //   hot  = 3 appels ou plus dans la meme journee   -> elle insiste
+  //   warm = 2e appel en moins de 48 h               -> sa demande n'a pas ete reglee
+  //   cool = deja appele il y a plus de 48 h         -> simple repere
+  // Compte sur TOUT l'historique du correspondant (historyFor), pas sur les seuls
+  // appels visibles : un filtre par motif ne doit pas faire disparaitre un rappel.
+  // Un numero masque n'a pas de groupe (groupKey -> 'seul:<id>') : jamais de signal.
+  function rappelOf(x){
+    var t=tsOf(x);
+    var avant=historyFor(x).filter(function(c){return c.id!==x.id&&tsOf(c)<=t});
+    if(!avant.length)return null;
+    var meme=avant.filter(function(c){return dayKey(tsOf(c))===dayKey(t)});
+    if(meme.length>=2)
+      return {cls:'hot',txt:(meme.length+1)+'ᵉ appel · depuis '+hhmm(Math.min.apply(null,meme.map(tsOf)))};
+    var dernier=Math.max.apply(null,avant.map(tsOf));
+    if(t-dernier<172800000)
+      return {cls:'warm',txt:(avant.length+1)+'ᵉ appel · '+dayLabel(dernier).toLowerCase()+' '+hhmm(dernier)};
+    return {cls:'cool',txt:'déjà appelé le '+dayLabel(dernier)};
   }
   // Fleche entrante barree, comme un appel manque sur iPhone.
   var MISS_SVG='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
@@ -1259,7 +1291,7 @@
       phone:fmtPhone(r.from_e164),
       grp:ecoule<7?'Cette semaine':'Plus ancien',
       when:ecoule<1?heure:(ecoule<7?d.toLocaleDateString('fr-FR',{weekday:'short'}):jour),
-      d:jour+' · '+heure,
+      d:jour+' · '+heure,ts:d.getTime(),
       unread:!r.read_at,archived:!!r.archived_at,
       archivedAt:r.archived_at?new Date(r.archived_at).toLocaleDateString('fr-FR'):'',
       dur:fmtDur(r.duration_secs),summary:r.summary||'(pas de résumé)',
