@@ -693,8 +693,10 @@
       var x=g.head;
       if(x.grp!==lastGrp){html+='<div class="grouplbl">'+x.grp+'</div>';lastGrp=x.grp;}
       var isMasked=x.phone==='Numéro masqué';
-      var sub=isMasked?'A raccroché · '+LABEL[x.motif]:LABEL[x.motif]+(x.dur?' · '+x.dur:'');
       var sg=rappelOf(x);
+      // Avec une puce, la duree saute : la colonne est etroite et « Réservation ·… »
+      // tronque mal. La duree reste lisible dans le fil, la puce non.
+      var sub=isMasked?'A raccroché · '+LABEL[x.motif]:LABEL[x.motif]+(!sg&&x.dur?' · '+x.dur:'');
       // sans signal on garde l'ancien compteur : une info affichee ne doit pas disparaitre
       if(!sg&&g.items.length>1)sub+=' · '+g.items.length+' appels';
       var unread=g.items.some(function(i){return i.unread});
