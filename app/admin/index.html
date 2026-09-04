@@ -206,6 +206,32 @@
   .linkout{width:100%;margin-top:10px;padding:9px 11px;border:1px solid var(--line-strong);border-radius:9px;
     background:var(--surface-2);color:var(--ink-soft);font:inherit;font-size:var(--fs-xs)}
 
+  /* ---- écran « questions sans réponse » ---- */
+  .gaprow{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;
+    padding:9px 8px;border-radius:9px;cursor:pointer;text-align:left;color:inherit}
+  .gaprow:hover{background:var(--surface-2)}
+  .gaprow .gl{width:220px;flex:0 0 auto;font-size:var(--fs-sm);display:flex;align-items:center;gap:8px}
+  .gaprow .gd{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+  .gaprow .gb{flex:1;height:9px;background:var(--surface-3);border-radius:999px;overflow:hidden;min-width:60px}
+  .gaprow .gb i{display:block;height:100%;border-radius:999px}
+  .gaprow .gv{width:96px;text-align:right;font-size:var(--fs-sm);color:var(--ink-soft);
+    font-variant-numeric:tabular-nums;flex:0 0 auto}
+  .pill{font-size:var(--fs-xs);padding:2px 9px;border-radius:999px;font-weight:600;white-space:nowrap}
+  .p-traiter{background:var(--urgence-bg);color:var(--urgence)}
+  .p-traite{background:var(--info-bg);color:var(--info)}
+  .p-horspor{background:var(--annulation-bg);color:var(--annulation)}
+  .p-classer{background:var(--inconnu-bg);color:var(--inconnu)}
+  .gaprow .gs{width:150px;flex:0 0 auto;text-align:right}
+  .lgd{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
+  .lgd span{font-size:var(--fs-xs);color:var(--ink-faint);display:flex;align-items:center;gap:6px;line-height:1.4}
+  .lgd i{width:9px;height:9px;border-radius:3px;display:block;flex:0 0 auto}
+  .qlist{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .qlist li{padding:11px 13px;border-top:1px solid var(--line)}
+  .qlist li:first-child{border-top:0}
+  .qmeta{display:flex;gap:10px;flex-wrap:wrap;font-size:var(--fs-xs);color:var(--ink-faint);margin-bottom:4px}
+  .qtxt{font-size:var(--fs-sm);font-style:italic;margin:0;line-height:1.5}
+  @media (max-width:820px){.gaprow{flex-wrap:wrap}.gaprow .gl{width:100%}.gaprow .gs{width:auto;text-align:left}}
+
   /* ---- modale ---- */
   .modal{position:fixed;inset:0;z-index:90;background:rgba(20,19,12,.45);display:flex;align-items:flex-start;
     justify-content:center;padding:5vh 16px;overflow-y:auto}
@@ -324,8 +350,13 @@
   }
 
   // ---- état ----------------------------------------------------------------
-  var HOTELS=[],CALLS=[],MSGS=[],MEMBRES={},moi='';
+  var HOTELS=[],CALLS=[],MSGS=[],GAPS=[],MEMBRES={},moi='';
   var vue='clients',hStat='all',perStat=30,d1='',d2='';
+  var qHotel='',qFiltre='tout';
+  var STATGAP={traiter:['À traiter','p-traiter','var(--urgence)'],
+               traite:['Traité','p-traite','var(--info)'],
+               horspor:['Sans réponse possible','p-horspor','var(--annulation)'],
+               classer:['À classer','p-classer','var(--inconnu)']};
   var exH={},exQ={calls:true,transcripts:false,messages:false,feedback:false},exD1='',exD2='';
 
   function tok(){try{return localStorage.getItem(TOKEN_KEY)||''}catch(e){return ''}}
@@ -438,9 +469,10 @@
 
   // ---- navigation ----------------------------------------------------------
   function VUES(){return [
-    {id:'clients',lbl:'Établissements',cnt:HOTELS.length},
-    {id:'stats',  lbl:'Statistiques'},
-    {id:'exports',lbl:'Exports'},
+    {id:'clients',  lbl:'Établissements',cnt:HOTELS.length},
+    {id:'stats',    lbl:'Statistiques'},
+    {id:'questions',lbl:'Questions'},
+    {id:'exports',  lbl:'Exports'},
     {id:'new',    lbl:'Nouvel établissement'}
   ]}
   function renderNav(){
@@ -751,6 +783,144 @@
     }
   }
 
+  // ---- 1 bis. questions sans réponse ---------------------------------------
+  // Pas de détection automatique : personne ne classe une transcription ici.
+  // C'est un carnet de bord — on écoute dans l'app de réception (le vrai lecteur
+  // audio y vit déjà), et on consigne ici thème, question et statut à la main.
+  function vueQuestions(){
+    if(!qHotel&&HOTELS.length)qHotel=HOTELS[0].id;
+    var h=hotel(qHotel);
+    var mine=GAPS.filter(function(g){return g.hotel_id===qHotel});
+    var vus=mine.filter(function(g){return qFiltre==='tout'||g.status===qFiltre});
+    var max=Math.max.apply(null,mine.map(function(g){return (g.entries||[]).length}))||1;
+
+    var opts=HOTELS.map(function(x){
+      return '<option value="'+esc(x.id)+'"'+(x.id===qHotel?' selected':'')+'>'+esc(x.name)+'</option>'}).join('');
+
+    var lignes=vus.map(function(g){
+      var n=(g.entries||[]).length,s=STATGAP[g.status];
+      return '<button class="gaprow" data-i="'+mine.indexOf(g)+'">'+
+        '<span class="gl"><i class="gd" style="background:'+s[2]+'"></i>'+esc(g.theme)+'</span>'+
+        '<span class="gb"><i style="width:'+Math.round(n/max*100)+'%;background:'+s[2]+'"></i></span>'+
+        '<span class="gv">'+n+' question'+(n!==1?'s':'')+'</span>'+
+        '<span class="gs"><span class="pill '+s[1]+'">'+s[0]+'</span></span></button>';
+    }).join('')||'<div class="hsub">Aucun thème dans ce filtre.</div>';
+
+    page('Questions sans réponse',
+      'Ce que l\'agent n\'a pas su répondre, classé par thème. Rien n\'est détecté automatiquement : '+
+      'vous consignez ici ce que vous entendez en écoutant les appels dans l\'application de réception.',
+      '<div class="filters"><div class="fld"><label for="qh">Établissement</label>'+
+        '<select id="qh">'+opts+'</select></div></div>'+
+      '<div class="card"><h2>Thèmes<span class="sub">'+esc(h?h.name:'')+'</span>'+
+        '<button class="gear" id="qNouveau" title="Nouveau thème" aria-label="Nouveau thème">+</button></h2>'+
+        '<div class="in">'+
+        '<div class="seg" id="qf" style="margin-bottom:16px">'+
+        [['tout','Tout'],['traiter','À traiter'],['traite','Traité'],
+         ['horspor','Sans réponse possible'],['classer','À classer']].map(function(x){
+          return '<button data-f="'+x[0]+'" aria-pressed="'+(qFiltre===x[0])+'">'+x[1]+'</button>'}).join('')+
+        '</div>'+
+        '<div id="qrows">'+lignes+'</div>'+
+        '<div class="lgd">'+
+          '<span><i style="background:var(--urgence)"></i>À traiter — l\'info manque, à ajouter au prompt</span>'+
+          '<span><i style="background:var(--info)"></i>Traité — info ajoutée au prompt</span>'+
+          '<span><i style="background:var(--annulation)"></i>Sans réponse possible — prise de message assumée</span>'+
+          '<span><i style="background:var(--inconnu)"></i>À classer — à lire pour créer un thème</span>'+
+        '</div></div></div>');
+
+    $('#qh').addEventListener('change',function(){qHotel=this.value;render()});
+    $$('#qf button').forEach(function(b){
+      b.addEventListener('click',function(){qFiltre=b.dataset.f;render()})});
+    $('#qNouveau').addEventListener('click',nouveauTheme);
+    $$('#qrows .gaprow').forEach(function(b){
+      b.addEventListener('click',function(){voirTheme(mine[+b.dataset.i])});
+    });
+  }
+
+  function nouveauTheme(){
+    var hn=hotel(qHotel);
+    modal('<div class="sh"><h2>Nouveau thème</h2><button class="x" id="ovX" aria-label="Fermer">×</button></div>'+
+      '<p class="lead">Un thème regroupe les questions sur un même sujet, pour « '+esc(hn?hn.name:'')+' ».</p>'+
+      '<div class="fw"><label for="ntLbl">Intitulé</label>'+
+      '<input id="ntLbl" placeholder="Parking, Animaux, Petit-déjeuner…"></div>'+
+      '<div class="acts"><button class="btn" id="ntNon">Annuler</button>'+
+      '<button class="btn primary" id="ntGo">Créer</button></div>'+
+      '<p class="note" id="ntNote"></p>');
+    $('#ovX').addEventListener('click',fermer);
+    $('#ntNon').addEventListener('click',fermer);
+    $('#ntGo').addEventListener('click',function(){
+      var b=this,note=$('#ntNote'),lbl=$('#ntLbl').value.trim();
+      if(!lbl){setNote(note,'Donnez un intitulé.');return}
+      setNote(note,'Création…');b.disabled=true;
+      api('/rest/v1/call_gaps',{method:'POST',headers:{Prefer:'return=representation'},
+        body:JSON.stringify({hotel_id:qHotel,theme:lbl})})
+        .then(function(r){return r.json()})
+        .then(function(rows){
+          if(!rows||!rows.length)throw new Error('Création refusée.');
+          GAPS.push(rows[0]);fermer();render();
+        })
+        .catch(function(e){setNote(note,e.message||'Ce thème existe peut-être déjà pour cet établissement.');b.disabled=false});
+    });
+  }
+
+  function voirTheme(g){
+    var s=STATGAP[g.status],entries=(g.entries||[]).slice().reverse();
+    modal('<div class="sh"><h2>'+esc(g.theme)+'</h2><span class="pill '+s[1]+'">'+s[0]+'</span>'+
+      '<button class="x" id="ovX" aria-label="Fermer">×</button></div>'+
+      '<p class="lead">'+entries.length+' question'+(entries.length!==1?'s':'')+' consignée'+
+      (entries.length!==1?'s':'')+'.</p>'+
+      (entries.length?'<ul class="qlist">'+entries.map(function(a){
+        return '<li><div class="qmeta">'+(a.date?'<span>'+esc(a.date)+'</span>':'')+
+          (a.from_e164?'<span>'+esc(a.from_e164)+'</span>':'')+'</div>'+
+          '<p class="qtxt">« '+esc(a.question)+' »</p></li>';
+      }).join('')+'</ul>':'<div class="hsub">Aucune question consignée pour l\'instant.</div>')+
+      '<div class="row2" style="margin-top:14px">'+
+        '<div class="fw"><label for="qDate">Date de l\'appel</label>'+
+        '<input id="qDate" type="date" value="'+iso(new Date())+'"></div>'+
+        '<div class="fw"><label for="qNum">Numéro (facultatif)</label><input id="qNum" placeholder="+33…"></div>'+
+      '</div>'+
+      '<div class="fw"><label for="qQ">Question, au mot près</label>'+
+      '<textarea id="qQ" rows="2" placeholder="Ce que l\'appelant a demandé"></textarea></div>'+
+      '<div class="acts"><button class="btn primary" id="qAdd">Ajouter cette question</button></div>'+
+      '<div class="row2" style="margin-top:6px">'+
+        '<div class="fw"><label for="qStatut">Statut</label><select id="qStatut">'+
+          Object.keys(STATGAP).map(function(k){
+            return '<option value="'+k+'"'+(g.status===k?' selected':'')+'>'+STATGAP[k][0]+'</option>'}).join('')+
+          '</select></div>'+
+        '<div class="fw"><label for="qNote">Note</label><input id="qNote" value="'+esc(g.note||'')+'"></div>'+
+      '</div>'+
+      '<div class="acts"><button class="btn" id="ovX2">Fermer</button>'+
+      '<button class="btn primary" id="qSave">Enregistrer le statut et la note</button></div>'+
+      '<p class="note" id="qNoteMsg"></p>');
+    $('#ovX').addEventListener('click',fermer);
+    $('#ovX2').addEventListener('click',fermer);
+    $('#qAdd').addEventListener('click',function(){
+      var b=this,note=$('#qNoteMsg'),q=$('#qQ').value.trim();
+      if(!q){setNote(note,'Décrivez la question posée.');return}
+      var next=(g.entries||[]).concat([{date:$('#qDate').value,from_e164:$('#qNum').value.trim(),question:q}]);
+      setNote(note,'Enregistrement…');b.disabled=true;
+      api('/rest/v1/call_gaps?id=eq.'+g.id,{method:'PATCH',headers:{Prefer:'return=representation'},
+        body:JSON.stringify({entries:next,updated_at:new Date().toISOString()})})
+        .then(function(r){return r.json()})
+        .then(function(rows){
+          if(!rows||!rows.length)throw new Error('Enregistrement refusé.');
+          Object.assign(g,rows[0]);render();voirTheme(g);
+        })
+        .catch(function(e){setNote(note,e.message||'Enregistrement impossible.');b.disabled=false});
+    });
+    $('#qSave').addEventListener('click',function(){
+      var b=this,note=$('#qNoteMsg');
+      setNote(note,'Enregistrement…');b.disabled=true;
+      api('/rest/v1/call_gaps?id=eq.'+g.id,{method:'PATCH',headers:{Prefer:'return=representation'},
+        body:JSON.stringify({status:$('#qStatut').value,note:$('#qNote').value,updated_at:new Date().toISOString()})})
+        .then(function(r){return r.json()})
+        .then(function(rows){
+          if(!rows||!rows.length)throw new Error('Enregistrement refusé.');
+          Object.assign(g,rows[0]);render();fermer();
+        })
+        .catch(function(e){setNote(note,e.message||'Enregistrement impossible.');b.disabled=false});
+    });
+  }
+
   function ouvrirTarifs(){
     var champ=function(i,l,v,h){
       return '<div class="fw"><label for="'+i+'">'+l+'</label>'+
@@ -1059,17 +1229,20 @@
           '&order=started_at.desc&limit=5000').then(function(r){return r.json()}),
       api('/rest/v1/messages?select=id,hotel_id,direction,body,phone_e164,status,created_at'+
           '&order=created_at.desc&limit=5000').then(function(r){return r.json()}),
-      api('/rest/v1/hotel_members?select=hotel_id,role').then(function(r){return r.json()})
+      api('/rest/v1/hotel_members?select=hotel_id,role').then(function(r){return r.json()}),
+      api('/rest/v1/call_gaps?select=*&order=theme.asc').then(function(r){return r.json()})
     ]).then(function(x){
-      HOTELS=x[0]||[];CALLS=x[1]||[];MSGS=x[2]||[];
+      HOTELS=x[0]||[];CALLS=x[1]||[];MSGS=x[2]||[];GAPS=x[4]||[];
       MEMBRES={};(x[3]||[]).forEach(function(m){MEMBRES[m.hotel_id]=(MEMBRES[m.hotel_id]||0)+1});
       HOTELS.forEach(function(h){if(!(h.id in exH))exH[h.id]=true});
+      if(!qHotel&&HOTELS.length)qHotel=HOTELS[0].id;
     });
   }
 
   function render(){
     if(vue==='clients')vueClients();
     else if(vue==='stats')vueStats();
+    else if(vue==='questions')vueQuestions();
     else if(vue==='exports')vueExports();
     else vueNew();
   }
