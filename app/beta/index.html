@@ -628,10 +628,53 @@
     var tail=dp.slice(-9);
     return msgs.filter(function(m){return digits(m.phone_e164).slice(-9)===tail});
   }
+  // Le jeton Supabase ne vit qu'une heure : la reception se retrouvait devant
+  // l'ecran de connexion en pleine journee, parfois pendant un appel. On garde
+  // le `refresh_token` (il etait jete) et on renouvelle en silence, jusqu'a
+  // SESSION_MAX apres la SAISIE DU MOT DE PASSE — pas apres le dernier
+  // renouvellement, sinon un poste jamais eteint ne se reconnecte plus jamais.
+  var SESSION_MAX=24*3600*1000, renewing=null, linkRt='';
+  // `fin` n'est pose qu'a la saisie du mot de passe : un renouvellement ne
+  // repousse jamais l'echeance.
+  function saveSession(j,fresh){
+    if(j.access_token)tok=j.access_token;
+    try{
+      localStorage.setItem('mylidie_tok',tok);
+      if(j.refresh_token)localStorage.setItem('mylidie_rtok',j.refresh_token);
+      if(fresh)localStorage.setItem('mylidie_fin',String(Date.now()+SESSION_MAX));
+    }catch(e){}
+  }
+  function sessionFin(){try{return +localStorage.getItem('mylidie_fin')||0}catch(e){return 0}}
+  // Un seul renouvellement a la fois : loadCalls() lance plusieurs requetes en
+  // parallele, et un refresh_token ne sert qu'une fois (rotation Supabase) —
+  // deux appels concurrents en griller un et deconnecteraient pour de bon.
+  function renew(){
+    if(renewing)return renewing;
+    var rt='';try{rt=localStorage.getItem('mylidie_rtok')||''}catch(e){}
+    if(!rt||!sessionFin()||Date.now()>sessionFin())return Promise.resolve(false);
+    renewing=fetch(SUPA.url+'/auth/v1/token?grant_type=refresh_token',{method:'POST',
+        headers:{apikey:SUPA.anon,'Content-Type':'application/json'},
+        body:JSON.stringify({refresh_token:rt})})
+      .then(function(r){return r.json()})
+      .then(function(j){if(!j.access_token)return false;saveSession(j,false);return true})
+      .catch(function(){return false})
+      .then(function(ok){renewing=null;return ok});
+    return renewing;
+  }
   function api(path,opt){
     opt=opt||{};opt.headers=Object.assign({apikey:SUPA.anon,Authorization:'Bearer '+tok,
       'Content-Type':'application/json'},opt.headers||{});
-    return fetch(SUPA.url+path,opt);
+    return fetch(SUPA.url+path,opt).then(function(r){
+      if(r.status!==401)return r;
+      // 401 = jeton perime, ou session de plus de 24 h. Le premier se repare
+      // sans rien demander ; le second rend la main aux gardes 401 existants,
+      // qui deconnectent.
+      return renew().then(function(ok){
+        if(!ok)return r;
+        opt.headers.Authorization='Bearer '+tok;
+        return fetch(SUPA.url+path,opt);
+      });
+    });
   }
 
   function counts(){var src=data.filter(function(x){return query||tab==='archives'?true:!x.archived});var c={all:src.length,urgence:0,resa:0,info:0,annulation:0,rappel:0,inconnu:0};src.forEach(function(x){c[x.motif]++});return c;}
@@ -1356,7 +1399,10 @@
         });
     });
   }
-  function logout(){try{localStorage.removeItem('mylidie_tok')}catch(e){}tok=null;showLogin();}
+  function logout(){
+    try{['mylidie_tok','mylidie_rtok','mylidie_fin'].forEach(function(k){localStorage.removeItem(k)})}catch(e){}
+    tok=null;showLogin();
+  }
   // Un seul ecran, trois modes : connexion, mot de passe oublie, choix du mot
   // de passe (arrivee depuis le lien recu par mail — invitation ou reinitialisation).
   var AUTH_LOGO='/mylidie-logo.png',lastMail='';
@@ -1417,7 +1463,7 @@
       .then(function(r){return r.json()})
       .then(function(j){
         if(!j.access_token){authScreen('login','Identifiants incorrects.');return;}
-        tok=j.access_token;try{localStorage.setItem('mylidie_tok',tok)}catch(e){}
+        saveSession(j,true);
         hideAuth();loadCalls();
       }).catch(function(){authScreen('login','Connexion impossible.')});
       return;
@@ -1449,7 +1495,7 @@
           'Ce lien a expiré. Demandez-en un nouveau depuis « Mot de passe oublié ».');
         return;
       }
-      try{localStorage.setItem('mylidie_tok',tok)}catch(e){}
+      saveSession({access_token:tok,refresh_token:linkRt},true);
       hideAuth();loadCalls();
     }).catch(function(){authScreen('newpass','Enregistrement impossible.')});
   }
@@ -1551,12 +1597,15 @@
     }else if((hp.type==='recovery'||hp.type==='invite')&&hp.access_token){
       // On sort le jeton de la barre d'adresse avant toute chose : il ne doit
       // pas rester dans l'historique ni partir dans un referer.
-      tok=hp.access_token;
+      tok=hp.access_token;linkRt=hp.refresh_token||'';
       try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
       authScreen('newpass');
     }else{
       try{tok=localStorage.getItem('mylidie_tok')}catch(e){}
-      if(tok)loadCalls().catch(function(){});else showLogin();
+      // Session de plus de 24 h : on ne tente meme pas, on redemande le mot de passe.
+      if(tok&&sessionFin()&&Date.now()>sessionFin()){logout();}
+      else if(tok)loadCalls().catch(function(){});
+      else showLogin();
     }
   }else{
     renderCounts();renderRows();
