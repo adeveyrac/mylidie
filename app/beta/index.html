@@ -630,12 +630,14 @@
   }
   // Le jeton Supabase ne vit qu'une heure : la reception se retrouvait devant
   // l'ecran de connexion en pleine journee, parfois pendant un appel. On garde
-  // le `refresh_token` (il etait jete) et on renouvelle en silence, jusqu'a
-  // SESSION_MAX apres la SAISIE DU MOT DE PASSE — pas apres le dernier
-  // renouvellement, sinon un poste jamais eteint ne se reconnecte plus jamais.
+  // le `refresh_token` (il etait jete) et on renouvelle en silence tant que le
+  // poste sert : `fin` = derniere activite + SESSION_MAX. Un poste laisse seul
+  // 24 h redemande le mot de passe.
   var SESSION_MAX=24*3600*1000, renewing=null, linkRt='';
-  // `fin` n'est pose qu'a la saisie du mot de passe : un renouvellement ne
-  // repousse jamais l'echeance.
+  // L'activite se mesure sur les GESTES, pas sur les requetes : l'app charge une
+  // fois et ne rappelle plus le serveur, une reception qui lit son ecran pendant
+  // une heure n'emet rien. Un renouvellement de jeton, lui, ne prouve rien du
+  // tout — il partirait meme d'un poste oublie allume.
   function saveSession(j,fresh){
     if(j.access_token)tok=j.access_token;
     try{
@@ -645,6 +647,14 @@
     }catch(e){}
   }
   function sessionFin(){try{return +localStorage.getItem('mylidie_fin')||0}catch(e){return 0}}
+  // Repousse l'echeance. Ecrit au plus une fois par minute : sans ce frein,
+  // chaque frappe dans la recherche ferait un aller-retour localStorage.
+  var lastTouch=0;
+  function touchSession(){
+    if(!tok||Date.now()-lastTouch<60000)return;
+    lastTouch=Date.now();
+    try{localStorage.setItem('mylidie_fin',String(Date.now()+SESSION_MAX))}catch(e){}
+  }
   // Un seul renouvellement a la fois : loadCalls() lance plusieurs requetes en
   // parallele, et un refresh_token ne sert qu'une fois (rotation Supabase) —
   // deux appels concurrents en griller un et deconnecteraient pour de bon.
@@ -661,14 +671,17 @@
       .then(function(ok){renewing=null;return ok});
     return renewing;
   }
+  ['pointerdown','keydown'].forEach(function(ev){
+    document.addEventListener(ev,touchSession,{capture:true,passive:true});
+  });
   function api(path,opt){
     opt=opt||{};opt.headers=Object.assign({apikey:SUPA.anon,Authorization:'Bearer '+tok,
       'Content-Type':'application/json'},opt.headers||{});
     return fetch(SUPA.url+path,opt).then(function(r){
       if(r.status!==401)return r;
-      // 401 = jeton perime, ou session de plus de 24 h. Le premier se repare
-      // sans rien demander ; le second rend la main aux gardes 401 existants,
-      // qui deconnectent.
+      // 401 = jeton perime, ou 24 h sans un geste. Le premier se repare sans
+      // rien demander ; le second rend la main aux gardes 401 existants, qui
+      // deconnectent.
       return renew().then(function(ok){
         if(!ok)return r;
         opt.headers.Authorization='Bearer '+tok;
@@ -1602,7 +1615,7 @@
       authScreen('newpass');
     }else{
       try{tok=localStorage.getItem('mylidie_tok')}catch(e){}
-      // Session de plus de 24 h : on ne tente meme pas, on redemande le mot de passe.
+      // 24 h sans un geste : on ne tente meme pas, on redemande le mot de passe.
       if(tok&&sessionFin()&&Date.now()>sessionFin()){logout();}
       else if(tok)loadCalls().catch(function(){});
       else showLogin();
