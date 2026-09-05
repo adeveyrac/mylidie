@@ -353,6 +353,60 @@
   var HOTELS=[],CALLS=[],MSGS=[],GAPS=[],MEMBRES={},moi='';
   var vue='clients',hStat='all',perStat=30,d1='',d2='';
   var qHotel='',qFiltre='tout';
+
+  // ---- détection des questions sans réponse --------------------------------
+  // Mesuré le 2026-09-04 sur 394 transcriptions réelles (Parc Dinard, Maison
+  // Traversière, Maison Gaité) : 32 appels détectés (8 %), 14 inspectés sans un
+  // seul faux positif. La phrase vient du prompt (« Je n'ai pas cette information,
+  // je vais transmettre… »), le modèle la reproduit au mot près — on détecte donc
+  // une phrase qu'on écrit nous-mêmes, pas une intention qu'on devine.
+  //
+  // ⚠️ L'ancrage porte sur ce qui manque à L'AGENT (« cette information », « accès »).
+  // Jamais sur « ne dispose pas », qui parle de L'HÔTEL : « l'hôtel ne dispose pas
+  // d'ascenseur » est une BONNE réponse, et ce motif l'avait classée en trou.
+  // Même raison d'exclure « je n'ai pas bien compris » (demande de répétition,
+  // 39 appels sur 394) : l'ancre « cette information » l'écarte toute seule.
+  var RX_TROU=/n'ai pas (?:cette information|l'information|d'information|accès (?:à|au|aux))/i;
+  // Catégorie distincte, volontairement : ce que l'agent n'a pas le POUVOIR de
+  // faire (transfert, dispo temps réel) ne se comble pas en éditant le prompt.
+  // Le mélanger aux trous ferait croire à l'hôtelier qu'il peut le corriger.
+  var RX_LIMITE=/je ne peux pas (?:transférer|collecter|vérifier|accéder|traiter)/i;
+
+  // Un appel détecté = le tour d'agent qui refuse + le tour d'appelant juste avant.
+  // Nos transcriptions ElevenLabs portent les rôles (celles d'ALLO ne les ont pas) :
+  // la question s'extrait donc exactement, sans découpage de phrases approximatif.
+  function detecte(hid){
+    var out=[];
+    CALLS.forEach(function(c){
+      if(c.hotel_id!==hid)return;
+      var t=c.transcript;if(!t||!t.length)return;
+      for(var i=0;i<t.length;i++){
+        if((t[i].role||'')!=='agent')continue;
+        var m=String(t[i].message||'');
+        var kind=RX_TROU.test(m)?'trou':(RX_LIMITE.test(m)?'limite':'');
+        if(!kind)continue;
+        var q='';
+        for(var j=i-1;j>=0;j--){if((t[j].role||'')==='user'){q=String(t[j].message||'');break}}
+        if(!q)continue;
+        out.push({call_id:c.id,date:(c.started_at||'').slice(0,10),
+                  from_e164:c.from_e164||'',question:q,agent:m,kind:kind});
+        break;   // un appel ne remonte qu'une fois, sur son premier refus
+      }
+    });
+    return out;
+  }
+  // Déjà classé = son call_id figure dans les entrées d'un thème. Pas de table de
+  // suivi : classer EST l'acquittement, et « ignorer » se fait en rangeant la
+  // question dans un thème « Démarchage » en « sans réponse possible ».
+  function dejaClasse(hid){
+    var vus={};
+    GAPS.forEach(function(g){
+      if(g.hotel_id!==hid)return;
+      (g.entries||[]).forEach(function(e){if(e.call_id)vus[e.call_id]=true});
+    });
+    return vus;
+  }
+
   var STATGAP={traiter:['À traiter','p-traiter','var(--urgence)'],
                traite:['Traité','p-traite','var(--info)'],
                horspor:['Sans réponse possible','p-horspor','var(--annulation)'],
@@ -806,11 +860,42 @@
         '<span class="gs"><span class="pill '+s[1]+'">'+s[0]+'</span></span></button>';
     }).join('')||'<div class="hsub">Aucun thème dans ce filtre.</div>';
 
+    // Détections non encore classées, les trous d'abord : c'est ce qui se comble.
+    var vus=dejaClasse(qHotel);
+    var det=detecte(qHotel).filter(function(d){return !vus[d.call_id]});
+    det.sort(function(a,b){return (a.kind===b.kind)?0:(a.kind==='trou'?-1:1)});
+    var nTrou=det.filter(function(d){return d.kind==='trou'}).length;
+    var nLim=det.length-nTrou;
+
+    var detHtml=det.length
+      ? '<ul class="qlist">'+det.map(function(d,i){
+          return '<li><div class="qmeta"><span class="pill '+(d.kind==='trou'?'p-traiter':'p-horspor')+'">'+
+            (d.kind==='trou'?'Trou d\'information':'Limite de l\'agent')+'</span>'+
+            '<span>'+esc(d.date)+'</span>'+(d.from_e164?'<span>'+esc(d.from_e164)+'</span>':'')+'</div>'+
+            '<p class="qtxt">« '+esc(d.question)+' »</p>'+
+            '<div style="margin-top:7px"><button class="btn sm" data-d="'+i+'">Classer dans un thème</button></div>'+
+            '</li>'}).join('')+'</ul>'
+      : '<div class="hsub">Rien à classer : tous les refus détectés sont déjà rangés dans un thème.</div>';
+
     page('Questions sans réponse',
-      'Ce que l\'agent n\'a pas su répondre, classé par thème. Rien n\'est détecté automatiquement : '+
-      'vous consignez ici ce que vous entendez en écoutant les appels dans l\'application de réception.',
+      'Ce que l\'agent n\'a pas su répondre. Les refus sont <b>détectés dans les transcriptions</b> ; '+
+      'c\'est vous qui décidez du thème. Vous pouvez aussi consigner à la main ce que vous entendez '+
+      'en écoutant les appels.',
       '<div class="filters"><div class="fld"><label for="qh">Établissement</label>'+
         '<select id="qh">'+opts+'</select></div></div>'+
+
+      '<div class="card"><h2>Détecté dans les appels'+
+        '<span class="sub">'+nTrou+' trou'+(nTrou!==1?'s':'')+' · '+nLim+' limite'+(nLim!==1?'s':'')+'</span></h2>'+
+        '<div class="in">'+
+        // `.warn b` est en display:block (c'est le titre de l'encart) : toute
+        // emphase en milieu de phrase passe par <strong>, sinon elle saute une ligne.
+        '<div class="warn"><b>Deux natures différentes, à ne pas confondre.</b>'+
+        'Un <strong>trou d\'information</strong> se comble en ajoutant le renseignement au prompt '+
+        'de l\'agent. Une <strong>limite de l\'agent</strong> (transférer un appel, vérifier une '+
+        'disponibilité en temps réel) ne se corrige pas en écrivant du texte : elle relève de la '+
+        'feuille de route produit.</div>'+
+        detHtml+'</div></div>'+
+
       '<div class="card"><h2>Thèmes<span class="sub">'+esc(h?h.name:'')+'</span>'+
         '<button class="gear" id="qNouveau" title="Nouveau thème" aria-label="Nouveau thème">+</button></h2>'+
         '<div class="in">'+
@@ -833,6 +918,59 @@
     $('#qNouveau').addEventListener('click',nouveauTheme);
     $$('#qrows .gaprow').forEach(function(b){
       b.addEventListener('click',function(){voirTheme(mine[+b.dataset.i])});
+    });
+    $$('[data-d]').forEach(function(b){
+      b.addEventListener('click',function(){classer(det[+b.dataset.d],mine)});
+    });
+  }
+
+  // Ranger une détection dans un thème : la question part telle quelle dans
+  // `entries`, avec son call_id — c'est lui qui la fait disparaître de la liste
+  // à classer, sans table de suivi supplémentaire.
+  function classer(d,mine){
+    modal('<div class="sh"><h2>Classer la question</h2>'+
+      '<button class="x" id="ovX" aria-label="Fermer">×</button></div>'+
+      '<p class="lead">Elle sera ajoutée au thème choisi, avec sa date et son numéro.</p>'+
+      '<ul class="qlist"><li><p class="qtxt">« '+esc(d.question)+' »</p>'+
+      '<div class="qmeta" style="margin:6px 0 0"><span>réponse de l\'agent :</span></div>'+
+      '<div class="hsub">'+esc(d.agent)+'</div></li></ul>'+
+      '<div class="fw" style="margin-top:14px"><label for="clT">Thème</label><select id="clT">'+
+        mine.map(function(g){return '<option value="'+esc(g.id)+'">'+esc(g.theme)+'</option>'}).join('')+
+        '<option value="">— nouveau thème —</option></select></div>'+
+      '<div class="fw"><label for="clN">Nom du nouveau thème</label>'+
+      '<input id="clN" placeholder="Conditions d\'annulation, Tarifs…"></div>'+
+      '<div class="acts"><button class="btn" id="clNon">Annuler</button>'+
+      '<button class="btn primary" id="clGo">Classer</button></div>'+
+      '<p class="note" id="clNote"></p>');
+    $('#ovX').addEventListener('click',fermer);
+    $('#clNon').addEventListener('click',fermer);
+    $('#clGo').addEventListener('click',function(){
+      var b=this,note=$('#clNote'),id=$('#clT').value,nom=$('#clN').value.trim();
+      var entry={date:d.date,from_e164:d.from_e164,question:d.question,call_id:d.call_id};
+      setNote(note,'Enregistrement…');b.disabled=true;
+      var p;
+      if(id){
+        var g=GAPS.filter(function(x){return x.id===id})[0];
+        p=api('/rest/v1/call_gaps?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=representation'},
+              body:JSON.stringify({entries:(g.entries||[]).concat([entry]),
+                                   updated_at:new Date().toISOString()})})
+             .then(function(r){return r.json()})
+             .then(function(rows){
+               if(!rows||!rows.length)throw new Error('Enregistrement refusé.');
+               Object.assign(g,rows[0]);});
+      }else{
+        if(!nom){setNote(note,'Donnez un nom au nouveau thème.');b.disabled=false;return}
+        // Une limite de l'agent n'est pas « à traiter » : elle ne se comble pas au prompt.
+        p=api('/rest/v1/call_gaps',{method:'POST',headers:{Prefer:'return=representation'},
+              body:JSON.stringify({hotel_id:qHotel,theme:nom,entries:[entry],
+                                   status:d.kind==='limite'?'horspor':'traiter'})})
+             .then(function(r){return r.json()})
+             .then(function(rows){
+               if(!rows||!rows.length)throw new Error('Création refusée.');
+               GAPS.push(rows[0]);});
+      }
+      p.then(function(){fermer();render()})
+       .catch(function(e){setNote(note,e.message||'Enregistrement impossible.');b.disabled=false});
     });
   }
 
