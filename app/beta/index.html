@@ -769,11 +769,17 @@
     $$('.row',wrap).forEach(function(el){el.addEventListener('click',function(){openThread(el.dataset.id,true)});});
   }
 
+  // L'action juste est dite DANS l'appel : elle vient du champ de collecte
+  // `suite_a_donner` de l'agent ElevenLabs. Les gabarits par motif ne sont
+  // qu'un repli, et ne disent QUE ce que les champs de l'appel portent :
+  // une 2e ligne inventée (« préparer la chambre ») se trompait des qu'un
+  // « resa » n'était pas une chambre — un brunch, une table, un séminaire.
   function betaFor(x){
-    if(x.motif==='urgence')return ['Traiter en priorité la demande urgente de '+esc(x.name)+'.','Prévenir la maintenance ou le responsable de garde selon le motif signalé.'];
-    if(x.motif==='resa')return ['Confirmer à la réception la réservation de '+esc(x.name)+(x.dates?' ('+esc(x.dates)+')':'')+'.','Vérifier la disponibilité et préparer la chambre pour une arrivée tardive.'];
-    if(x.motif==='rappel')return ['Rappeler '+esc(x.name)+' au '+esc(x.phone)+' pour traiter sa demande.','Vérifier la réservation concernée avant de rappeler.'];
-    if(x.motif==='annulation')return ['Confirmer l\'annulation par SMS à '+esc(x.name)+'.','Libérer la chambre concernée dans le planning.'];
+    if(x.suite)return [esc(x.suite)];
+    if(x.motif==='urgence')return ['Traiter en priorité la demande urgente de '+esc(x.name)+'.'];
+    if(x.motif==='resa')return ['Confirmer à la réception la demande de '+esc(x.name)+(x.dates?' ('+esc(x.dates)+')':'')+'.'];
+    if(x.motif==='rappel')return ['Rappeler '+esc(x.name)+' au '+esc(x.phone)+' pour traiter sa demande.'];
+    if(x.motif==='annulation')return ['Confirmer l\'annulation à '+esc(x.name)+' et libérer le créneau concerné.'];
     return null;
   }
   // Le glyphe unicode s'affichait en tofu (rectangle barre) sur iOS : un SVG
@@ -1354,7 +1360,7 @@
       archivedAt:r.archived_at?new Date(r.archived_at).toLocaleDateString('fr-FR'):'',
       dur:fmtDur(r.duration_secs),summary:r.summary||'(pas de résumé)',
       transcript:tr,noMessage:tr.length===0,audio:r.recording_url||'',
-      dates:gv('dates_sejour'),resa:gv('reservation_prise')};
+      dates:gv('dates_sejour'),resa:gv('reservation_prise'),suite:gv('suite_a_donner')};
   }
   // Un compte peut appartenir à plusieurs établissements — un administrateur
   // plateforme les voit tous (is_platform_admin passe la RLS). Sans choix
