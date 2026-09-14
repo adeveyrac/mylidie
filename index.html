@@ -1409,7 +1409,7 @@ addEventListener('DOMContentLoaded',function(){
 })();
 </script>
 
-<div id="cookie-banner" hidden style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--ink);color:var(--white);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-top:1px solid var(--accent);font-size:.85rem">
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--ink);color:var(--white);padding:1rem 1.5rem;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-top:1px solid var(--accent);font-size:.85rem">
   <p style="margin:0;flex:1;min-width:200px">Nous utilisons des cookies de mesure d'audience (Google Analytics). <a href="/mentions-legales.html" style="color:var(--accent)">En savoir plus</a></p>
   <div style="display:flex;gap:.6rem;flex-shrink:0">
     <button class="btn btn-o btn-s btn-inv" type="button" onclick="refuseCookies()">Refuser</button>
@@ -1419,9 +1419,9 @@ addEventListener('DOMContentLoaded',function(){
 <script>
   (function(){var c=null;try{c=localStorage.getItem('mylidie_cookie_consent')}catch(e){}
     if(c==='accepted'){gtag('consent','update',{'analytics_storage':'granted'})}
-    else if(!c){document.getElementById('cookie-banner').hidden=false}})();
-  function acceptCookies(){try{localStorage.setItem('mylidie_cookie_consent','accepted')}catch(e){}gtag('consent','update',{'analytics_storage':'granted'});document.getElementById('cookie-banner').hidden=true}
-  function refuseCookies(){try{localStorage.setItem('mylidie_cookie_consent','refused')}catch(e){}document.getElementById('cookie-banner').hidden=true}
+    else if(!c){document.getElementById('cookie-banner').style.display='flex'}})();
+  function acceptCookies(){try{localStorage.setItem('mylidie_cookie_consent','accepted')}catch(e){}gtag('consent','update',{'analytics_storage':'granted'});document.getElementById('cookie-banner').style.display='none'}
+  function refuseCookies(){try{localStorage.setItem('mylidie_cookie_consent','refused')}catch(e){}document.getElementById('cookie-banner').style.display='none'}
 </script>
 </body>
 </html>
