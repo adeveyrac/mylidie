@@ -112,7 +112,7 @@ footer a:hover{border-color:var(--accent)}
       <div class="h"><strong>Choisissez un créneau</strong><span class="mono">15 min · visio ou téléphone</span></div>
       <div class="calendly-inline-widget" data-url="https://calendly.com/adeveyrac/15min?hide_gdpr_banner=1&hide_event_type_details=1&background_color=ffffff&text_color=0a0a0a&primary_color=0a0a0a"></div>
     </div>
-    <p class="fallback">Le calendrier ne s'affiche pas ? <a href="https://calendly.com/adeveyrac/15min" target="_blank" rel="noopener">Ouvrir l'agenda dans un nouvel onglet</a> ou écrire à <a href="mailto:amaury@mylidie.com">amaury@mylidie.com</a>.</p>
+    <p class="fallback">Le calendrier ne s'affiche pas ? <a href="https://calendly.com/adeveyrac/15min" target="_blank" rel="noopener">Ouvrir l'agenda dans un nouvel onglet</a> ou écrire à <a class="mail" href="#">contact [at] mylidie.com</a>.</p>
   </section>
 
   <aside>
@@ -136,11 +136,19 @@ footer a:hover{border-color:var(--accent)}
 </div>
 
 <footer>
-  <span>Mylidie · <a href="mailto:amaury@mylidie.com">contact@mylidie.com</a></span>
+  <span>Mylidie · <a class="mail" href="#">contact [at] mylidie.com</a></span>
   <span><a href="/mentions-legales.html">Mentions légales</a> · <a href="/cgu-cgv.html">CGU et CGV</a></span>
 </footer>
 </div>
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+<script>
+// Adresse jamais ecrite en clair dans le HTML : assemblee au chargement pour les liens .mail
+// (meme principe que le telephone). Sans JS, le visiteur lit « contact [at] mylidie.com ».
+addEventListener('DOMContentLoaded',function(){
+  var m=['contact','mylidie.com'].join('@');
+  document.querySelectorAll('a.mail').forEach(function(a){a.href='mailto:'+m;a.textContent=a.textContent.replace('contact [at] mylidie.com',m)});
+});
+</script>
 
 <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--ink);color:var(--white);padding:1rem 1.5rem;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-top:1px solid var(--accent);font-size:.85rem">
   <p style="margin:0;flex:1;min-width:200px">Nous utilisons des cookies de mesure d'audience (Google Analytics). <a href="/mentions-legales.html" style="color:var(--accent)">En savoir plus</a></p>

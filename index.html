@@ -702,6 +702,8 @@ dialog[open]{animation:pop .34s cubic-bezier(.2,0,.2,1)}
 addEventListener('DOMContentLoaded',function(){
   var n='+33'+[757,598,706].join('');
   document.querySelectorAll('a.tel').forEach(function(a){a.href='tel:'+n});
+  var m=['contact','mylidie.com'].join('@');  // idem pour l'adresse mail
+  document.querySelectorAll('a.mail').forEach(function(a){a.href='mailto:'+m;a.textContent=a.textContent.replace('contact [at] mylidie.com',m)});
 });
 </script>
 
@@ -1153,7 +1155,7 @@ addEventListener('DOMContentLoaded',function(){
       <a href="/mentions-legales.html">Mentions légales</a>
       <a href="/cgu-cgv.html">CGU et CGV</a>
       <a href="/test/">Demander une démo</a>
-      <a href="mailto:amaury@mylidie.com">contact@mylidie.com</a>
+      <a class="mail" href="#contact">contact [at] mylidie.com</a>
     </div>
   </div>
 </footer>

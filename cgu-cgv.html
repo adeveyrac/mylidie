@@ -276,7 +276,7 @@ footer a:hover{background:none;border-color:var(--accent)}
 
   <section id="support">
     <h2>19. Support</h2>
-    <p>Le support est accessible par e-mail à <a href="mailto:amaury@mylidie.com">amaury@mylidie.com</a>.</p>
+    <p>Le support est accessible par e-mail à <a class="mail" href="#">contact [at] mylidie.com</a>.</p>
     <p>Les demandes de support sont traitées dans un délai raisonnable, aux jours ouvrés, sous réserve de la disponibilité du Service et des prestataires techniques tiers.</p>
   </section>
 
@@ -293,9 +293,17 @@ footer a:hover{background:none;border-color:var(--accent)}
   </section>
 </div>
 <footer>
-  <span>&copy; 2026 CHORIE, éditeur de Mylidie · <a href="mailto:amaury@mylidie.com">contact@mylidie.com</a></span>
+  <span>&copy; 2026 CHORIE, éditeur de Mylidie · <a class="mail" href="#">contact [at] mylidie.com</a></span>
   <span><a href="/">Accueil</a> · <a href="/mentions-legales.html">Mentions légales</a> · <a href="/cgu-cgv.html">CGU et CGV</a></span>
 </footer>
 </div>
+<script>
+// Adresse jamais ecrite en clair dans le HTML : assemblee au chargement pour les liens .mail
+// (meme principe que le telephone). Sans JS, le visiteur lit « contact [at] mylidie.com ».
+addEventListener('DOMContentLoaded',function(){
+  var m=['contact','mylidie.com'].join('@');
+  document.querySelectorAll('a.mail').forEach(function(a){a.href='mailto:'+m;a.textContent=a.textContent.replace('contact [at] mylidie.com',m)});
+});
+</script>
 </body>
 </html>

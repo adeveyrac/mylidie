@@ -170,7 +170,7 @@ footer a:hover{background:none;border-color:var(--accent)}
 
     <h3>Responsable du traitement</h3>
     <p>CHORIE, 4 rue du Petit Saint‑Esprit, 13100 Aix‑en‑Provence<br>
-    Contact : <a href="mailto:amaury@mylidie.com">amaury@mylidie.com</a></p>
+    Contact : <a class="mail" href="#">contact [at] mylidie.com</a></p>
 
     <h3>Données collectées</h3>
     <p>Dans le cadre de votre navigation, CHORIE peut collecter les données suivantes :</p>
@@ -198,7 +198,7 @@ footer a:hover{background:none;border-color:var(--accent)}
       <li><strong>Droit à la portabilité</strong> : recevoir vos données dans un format structuré</li>
       <li><strong>Droit d'opposition</strong> : vous opposer à certains traitements</li>
     </ul>
-    <p>Pour exercer ces droits, contactez-nous par e-mail à <a href="mailto:amaury@mylidie.com">amaury@mylidie.com</a>. Vous pouvez également adresser une réclamation à la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>).</p>
+    <p>Pour exercer ces droits, contactez-nous par e-mail à <a class="mail" href="#">contact [at] mylidie.com</a>. Vous pouvez également adresser une réclamation à la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>).</p>
   </section>
 
   
@@ -284,8 +284,8 @@ footer a:hover{background:none;border-color:var(--accent)}
     <p>Un appelant peut demander l'accès, la rectification, l'effacement ou la limitation des données
       le concernant, ainsi que s'opposer au traitement. Ces demandes s'adressent <strong>à
       l'établissement appelé</strong>, qui est responsable de traitement. Elles peuvent également
-      être adressées à CHORIE par e-mail à <a href="mailto:amaury@mylidie.com">amaury@mylidie.com</a>, ou
-      par écrit à <a href="mailto:amaury@mylidie.com">amaury@mylidie.com</a>&nbsp;:
+      être adressées à CHORIE par e-mail à <a class="mail" href="#">contact [at] mylidie.com</a>, ou
+      par écrit à <a class="mail" href="#">contact [at] mylidie.com</a>&nbsp;:
       CHORIE les transmet alors sans délai à l'établissement concerné et l'assiste pour y répondre.</p>
     <p>Toute personne peut par ailleurs introduire une réclamation auprès de la
       <a href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a>.</p>
@@ -318,16 +318,24 @@ footer a:hover{background:none;border-color:var(--accent)}
     <h2>8. Contact</h2>
     <div class="info-box">
       <strong>Pour toute question relative aux mentions légales ou à vos données personnelles</strong>
-      Par e-mail : <a href="mailto:amaury@mylidie.com">amaury@mylidie.com</a><br>
+      Par e-mail : <a class="mail" href="#">contact [at] mylidie.com</a><br>
       Site : <a href="https://mylidie.com">mylidie.com</a><br>
       CHORIE, 4 rue du Petit Saint‑Esprit, 13100 Aix‑en‑Provence
     </div>
   </section>
 </div>
 <footer>
-  <span>&copy; 2026 CHORIE, éditeur de Mylidie · <a href="mailto:amaury@mylidie.com">contact@mylidie.com</a></span>
+  <span>&copy; 2026 CHORIE, éditeur de Mylidie · <a class="mail" href="#">contact [at] mylidie.com</a></span>
   <span><a href="/">Accueil</a> · <a href="/mentions-legales.html">Mentions légales</a> · <a href="/cgu-cgv.html">CGU et CGV</a></span>
 </footer>
 </div>
+<script>
+// Adresse jamais ecrite en clair dans le HTML : assemblee au chargement pour les liens .mail
+// (meme principe que le telephone). Sans JS, le visiteur lit « contact [at] mylidie.com ».
+addEventListener('DOMContentLoaded',function(){
+  var m=['contact','mylidie.com'].join('@');
+  document.querySelectorAll('a.mail').forEach(function(a){a.href='mailto:'+m;a.textContent=a.textContent.replace('contact [at] mylidie.com',m)});
+});
+</script>
 </body>
 </html>
