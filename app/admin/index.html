@@ -414,25 +414,55 @@
   var exH={},exQ={calls:true,transcripts:false,messages:false,feedback:false},exD1='',exD2='';
 
   function tok(){try{return localStorage.getItem(TOKEN_KEY)||''}catch(e){return ''}}
-  function api(path,opt){
-    opt=opt||{};opt.headers=Object.assign({apikey:SUPA.anon,Authorization:'Bearer '+tok(),
+  // Le jeton dure une heure. L'app le renouvelle en silence avec le refresh_token qu'elle
+  // range à côté (mylidie_rtok, mylidie_fin) ; la console lisait le jeton sans jamais le
+  // renouveler, et classer une question après une heure d'écran finissait en 401.
+  // Même recette que l'app : un seul renouvellement à la fois (rotation Supabase), et on
+  // n'insiste pas au-delà de l'échéance d'inactivité que l'app a posée.
+  var renewing=null;
+  function renew(){
+    if(renewing)return renewing;
+    var rt='',fin=0;try{rt=localStorage.getItem('mylidie_rtok')||'';fin=+localStorage.getItem('mylidie_fin')||0}catch(e){}
+    if(!rt||!fin||Date.now()>fin)return Promise.resolve(false);
+    renewing=fetch(SUPA.url+'/auth/v1/token?grant_type=refresh_token',{method:'POST',
+        headers:{apikey:SUPA.anon,'Content-Type':'application/json'},
+        body:JSON.stringify({refresh_token:rt})})
+      .then(function(r){return r.json()})
+      .then(function(j){
+        if(!j.access_token)return false;
+        try{localStorage.setItem(TOKEN_KEY,j.access_token);
+            if(j.refresh_token)localStorage.setItem('mylidie_rtok',j.refresh_token)}catch(e){}
+        return true;})
+      .catch(function(){return false})
+      .then(function(ok){renewing=null;return ok});
+    return renewing;
+  }
+  function perime(){
+    fermer();
+    gate('Session expirée','Reconnectez-vous à l\'application de réception, puis revenez ici.');
+    throw new Error('401');
+  }
+  // fetch + rejeu unique après renouvellement du jeton.
+  function fetchAuth(path,opt){
+    opt.headers=Object.assign({apikey:SUPA.anon,Authorization:'Bearer '+tok(),
       'Content-Type':'application/json'},opt.headers||{});
     return fetch(SUPA.url+path,opt).then(function(r){
-      if(r.status===401){gate('Session expirée','Reconnectez-vous à l\'application de réception, puis revenez ici.');
-        throw new Error('401');}
-      return r;
+      if(r.status!==401)return r;
+      return renew().then(function(ok){
+        if(!ok)return r;
+        opt.headers.Authorization='Bearer '+tok();
+        return fetch(SUPA.url+path,opt);
+      });
     });
   }
+  function api(path,opt){
+    return fetchAuth(path,opt||{}).then(function(r){if(r.status===401)perime();return r});
+  }
   function adminCall(payload){
-    return fetch(SUPA.url+'/functions/v1/admin',{method:'POST',
-      headers:{apikey:SUPA.anon,Authorization:'Bearer '+tok(),'Content-Type':'application/json'},
-      body:JSON.stringify(payload)})
+    return fetchAuth('/functions/v1/admin',{method:'POST',body:JSON.stringify(payload)})
       .then(function(r){return r.json().catch(function(){return {}}).then(function(j){
-        // Le jeton dure une heure et rien ne le renouvelle. Passé ce délai la passerelle
-        // Supabase répond {code,message} — sans champ `error` — et l'écran affichait
-        // « Erreur inattendue » pour une simple session périmée. Même geste que api().
-        if(r.status===401){gate('Session expirée','Reconnectez-vous à l\'application de réception, puis revenez ici.');
-          throw new Error('401');}
+        // La passerelle répond {code,message} sans champ `error` sur un jeton périmé.
+        if(r.status===401)perime();
         if(!r.ok)throw new Error(j.error||j.message||'Erreur inattendue.');return j;})});
   }
   function jwtPayload(t){
