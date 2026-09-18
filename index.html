@@ -42,7 +42,15 @@
  "mainEntity": [
   {
    "@type": "Question",
-   "name": "Voir la suite de l'appelReplier MylidieBien sûr. Pour combien de personnes ? Mme RousseauDeux personnes. MylidieQuelles sont les dates souhaitées ? Mme RousseauDu 19 au 20 septembre. MylidieTrès bien. Souhaitez-vous un petit-déjeuner ? Mme RousseauOui. Est-ce qu'il peut être servi à sept heures ? Nous devons partir très tôt. MylidieLe petit-déjeuner est servi à partir de sept heures trente. Je transmets votre demande à la réception, qui vous confirmera si c'est possible. Mme RousseauTrès bien, je vous remercie. Enregistrement 02:10 05/ Clients Vos réceptionnistes sont nos meilleurs vendeurs. Ils l'utilisent, ils en parlent. La réception y gagne dès le premier jour, la direction voit ce qui lui échappait, et ça se voit sur le chiffre. L'équipe l'adopte Quand j'ai la fiche, je rappelle les clients en général dans les 10 min. Ça évite les commentaires négatifs sur une réception injoignable, et ça fait gagner du temps. JadeRéceptionniste, Albi La direction voit la valeur Avant, on avait beaucoup d'appels manqués sans savoir pourquoi les gens appelaient. Maintenant, 100 % des appels sont pris et qualifiés, et on les rappelle tous. Louis GrandcolasMaison Traversière L'hôtel gagne de l'argent En quelques jours, l'agent m'a permis de sécuriser plus de 2 000 € de réservations. On a l'impression d'avoir un réceptionniste supplémentaire disponible en permanence, c'est top ! Pierre de KerautemHôtel du Parc, Dinard 06/ Tarifs Un forfait unique. Tout inclus. Pas de frais à la minute, pas de coûts cachés. Vous savez exactement ce que vous payez. Réceptionniste vocal, tout inclus Tout ce qu'il faut pour ne plus perdre un seul appel. Réceptionniste 24/7Répond à votre place, nuits et week-ends. Pas de tarification à la minuteZéro stress, tout est inclus. Application réceptionFiches d'appel sur ordinateur et téléphone. Enregistrements et transcriptionsChaque appel réécoutable et cherchable. Cinq langues nativesFR, EN, ES, DE, IT avec bascule automatique. Transfert d'urgenceL'agent transfère en cas d'urgence au numéro souhaité. SMSLa réception peut confirmer par SMS dans l'app, sans avoir à rappeler systématiquement. Installation incluseParamétrage et rédaction pris en charge. Annuel -33 % Mensuel 99€ HT / mois 149 € / mois Facturation annuelle en une fois : 1 188 € HT, soit 600 € d'économie sur l'année. Démarrer 15 jours gratuits Demander une démo ou appeler Prix indicatifs, modifiables par CHORIE, éditeur de Mylidie. 07/ Questions Questions fréquentes. Combien de temps l'installation prend-elle vraiment ?",
+   "name": "Qu'est-ce que Mylidie ?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Mylidie est un réceptionniste téléphonique IA conçu pour les hôtels. Il répond aux appels que votre réception ne peut pas prendre : ligne occupée, nuit, week-end. Il renseigne les clients sur l'hôtel (horaires, parking, petit-déjeuner, animaux), qualifie les demandes de réservation et transfère les urgences au numéro de votre choix. Il parle cinq langues (français, anglais, espagnol, allemand, italien) et bascule automatiquement selon l'appelant. Chaque appel donne une fiche dans l'application réception, avec l'enregistrement et la transcription, pour rappeler le client ou confirmer par SMS. L'installation se fait par un simple renvoi d'appel, sans changer de téléphonie, et l'agent est opérationnel en 24 h. Le tarif est un forfait unique, tout inclus, sans facturation à la minute : 99 € HT par mois en annuel ou 149 € par mois sans engagement. Mylidie est édité par CHORIE, société française basée à Aix-en-Provence, et proposé avec un essai gratuit de 15 jours."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Combien de temps l'installation prend-elle vraiment ?",
    "acceptedAnswer": {
     "@type": "Answer",
     "text": "Environ une heure de votre côté, répartie sur un échange où nous récupérons les informations de l'établissement. Le paramétrage, la rédaction et les premiers tests sont réalisés par nos soins. Vous n'avez qu'à valider les informations que nous vous transmettons."
@@ -116,7 +124,96 @@
 }
 </script>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Organization","name":"Mylidie","url":"https://mylidie.com/","logo":"https://mylidie.com/favicon-180.png","description":"Réceptionniste vocal IA pour hôtels : répond aux appels quand la réception est occupée."}
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Organization",
+   "@id": "https://mylidie.com/#org",
+   "name": "Mylidie",
+   "legalName": "CHORIE",
+   "url": "https://mylidie.com/",
+   "logo": "https://mylidie.com/favicon-180.png",
+   "description": "Réceptionniste téléphonique IA pour hôtels : répond aux appels quand la réception est occupée, en cinq langues, et transmet une fiche par appel.",
+   "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Aix-en-Provence",
+    "postalCode": "13100",
+    "addressCountry": "FR"
+   },
+   "founder": {
+    "@type": "Person",
+    "name": "Amaury de Veyrac"
+   },
+   "areaServed": "FR",
+   "knowsLanguage": [
+    "fr",
+    "en",
+    "es",
+    "de",
+    "it"
+   ],
+   "sameAs": [
+    "https://www.linkedin.com/company/146609360"
+   ]
+  },
+  {
+   "@type": "Service",
+   "@id": "https://mylidie.com/#service",
+   "name": "Mylidie, réceptionniste téléphonique IA pour hôtels",
+   "serviceType": "Réceptionniste vocal IA / standard téléphonique automatisé pour hôtels",
+   "provider": {
+    "@id": "https://mylidie.com/#org"
+   },
+   "audience": {
+    "@type": "BusinessAudience",
+    "name": "Hôtels"
+   },
+   "availableLanguage": [
+    "fr",
+    "en",
+    "es",
+    "de",
+    "it"
+   ],
+   "areaServed": "FR",
+   "description": "Répond 24/7 aux appels non pris par la réception, renseigne les clients, qualifie les demandes de réservation, transfère les urgences, et remet une fiche par appel dans l'application réception (enregistrement, transcription, confirmation par SMS). Installation par renvoi d'appel, opérationnel en 24 h, essai gratuit de 15 jours.",
+   "offers": [
+    {
+     "@type": "Offer",
+     "name": "Abonnement annuel",
+     "price": "99",
+     "priceCurrency": "EUR",
+     "description": "99 € HT par mois, facturation annuelle (1 188 € HT par an), tout inclus, sans facturation à la minute."
+    },
+    {
+     "@type": "Offer",
+     "name": "Abonnement mensuel",
+     "price": "149",
+     "priceCurrency": "EUR",
+     "description": "149 € par mois, sans engagement, tout inclus."
+    }
+   ]
+  },
+  {
+   "@type": "WebPage",
+   "@id": "https://mylidie.com/#page",
+   "url": "https://mylidie.com/",
+   "inLanguage": "fr-FR",
+   "dateModified": "2026-09-18",
+   "about": {
+    "@id": "https://mylidie.com/#org"
+   },
+   "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://mylidie.com/",
+    "name": "Mylidie"
+   },
+   "name": "Mylidie, le réceptionniste IA pour hôtels",
+   "description": "Un appel sur trois concerne une réservation, ne perdez plus de chiffre d'affaires. Le réceptionniste IA polyglotte qui prend le relais quand votre équipe est occupée."
+  }
+ ]
+}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -575,7 +672,8 @@ footer{background:var(--ink);color:var(--white);padding-top:6rem;overflow:hidden
   display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;
   border-top:1px solid var(--line-inv);color:var(--muted-inv);
 }
-.f-nav{display:flex;gap:2rem;flex-wrap:wrap}
+.f-nav{display:flex;gap:2rem;flex-wrap:wrap;align-items:center}
+.f-nav .f-in{display:inline-flex}
 footer a{color:var(--muted-inv);text-decoration:none;transition:color .2s}
 footer a:hover{color:var(--accent)}
 footer .wordmark{padding-bottom:1.5rem}
@@ -744,7 +842,7 @@ addEventListener('DOMContentLoaded',function(){
     <div>
     <h1 class="hero-h1">Un appel sur trois concerne une réservation, <mark>ne perdez plus de chiffre d'affaires</mark>.</h1>
 
-    <p class="hero-lede">Le réceptionniste IA polyglotte qui prend le relais quand votre équipe est occupée.</p>
+    <p class="hero-lede">Mylidie est le réceptionniste IA polyglotte qui prend le relais quand votre équipe est occupée.</p>
 
     <div class="hero-cta">
       <a class="btn btn-lg" href="/test/">Essayer gratuitement</a>
@@ -1083,6 +1181,20 @@ addEventListener('DOMContentLoaded',function(){
     <div class="wide">
       <div class="faq">
         <details open>
+          <summary>Qu'est-ce que Mylidie&nbsp;?</summary>
+          <p>Mylidie est un réceptionniste téléphonique IA conçu pour les hôtels. Il répond aux appels que
+          votre réception ne peut pas prendre : ligne occupée, nuit, week-end. Il renseigne les clients sur
+          l'hôtel (horaires, parking, petit-déjeuner, animaux), qualifie les demandes de réservation et
+          transfère les urgences au numéro de votre choix. Il parle cinq langues (français, anglais,
+          espagnol, allemand, italien) et bascule automatiquement selon l'appelant. Chaque appel donne une
+          fiche dans l'application réception, avec l'enregistrement et la transcription, pour rappeler le
+          client ou confirmer par SMS. L'installation se fait par un simple renvoi d'appel, sans changer de
+          téléphonie, et l'agent est opérationnel en 24&nbsp;h. Le tarif est un forfait unique, tout inclus,
+          sans facturation à la minute : 99&nbsp;€ HT par mois en annuel ou 149&nbsp;€ par mois sans
+          engagement. Mylidie est édité par CHORIE, société française basée à Aix-en-Provence, et proposé
+          avec un essai gratuit de 15 jours.</p>
+        </details>
+        <details>
           <summary>Combien de temps l'installation prend-elle vraiment&nbsp;?</summary>
           <p>Environ une heure de votre côté, répartie sur un échange où nous récupérons les informations
           de l'établissement. Le paramétrage, la rédaction et les premiers tests sont réalisés par nos soins. Vous n'avez qu'à valider les informations que nous vous transmettons.</p>
@@ -1156,6 +1268,7 @@ addEventListener('DOMContentLoaded',function(){
       <a href="/cgu-cgv.html">CGU et CGV</a>
       <a href="/test/">Demander une démo</a>
       <a class="mail" href="#contact">contact [at] mylidie.com</a>
+      <a class="f-in" href="https://www.linkedin.com/company/146609360" target="_blank" rel="noopener" aria-label="Mylidie sur LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.2 2.3-2.5 4.74-2.5 5.07 0 6 3.3 6 7.6V24h-5v-7.7c0-1.84-.04-4.2-2.6-4.2-2.6 0-3 2-3 4.07V24h-5V8z"/></svg></a>
     </div>
   </div>
 </footer>

@@ -1,0 +1,21 @@
+# Mylidie
+
+> Mylidie est un réceptionniste téléphonique IA pour hôtels. Il répond aux appels que la réception ne peut pas prendre, en cinq langues (français, anglais, espagnol, allemand, italien), renseigne les clients, qualifie les demandes de réservation et transmet à la réception une fiche par appel. Installation en 24 h par simple renvoi d'appel, sans changer de téléphonie. Essai gratuit de 15 jours.
+
+## Pages
+- [Accueil](https://mylidie.com/) : fonctionnement, application réception, témoignages, tarifs, questions fréquentes
+- [Test gratuit 15 jours](https://mylidie.com/test/) : démarrer un essai, prise de rendez-vous
+- [Exemple de bilan J+15](https://mylidie.com/exemple-bilan/) : rapport type remis à la fin de l'essai
+- [Mentions légales](https://mylidie.com/mentions-legales.html)
+- [CGU et CGV](https://mylidie.com/cgu-cgv.html)
+
+## Repères
+- Cible : hôtels, en France
+- Tarif : 99 € HT par mois en facturation annuelle (1 188 € HT par an), ou 149 € par mois sans engagement ; tout inclus, pas de facturation à la minute
+- Langues : français, anglais, espagnol, allemand, italien, bascule automatique selon l'appelant
+- Installation : renvoi d'appel, opérationnel en 24 h, aucune formation, aucun changement d'opérateur
+- Fonctions : réponse 24/7, fiche par appel dans l'application réception, enregistrements et transcriptions, transfert d'urgence, confirmation par SMS depuis l'application
+- Éditeur : CHORIE (SAS), Aix-en-Provence, France
+- LinkedIn : https://www.linkedin.com/company/146609360
+- Démo : un appel réel est écoutable sur la page d'accueil
+- Mis à jour le 2026-09-18
