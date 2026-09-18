@@ -17,5 +17,6 @@
 - Fonctions : réponse 24/7, fiche par appel dans l'application réception, enregistrements et transcriptions, transfert d'urgence, confirmation par SMS depuis l'application
 - Éditeur : CHORIE (SAS), Aix-en-Provence, France
 - LinkedIn : https://www.linkedin.com/company/146609360
+- YouTube : https://www.youtube.com/@mylidie (un appel réel de réservation pris par l'agent, 75 secondes)
 - Démo : un appel réel est écoutable sur la page d'accueil
 - Mis à jour le 2026-09-18
