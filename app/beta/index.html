@@ -80,7 +80,12 @@
   .brandbox .hn{font-weight:700;font-size:var(--fs-base);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .brandbox .hp{font-size:var(--fs-xs);color:var(--ink-faint);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:5px;margin-top:2px;}
   .brandbox .hp .fr{font-size:12px}
+  .brandbox{position:relative}
   .brandbox .chev{color:var(--ink-faint);font-size:15px}
+  .brandbox .chev[hidden]{display:none}
+  .brandbox.solo{cursor:default}
+  .menu.down{bottom:auto;top:calc(100% - 6px);left:10px;right:10px}
+  .mi.on{font-weight:700}
 
   .searchbox{padding:12px 14px;}
   .searchbox input{width:100%;padding:9px 12px 9px 32px;border-radius:0;border:1px solid var(--line-strong);
@@ -470,6 +475,7 @@
         <div class="hp"><span class="fr">🇫🇷</span><span>+33 5 63 47 12 08</span></div>
       </div>
       <span class="chev">⌄</span>
+      <div class="menu down" id="hotelMenu" hidden></div>
     </div>
     <div class="searchbox">
       <input id="search" type="search" placeholder="Chercher un nom, un numéro, « animaux »…">
@@ -1378,13 +1384,40 @@
       .then(function(r){if(r.status===401){logout();throw new Error('session expirée');}return r.json()})
       .then(function(rows){
         if(!rows||!rows.length)return;
-        var want=wantedHotel();
-        hotel=rows.filter(function(h){return h.id===want})[0]||rows[0];
+        // Un compte qui voit plusieurs hôtels (propriétaire de plusieurs établissements,
+        // admin plateforme) choisit lequel afficher ; le choix survit à la prochaine visite.
+        // Critère = nombre d'hôtels visibles, jamais le rôle. Un seul hôtel : rien ne change.
+        var want=wantedHotel(), memo='';
+        try{memo=localStorage.getItem('mylidie_hotel')||''}catch(e){}
+        function byId(id){return rows.filter(function(h){return h.id===id})[0]}
+        hotel=byId(want)||byId(memo)||rows[0];
         HOTEL_ID=hotel.id;
+        hotelMenu(rows);
         $('.brandbox .hn').textContent=hotel.name||'';
         if(hotel.phone_e164)$('.brandbox .hp span:last-child').textContent=fmtPhone(hotel.phone_e164);
         if(hotel.logo_url)$('.brandbox .logo').innerHTML='<img src="'+hotel.logo_url+'" alt="">';
       });
+  }
+  // ponytail: changer d'hôtel = recharger la page avec ?hotel=. Tout l'état (appels, SMS,
+  // filtres, fil ouvert) repart de zéro sans rien avoir à vider à la main.
+  function hotelMenu(rows){
+    var box=$('.brandbox'), menu=$('#hotelMenu'), chev=$('.brandbox .chev');
+    var multi=rows.length>1;
+    chev.hidden=!multi; box.classList.toggle('solo',!multi);
+    if(!multi)return;
+    menu.innerHTML=rows.map(function(h){
+      return '<button class="mi'+(h.id===HOTEL_ID?' on':'')+'" data-h="'+h.id+'">'+esc(h.name||'')+'</button>';
+    }).join('');
+    box.addEventListener('click',function(e){
+      var b=e.target.closest('.mi[data-h]');
+      if(b){
+        try{localStorage.setItem('mylidie_hotel',b.dataset.h)}catch(x){}
+        location.href=location.pathname+'?hotel='+b.dataset.h;
+        return;
+      }
+      e.stopPropagation();menu.hidden=!menu.hidden;
+    });
+    document.addEventListener('click',function(e){if(!e.target.closest('.brandbox'))menu.hidden=true;});
   }
   function loadMsgs(){
     return api('/rest/v1/messages?select=*&hotel_id=eq.'+HOTEL_ID+'&order=created_at.asc&limit=500')
@@ -1537,7 +1570,7 @@
   document.addEventListener('click',function(e){if(!e.target.closest('.usermenu'))openMenu(false);});
   document.addEventListener('keydown',function(e){
     if(e.key!=='Escape')return;
-    openMenu(false);
+    openMenu(false);$('#hotelMenu').hidden=true;
     if(document.body.classList.contains('drawer'))drawer(false);
     else if(openId){openId=null;renderDetail();renderRows();}
     else document.body.classList.remove('detail');
