@@ -1360,7 +1360,7 @@
       name:gv('nom_client')||'Appelant non identifié',
       phone:fmtPhone(r.from_e164),
       grp:ecoule<7?'Cette semaine':'Plus ancien',
-      when:ecoule<1?heure:(ecoule<7?d.toLocaleDateString('fr-FR',{weekday:'short'}):jour),
+      when:dayKey(d)===dayKey(now)?heure:(ecoule<7?d.toLocaleDateString('fr-FR',{weekday:'short'}):jour),
       d:jour+' · '+heure,ts:d.getTime(),
       unread:!r.read_at,archived:!!r.archived_at,
       archivedAt:r.archived_at?new Date(r.archived_at).toLocaleDateString('fr-FR'):'',
