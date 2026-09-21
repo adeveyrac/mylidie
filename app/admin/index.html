@@ -102,6 +102,7 @@
   .t-payant{background:var(--info-bg);color:var(--info)}
   .t-test{background:var(--rappel-bg);color:var(--rappel)}
   .t-inactif{background:var(--annulation-bg);color:var(--annulation)}
+  .t-pause{background:var(--line);color:var(--ink-faint)}
 
   .btn{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);border-radius:9px;
     padding:7px 12px;font-size:var(--fs-sm);cursor:pointer;transition:transform 100ms ease-out}
@@ -675,11 +676,13 @@
     var lignes=HOTELS.map(function(h){
       var s=stats([h.id],p),sc=scoreCablage(h);
       var etat='<span class="tag t-'+esc(h.billing_status)+'">'+
-        (h.billing_status==='payant'?'Payant':h.billing_status==='test'?'Test':'Inactif')+'</span>'+
+        ({payant:'Payant',test:'Test',pause:'En pause'}[h.billing_status]||'Inactif')+'</span>'+
         '<div class="hsub">'+(h.billing_status==='payant'
           ? eur(+h.subscription_eur)+' HT / mois'
           : h.billing_status==='test'
           ? 'J+'+Math.round((Date.now()-new Date(h.created_at))/86400000)+' · IBAN non renseigné'
+          : h.billing_status==='pause'
+          ? 'en attente de décision'
           : 'abonnement résilié')+'</div>';
       return '<tr>'+
         '<td><div class="hname">'+esc(h.name)+'</div>'+
@@ -730,9 +733,9 @@
         'style="text-decoration:none;display:inline-block">Ouvrir le formulaire SEPA ↗</a></p>'+
       '<div class="row2">'+
         '<div class="fw"><label for="fbSt">État de facturation</label><select id="fbSt">'+
-          ['test','payant','inactif'].map(function(v){
+          ['test','payant','pause','inactif'].map(function(v){
             return '<option value="'+v+'"'+(h.billing_status===v?' selected':'')+'>'+
-              (v==='test'?'Test — rien n\'est encaissé':v==='payant'?'Payant — abonnement actif':'Inactif — résilié')+
+              (v==='test'?'Test — rien n\'est encaissé':v==='payant'?'Payant — abonnement actif':v==='pause'?'En pause — test terminé, décision en attente':'Inactif — résilié')+
               '</option>'}).join('')+'</select></div>'+
         '<div class="fw"><label for="fbAbo">Abonnement mensuel HT (€)</label>'+
           '<input id="fbAbo" type="number" step="1" min="0" value="'+(+h.subscription_eur)+'">'+
