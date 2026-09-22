@@ -511,7 +511,7 @@
   <!-- MIDDLE -->
   <section class="col list">
     <div class="list-head">
-      <div class="lt"><button class="burger" id="burger" aria-label="Filtres et compte">☰</button>Discussions <span class="btag" title="Version bêta — l'app évolue encore, signalez ce qui coince">Bêta</span></div>
+      <div class="lt"><button class="burger" id="burger" aria-label="Filtres et compte">☰</button>Discussions</div>
       <div class="tabs" id="tabs">
         <button class="ltab" aria-selected="true" data-t="tous">Tous</button>
         <button class="ltab" aria-selected="false" data-t="nonlus">Non lus</button>
@@ -893,7 +893,7 @@
       '<div class="tl-sub">Enregistrement</div>'+(player||'<div class="d-none">Pas d\'enregistrement exploitable.</div>')+
       '<div class="tl-sub">Informations</div><div class="info-grid">'+info+'</div>'+
       '<div class="tl-sub">Transcription</div>'+tr+
-      (beta?'<div class="beta" style="margin:20px 0 0"><div class="bh">✨ Avant votre prochain appel <span class="btag">Bêta</span></div><ol>'+
+      (beta?'<div class="beta" style="margin:20px 0 0"><div class="bh">✨ Avant votre prochain appel</div><ol>'+
         beta.map(function(b){return '<li>'+b+'</li>'}).join('')+'</ol></div>':'')+
       '</div>';
   }
@@ -1210,7 +1210,7 @@
     ov.innerHTML='<div class="sheet">'+
       '<div class="sh"><h2>Un souci ? Dites-le-nous</h2>'+
         '<button class="x" id="fbX" aria-label="Fermer">×</button></div>'+
-      '<p class="lead">L\'application est en version bêta. Décrivez ce qui cloche ou ce qui '+
+      '<p class="lead">Décrivez ce qui cloche ou ce qui '+
         'vous manque — chaque retour est lu.</p>'+
       fld('fbSubject','Objet','Le bouton X ne répond pas','',true)+
       '<div class="fld"><label for="fbBody">Ce qui s\'est passé</label>'+
