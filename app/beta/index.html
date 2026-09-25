@@ -1579,10 +1579,37 @@
           return loadClients().then(loadMsgs).then(function(){
             renderCounts();renderRows();
             var v=visible();
-            if(v.length&&window.matchMedia('(min-width:901px)').matches)openThread(v[0].id);
+            if(!selected&&v.length&&window.matchMedia('(min-width:901px)').matches)openThread(v[0].id);
           });
         });
     });
+  }
+  // Sans ça, un appel reçu n'apparaissait qu'au rechargement de la page. On
+  // sonde une empreinte légère (pas les transcriptions) et on ne recharge que si
+  // elle bouge ; la toute première sonde recharge une fois, par construction.
+  var pollSig='',pollN=0,pageSrc='';
+  function poll(){
+    if(!tok||!HOTEL_ID||document.hidden)return;
+    var q='hotel_id=eq.'+HOTEL_ID+'&order=';
+    Promise.all([
+      api('/rest/v1/calls?select=id,read_at,archived_at&'+q+'started_at.desc&limit=200').then(function(r){return r.text()}),
+      api('/rest/v1/messages?select=id,status&'+q+'created_at.desc&limit=500').then(function(r){return r.text()})
+    ]).then(function(t){
+      var s=t.join('|');if(s===pollSig)return;pollSig=s;
+      return loadCalls().then(function(){if(selected&&!openId)renderDetail();});
+    }).catch(function(){});
+    // Nouvelle version déployée : comparée au contenu (pas à l'ETag, qui peut
+    // varier d'un nœud Pages à l'autre et faire boucler le rechargement).
+    if(pollN++%10)return;
+    fetch(location.pathname,{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(h){
+      if(!h)return;
+      if(!pageSrc){pageSrc=h;return;}
+      if(h!==pageSrc&&!openId&&!$('#cInput').value.trim())location.reload();
+    }).catch(function(){});
+  }
+  if(LIVE){
+    setInterval(poll,30000);
+    document.addEventListener('visibilitychange',poll);
   }
   function logout(){
     try{['mylidie_tok','mylidie_rtok','mylidie_fin'].forEach(function(k){localStorage.removeItem(k)})}catch(e){}
