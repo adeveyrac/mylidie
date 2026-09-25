@@ -458,6 +458,69 @@
   }
 
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---- SMS à un numéro libre (« Nouveau SMS ») ---- */
+  .newsms{margin-left:auto;border:0;background:var(--btn-bg);color:var(--btn-fg);font:inherit;font-size:var(--fs-sm);
+    font-weight:600;padding:7px 12px;cursor:pointer;letter-spacing:0;white-space:nowrap}
+  .newsms:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .pill.sms{background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--line-strong)}
+  .rav svg,.dav svg{width:60%;height:60%;display:block}
+  .to{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+  .to label{font-weight:700;color:var(--ink-soft)}
+  .to input{flex:1;min-width:0;font:inherit;font-size:var(--fs-base);padding:9px 11px;border:1px solid var(--line-strong);
+    background:var(--surface);color:var(--ink);border-radius:0}
+  .to input:focus{outline:2px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:1px}
+  .sug{display:flex;flex-direction:column;gap:6px;padding:16px 22px}
+  .sug .sl{font-size:var(--fs-xs);font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);margin:6px 0 2px}
+  .sug button{display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--line);background:var(--surface);
+    color:var(--ink);font:inherit;padding:10px 12px;cursor:pointer}
+  .sug button:hover,.sug button:focus-visible{border-color:var(--ink);outline:0}
+  .sug .rav{width:36px;height:36px;font-size:var(--fs-xs)}
+  .sug .sn{font-weight:600}.sug .sp{color:var(--ink-soft);font-size:var(--fs-sm)}
+  .sug .sw{color:var(--miss);font-size:var(--fs-sm);font-weight:600;padding:4px 2px}
+  .sug .hint{color:var(--ink-soft);font-size:var(--fs-sm);padding:4px 2px}
+  .sug .rules{margin-top:18px;color:var(--ink-faint);font-size:var(--fs-sm);line-height:1.5}
+  /* ---- nom du correspondant, modifiable ---- */
+  .det-head .dnbtn{all:unset;display:inline-flex;align-items:center;gap:8px;max-width:100%;cursor:text}
+  .det-head .dnbtn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .det-head .dnbtn .dnt{overflow:hidden;text-overflow:ellipsis}
+  .det-head .dnbtn .pen{flex:0 0 auto;font-size:var(--fs-sm);font-weight:600;color:var(--ink-faint);opacity:.7}
+  .det-head .dnbtn:hover .pen{opacity:1;color:var(--ink)}
+  .det-head .dnin{font:inherit;font-weight:700;font-size:var(--fs-lg);padding:2px 8px;width:min(320px,100%);
+    border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:0}
+  .det-head .dnin:focus{outline:2px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:1px}
+  /* ---- modèles de SMS ---- */
+  .chead{display:flex;align-items:center;gap:8px;margin:0 0 8px}
+  .composer .chead .cnote{margin:0}
+  .tplwrap{position:relative;margin-left:auto}
+  .tplbtn{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);font:inherit;
+    font-size:var(--fs-sm);font-weight:600;padding:5px 10px;cursor:pointer}
+  .tplbtn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .tplmenu{position:absolute;bottom:calc(100% + 6px);right:0;width:min(420px,80vw);z-index:20;background:var(--surface);
+    border:1px solid var(--line-strong);box-shadow:var(--shadow);padding:6px;display:flex;flex-direction:column;gap:4px}
+  .tplmenu[hidden]{display:none}
+  .tplmenu .ti{display:flex;align-items:stretch;gap:4px}
+  .tplmenu .tu{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left;border:0;background:none;
+    color:var(--ink);font:inherit;padding:8px 10px;cursor:pointer}
+  .tplmenu .tu:hover,.tplmenu .tu:focus-visible{background:var(--surface-2);outline:0}
+  .tplmenu .tu b{font-size:var(--fs-sm)}
+  .tplmenu .tu span{font-size:var(--fs-sm);color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tplmenu .tx,.tplmenu .te{border:0;background:none;color:var(--ink-faint);font-size:17px;width:36px;cursor:pointer}
+  .tplmenu .tx:hover,.tplmenu .tx:focus-visible{color:var(--miss);background:var(--miss-bg);outline:0}
+  .tplmenu .te:hover,.tplmenu .te:focus-visible{color:var(--ink);background:var(--surface-2);outline:0}
+  .tplmenu .tadd{border:1px dashed var(--line-strong);background:none;color:var(--ink);font:inherit;font-size:var(--fs-sm);
+    font-weight:600;padding:9px 10px;cursor:pointer;text-align:left;margin-top:4px}
+  .tplmenu .t0{font-size:var(--fs-sm);color:var(--ink-faint);padding:6px 2px;line-height:1.4}
+  .tplmenu .ted{display:flex;flex-direction:column;gap:8px;padding:6px}
+  .tplmenu .teh{font-weight:700;font-size:var(--fs-sm)}
+  .tplmenu .ted input,.tplmenu .ted textarea{font:inherit;font-size:var(--fs-sm);padding:8px 10px;border:1px solid var(--line-strong);
+    background:var(--surface);color:var(--ink);border-radius:0;resize:vertical}
+  .tplmenu .ted input:focus,.tplmenu .ted textarea:focus{outline:2px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:1px}
+  .tplmenu .terr{color:var(--miss);font-size:var(--fs-sm);font-weight:600}
+  .tplmenu .terr:empty{display:none}
+  .tplmenu .tbtns{display:flex;justify-content:flex-end;gap:6px}
+  .tplmenu .tbtns button{border:0;background:var(--btn-bg);color:var(--btn-fg);font:inherit;font-size:var(--fs-sm);font-weight:600;padding:8px 14px;cursor:pointer}
+  .tplmenu .tbtns .ghost{background:none;color:var(--ink);border:1px solid var(--line-strong)}
 </style>
 
 <div class="scrim" id="scrim"></div>
@@ -511,7 +574,7 @@
   <!-- MIDDLE -->
   <section class="col list">
     <div class="list-head">
-      <div class="lt"><button class="burger" id="burger" aria-label="Filtres et compte">☰</button>Discussions</div>
+      <div class="lt"><button class="burger" id="burger" aria-label="Filtres et compte">☰</button>Discussions<button class="newsms" id="newSms" title="Écrire un SMS à n'importe quel numéro">✎ Nouveau SMS</button></div>
       <div class="tabs" id="tabs">
         <button class="ltab" aria-selected="true" data-t="tous">Tous</button>
         <button class="ltab" aria-selected="false" data-t="nonlus">Non lus</button>
@@ -529,7 +592,7 @@
       <div class="det-body" id="detBody"></div>
       <div class="composer" id="composer">
         <div class="cbox">
-          <p class="cnote">Envoyer un sms</p>
+          <div class="chead"><p class="cnote">Envoyer un sms</p><div class="tplwrap"><button class="tplbtn" id="tplBtn" aria-haspopup="true" aria-expanded="false">Modèles ▾</button><div class="tplmenu" id="tplMenu" hidden></div></div></div>
           <div class="cm">
             <textarea id="cInput" rows="1" placeholder="Écrire un message…"></textarea>
             <button class="send" id="cSend" aria-label="Envoyer">➤</button>
@@ -544,8 +607,8 @@
 
 <script>
 (function(){
-  var LABEL={urgence:'Urgence',resa:'Réservation',info:'Information',annulation:'Annulation',rappel:'Demande de rappel',inconnu:'Inconnu'};
-  var COLOR={urgence:'#d9480f',resa:'#c0392b',info:'#2f7d5b',annulation:'#5b6b7a',rappel:'#b5850f',inconnu:'#6d4b9f'};
+  var LABEL={sms:'SMS envoyé',urgence:'Urgence',resa:'Réservation',info:'Information',annulation:'Annulation',rappel:'Demande de rappel',inconnu:'Inconnu'};
+  var COLOR={sms:'#3d3d3d',urgence:'#d9480f',resa:'#c0392b',info:'#2f7d5b',annulation:'#5b6b7a',rappel:'#b5850f',inconnu:'#6d4b9f'};
   var data=[
     {id:'c0',motif:'urgence',name:'Chambre 214 · M. Ferrand',phone:'+33 6 90 33 12 45',grp:'Cette semaine',when:'07h',d:'27/07 · 07h58',
      unread:true,dur:'0 m 54 s',
@@ -700,6 +763,10 @@
   function renderCounts(){var c=counts();$$('[data-c]').forEach(function(el){el.textContent=c[el.dataset.c]});}
   // Les particules sautent : « Pierre de Kerautem » donnait PD, ce qui se lit mal
   // sur un avatar. On prend la 1re lettre des deux premiers vrais mots.
+  var SMS_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" '+
+    'stroke-linejoin="round" aria-label="SMS"><path d="M4 5h16v11H9l-5 4z"/>'+
+    '<path d="M8 9.5h8M8 12.5h5" stroke-linecap="round"/></svg>';
+  function avInner(n){return /^[+\d]/.test(String(n))?SMS_SVG:esc(initials(n));}
   function initials(n){
     var p=String(n||'').split(/\s+/).filter(function(w){
       return w&&!/^(de|du|des|d'|le|la|von|van|di)$/i.test(w)});
@@ -749,23 +816,31 @@
   }
   function renderRows(){
     var wrap=$('#rows'),grps=groupsOf(visible()),keep=wrap.scrollTop;
+    grps.forEach(function(g){
+      var lm=msgsFor(g.head).slice(-1)[0];
+      var lc=Math.max.apply(null,[0].concat(g.items.filter(function(i){return !i.smsOnly}).map(tsOf)));
+      g.last=Math.max(lc,lm?lm.ts:0);g.smsLast=lm&&lm.ts>lc?lm:null;
+    });
+    grps.sort(function(a,b){return b.last-a.last});
     if(!grps.length){wrap.innerHTML='<div class="list-empty">'+(query?'Aucun résultat.':tab==='archives'?'Aucune discussion archivée.':'Aucune discussion.')+'</div>';return;}
     var html='',lastGrp=null;
     grps.forEach(function(g){
       var x=g.head;
-      if(x.grp!==lastGrp){html+='<div class="grouplbl">'+x.grp+'</div>';lastGrp=x.grp;}
+      var gl=g.smsLast?grpOf(g.smsLast.ts):x.grp;
+      if(gl!==lastGrp){html+='<div class="grouplbl">'+gl+'</div>';lastGrp=gl;}
       var isMasked=x.phone==='Numéro masqué';
       var sg=rappelOf(x);
       // Avec une puce, la duree saute : la colonne est etroite et « Réservation ·… »
       // tronque mal. La duree reste lisible dans le fil, la puce non.
       var sub=isMasked?'A raccroché · '+LABEL[x.motif]:LABEL[x.motif]+(!sg&&x.dur?' · '+x.dur:'');
       // sans signal on garde l'ancien compteur : une info affichee ne doit pas disparaitre
-      if(!sg&&g.items.length>1)sub+=' · '+g.items.length+' appels';
+      if(x.smsOnly||g.smsLast){var lm=msgsFor(x).slice(-1)[0];sub='SMS · '+(lm?lm.body:'');}
+      else if(!sg&&g.items.length>1)sub+=' · '+g.items.length+' appels';
       var unread=g.items.some(function(i){return i.unread});
       var sel=g.items.some(function(i){return i.id===selected});
       html+='<div class="row" data-id="'+x.id+'"'+(sel?' aria-selected="true"':'')+'>'+
-        '<div class="rav" style="background:'+COLOR[x.motif]+'">'+esc(initials(x.name))+'</div>'+
-        '<div class="rmeta"><div class="rl1"><span class="rn">'+esc(x.name)+'</span><span class="rt">'+x.when+'</span></div>'+
+        '<div class="rav" style="background:'+COLOR[x.motif]+'">'+avInner(x.name)+'</div>'+
+        '<div class="rmeta"><div class="rl1"><span class="rn">'+esc(x.name)+'</span><span class="rt">'+(g.smsLast?whenOf(g.smsLast.ts):x.when)+'</span></div>'+
         '<div class="rl2"><span class="mdot" style="background:'+COLOR[x.motif]+'"></span>'+
           '<span class="rsub">'+esc(sub)+'</span>'+
           (sg?'<span class="chip '+sg.cls+'">'+esc(sg.txt)+'</span>':'')+'</div></div>'+
@@ -798,14 +873,17 @@
     '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
   function detHeadHTML(x){
     return '<button class="dback mob" id="dbackList" aria-label="Retour à la liste">‹</button>'+
-      '<div class="dav" style="background:'+COLOR[x.motif]+'">'+esc(initials(x.name))+'</div>'+
-      '<div class="dmeta"><div class="dn">'+esc(x.name)+'</div>'+
+      '<div class="dav" style="background:'+COLOR[x.motif]+'">'+avInner(x.name)+'</div>'+
+      '<div class="dmeta"><div class="dn">'+(digits(x.phone).length>=6
+        ? '<button class="dnbtn" id="dnBtn" title="Modifier le nom"><span class="dnt">'+esc(x.name)+'</span>'+
+          '<span class="pen">'+(/^[+\d]/.test(x.name)?'✎ Ajouter un nom':'✎')+'</span></button>'
+        : esc(x.name))+'</div>'+
       '<div class="dp"><span>'+esc(x.phone)+'</span>'+
       (digits(x.phone).length>=6
         ? '<button class="cpy" title="Copier le numéro" aria-label="Copier le numéro" data-n="'+esc(x.phone)+'">'+COPY_SVG+'</button>'
         : '')+'</div></div>'+
       '<span class="pill '+x.motif+'" style="margin-left:14px">'+LABEL[x.motif]+'</span>'+
-      (x.archived
+      (x.smsOnly ? '' : x.archived
         ? '<span class="archtag" title="Archivée le '+esc(x.archivedAt||'')+'">Archivée</span>'+
           '<button class="archbtn" id="archBtn">Désarchiver</button>'
         : '<button class="archbtn" id="archBtn" title="Masque la discussion de la boîte — réversible à tout moment">Archiver</button>');
@@ -820,7 +898,7 @@
   }
   // Un fil = un correspondant : ses appels ET ses SMS, du plus ancien au plus récent.
   function timelineFor(x){
-    var items=historyFor(x).map(function(c){return {k:'call',ts:tsOf(c),c:c}})
+    var items=historyFor(x).filter(function(c){return !c.smsOnly}).map(function(c){return {k:'call',ts:tsOf(c),c:c}})
       .concat(msgsFor(x).map(function(m){return {k:'sms',ts:m.ts||0,m:m}}));
     items.sort(function(a,b){return a.ts-b.ts});
     return items;
@@ -1420,10 +1498,10 @@
     document.addEventListener('click',function(e){if(!e.target.closest('.brandbox'))menu.hidden=true;});
   }
   function loadMsgs(){
-    return api('/rest/v1/messages?select=*&hotel_id=eq.'+HOTEL_ID+'&order=created_at.asc&limit=500')
+    return api('/rest/v1/messages?select=*&hotel_id=eq.'+HOTEL_ID+'&order=created_at.desc&limit=500')
       .then(function(r){return r.json()})
       .then(function(rows){
-        msgs=(rows||[]).map(function(m){
+        msgs=(rows||[]).reverse().map(function(m){
           // Sans ts, timelineFor() retombait sur 0 et collait tous les SMS en
           // haut du fil, avant des appels bien plus anciens.
           return {direction:m.direction,body:m.body,status:m.status,phone_e164:m.phone_e164||'',
@@ -1431,7 +1509,55 @@
                   at:new Date(m.created_at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',
                        hour:'2-digit',minute:'2-digit'}).replace(':','h').replace(', ',' à ')};
         });
-      }).catch(function(){msgs=[]});
+      }).catch(function(){msgs=[]}).then(syncSmsOnly);
+  }
+  // Un numéro qui n'a jamais appelé (SMS écrit depuis « Nouveau SMS ») n'a aucune ligne
+  // dans `calls` : on lui fabrique sa discussion à partir de ses SMS. Dès qu'il appelle,
+  // ses SMS rejoignent le fil de l'appel (même numéro = même discussion).
+  function syncSmsOnly(){
+    var called={};
+    data.forEach(function(x){var d=digits(x.phone);if(!x.smsOnly&&d.length>=6)called[d.slice(-9)]=1;});
+    // le fil ouvert sans SMS encore envoyé (numéro tout juste saisi) doit survivre
+    var keep=data.filter(function(x){return x.smsOnly&&x.id===selected});
+    for(var i=data.length-1;i>=0;i--)if(data[i].smsOnly)data.splice(i,1);
+    var seen={};
+    msgs.slice().reverse().forEach(function(m){
+      var d=digits(m.phone_e164),k=d.slice(-9);
+      if(d.length<6||called[k]||seen[k])return;
+      seen[k]=1;data.push(smsEntry(d,m.ts));
+    });
+    keep.forEach(function(x){if(!seen[digits(x.phone).slice(-9)])data.push(x)});
+    applyNames();
+  }
+  function grpOf(ts){return (Date.now()-ts)/864e5<7?'Cette semaine':'Plus ancien';}
+  function whenOf(ts){
+    var d=new Date(ts),now=new Date();
+    if(dayKey(ts)===dayKey(now.getTime()))return hhmm(ts);
+    return (now-d)/864e5<7?d.toLocaleDateString('fr-FR',{weekday:'short'})
+      :d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+  }
+  function smsEntry(d,ts,disp){
+    var p=disp||fmtPhone('+'+d);
+    return {id:'sms:'+d,motif:'sms',smsOnly:true,name:p,name0:p,phone:p,ts:ts,d:'',
+      grp:grpOf(ts),when:whenOf(ts),summary:'',transcript:[]};
+  }
+  // Nom donné par la réception (table `clients`, clé = hôtel + numéro). Il prime sur
+  // celui que l'agent a compris au téléphone ; effacé, on retombe sur ce dernier.
+  var NAMES={};
+  function applyNames(){
+    data.forEach(function(x){
+      if(x.name0===undefined)x.name0=x.name;
+      var d=digits(x.phone);
+      x.name=(d.length>=6&&NAMES[d.slice(-9)])||x.name0;
+    });
+  }
+  function loadClients(){
+    return api('/rest/v1/clients?select=phone_e164,name&hotel_id=eq.'+HOTEL_ID+'&name=not.is.null')
+      .then(function(r){return r.json()})
+      .then(function(rows){
+        NAMES={};
+        (rows||[]).forEach(function(c){var d=digits(c.phone_e164);if(d.length>=6&&c.name)NAMES[d.slice(-9)]=c.name;});
+      }).catch(function(){});
   }
   // L'hôtel se charge EN PREMIER : sans lui on ne sait pas quoi filtrer, et une
   // liste non filtrée est pire qu'une liste vide.
@@ -1449,7 +1575,8 @@
         .then(function(r){if(r.status===401){logout();throw new Error('session expirée');}return r.json()})
         .then(function(rows){
           data.length=0;rows.forEach(function(r){data.push(mapRow(r))});
-          return loadMsgs().then(function(){
+          loadTpl();
+          return loadClients().then(loadMsgs).then(function(){
             renderCounts();renderRows();
             var v=visible();
             if(v.length&&window.matchMedia('(min-width:901px)').matches)openThread(v[0].id);
@@ -1614,8 +1741,17 @@
     var inp=$('#cInput'),v=inp.value.trim();if(!v)return;
     var note=$('.composer .cnote'),old='Envoyer un sms';
     var x=data.find(function(d){return d.id===selected});
+    // un modèle dont un [champ] n'a pas été remplacé ne part pas
+    var hole=/\[[^\]]*\]/.exec(v);
+    if(hole){alertBox('Message à compléter','Remplacez '+hole[0]+' par la bonne information avant d\'envoyer.');
+      var k=inp.value.indexOf(hole[0]);inp.setSelectionRange(k,k+hole[0].length);return;}
     if(!LIVE){inp.value='';inp.style.height='auto';
-      note.textContent='✓ Message envoyé';setTimeout(function(){note.textContent=old},2000);return;}
+      var now=Date.now();
+      msgs.push({direction:'out',status:'delivered',phone_e164:'+'+digits(x.phone),ts:now,body:v,
+        at:"aujourd'hui à "+hhmm(now)});
+      if(x.smsOnly){x.when=hhmm(now);x.ts=now;}
+      note.textContent='✓ Message envoyé';setTimeout(function(){note.textContent=old},2000);
+      renderDetail();renderRows();renderCounts();return;}
     function fail(txt){
       note.textContent=txt;note.classList.add('err');
       setTimeout(function(){note.textContent=old;note.classList.remove('err');},4000);
@@ -1629,14 +1765,216 @@
         'Le '+x.phone+' est une ligne fixe : elle ne peut pas recevoir de SMS. '+
         'Seuls les numéros mobiles (06 et 07) en reçoivent. Rappelez ce client par téléphone.');
       return;}
+    // Le SMS part sous le nom de l'hôtel (expéditeur alphanumérique) : refusé aux États-Unis et au Canada.
+    if(dg[0]==='1'){
+      alertBox('Numéro américain ou canadien',
+        'Les numéros des États-Unis et du Canada ne peuvent pas recevoir nos SMS. Rappelez ce client par téléphone.');
+      return;}
     inp.value='';inp.style.height='auto';note.textContent='Envoi…';
     // le webhook N8N revalide le jeton auprès de Supabase avant de faire partir le SMS
     n8nSend(SMS_OUT,{to:'+'+digits(x.phone),body:v,hotel_id:HOTEL_ID})
       .then(function(){note.textContent='✓ SMS envoyé';
-        return loadMsgs().then(function(){if(selected)renderDetail();refreshStatuses(3);});})
+        return loadMsgs().then(function(){if(selected)renderDetail();renderRows();renderCounts();refreshStatuses(3);});})
       .catch(function(e){fail(e.message||'Échec de l\'envoi.');inp.value=v;})
       .then(function(){setTimeout(function(){note.textContent=old;note.classList.remove('err');},3000)});
   }
+
+  // ---- « Nouveau SMS » : écrire à un numéro qui n'est pas dans la liste ----
+  // Un champ « À » : un nom ou un numéro. Un numéro déjà connu rouvre SA discussion
+  // (comparaison sur les 9 derniers chiffres : 06… = +33 6… = 0033 6…) ; un numéro
+  // nouveau ouvre une discussion sans appel, affichée par son numéro.
+  function plural(n,w){return n+' '+w+(n>1?'s':'');}
+  // null = pas un numéro (on cherche un nom) ; {part} = en cours de frappe ;
+  // {bad} = refusé ; {d, disp, warn} = numéro complet, chiffres au format international.
+  function parseNum(q){
+    if(/[a-zà-ÿ]/i.test(q)||!/\d/.test(q))return null;
+    var intl=/^\s*(\+|00)/.test(q),d=digits(q).replace(/^00/,'');
+    if(!intl){
+      if(d[0]!=='0')return {bad:"Commencez par 0 pour un numéro français, ou par + et l'indicatif du pays pour un numéro étranger (+44…)."};
+      if(d.length<10)return {part:'Numéro incomplet : il manque '+plural(10-d.length,'chiffre')+'.'};
+      if(d.length>10)return {bad:'Numéro trop long : un numéro français compte 10 chiffres.'};
+      d='33'+d.slice(1);
+    }else if(d.indexOf('33')===0){
+      if(d.length===12&&d[2]==='0')d='33'+d.slice(3);   // « +33 06… » : le 0 est en trop
+      if(d.length<11)return {part:'Numéro incomplet : il manque '+plural(11-d.length,'chiffre')+'.'};
+      if(d.length>11)return {bad:'Numéro trop long pour un numéro français.'};
+    }else{
+      if(d.length<8)return {part:"Numéro incomplet : tapez l'indicatif du pays puis le numéro."};
+      if(d.length>15)return {bad:'Numéro trop long.'};
+    }
+    if(d.indexOf('33')===0&&!/^33[67]/.test(d))
+      return {bad:fmtPhone('+'+d)+" n'est pas un portable : seuls les 06 et 07 reçoivent des SMS."};
+    // ponytail: le SMS part sous le nom de l'hôtel, refusé aux États-Unis et au Canada. Une liste
+    // de pays bloqués n'aura de sens que si un autre échoue en vrai.
+    if(d[0]==='1')return {bad:'Les numéros des États-Unis et du Canada ne peuvent pas recevoir nos SMS.'};
+    return {d:d,disp:d.indexOf('33')===0?fmtPhone('+'+d):q.replace(/^\s*00/,'+').replace(/\s+/g,' ').trim(),
+      warn:d.indexOf('33')===0?'':"Numéro étranger : l'envoi fonctionne dans la plupart des pays, sans garantie."};
+  }
+  function openNew(){
+    selected=null;openId=null;renderRows();
+    document.body.classList.add('detail');
+    $('#detailEmpty').style.display='none';$('#detailInner').style.display='flex';
+    $('#composer').style.display='none';
+    $('#detHead').innerHTML='<button class="dback mob" id="dbackList" aria-label="Retour à la liste">‹</button>'+
+      '<div class="to"><label for="toIn">À :</label><input id="toIn" autocomplete="off" '+
+      'placeholder="Entrer un nom ou un numéro"></div>';
+    var bl=$('#dbackList');if(bl)bl.addEventListener('click',function(){document.body.classList.remove('detail')});
+    var inp=$('#toIn');inp.addEventListener('input',function(){drawSug(inp.value)});
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){var f=$('.sug button');if(f)f.click();}});
+    drawSug('');inp.focus();
+  }
+  function drawSug(q){
+    q=q.trim();var body=$('#detBody'),html='',p=parseNum(q),d=p&&p.d;
+    var known=groupsOf(data.filter(function(x){return digits(x.phone).length>=6}))
+      .map(function(g){return g.head});
+    var hits=d?known.filter(function(x){return digits(x.phone).slice(-9)===d.slice(-9)})
+      :q?known.filter(function(x){var s=query;query=q;var ok=matchQuery(x);query=s;return ok}):known.slice(0,5);
+    if(p&&p.bad)html+='<div class="sw">'+esc(p.bad)+'</div>';
+    else if(d&&!hits.length)
+      html+='<div class="sl">Nouveau numéro</div>'+
+        '<button data-new="'+d+'" data-disp="'+esc(p.disp)+'"><span class="rav" style="background:'+COLOR.sms+'">'+SMS_SVG+'</span>'+
+        '<span><span class="sn">Écrire au '+esc(p.disp)+'</span></span></button>';
+    else if(p&&p.part)html+='<div class="hint">'+esc(p.part)+'</div>';
+    else if(q&&!hits.length)html+='<div class="hint">Aucun correspondant « '+esc(q)+' ». Tapez ou collez un numéro complet.</div>';
+    if(d&&p.warn)html+='<div class="hint">'+esc(p.warn)+'</div>';
+    if(hits.length&&!(p&&p.bad)){
+      html+='<div class="sl">'+(d?'Discussion existante · le SMS s’y ajoutera':q?'Correspondants':'Derniers correspondants')+'</div>'+
+        hits.slice(0,8).map(function(x){
+        return '<button data-go="'+x.id+'"><span class="rav" style="background:'+COLOR[x.motif]+'">'+avInner(x.name)+'</span>'+
+          '<span><span class="sn">'+esc(x.name)+'</span><br><span class="sp">'+esc(x.phone)+'</span></span></button>';
+      }).join('');
+    }
+    if(!q)html+='<div class="rules">Portables français (06, 07) : sans restriction.<br>'+
+      'Numéros étrangers : tapez le + et l\'indicatif du pays (+44 pour le Royaume-Uni).<br>'+
+      'Lignes fixes : impossible, elles ne reçoivent pas de SMS.</div>';
+    body.innerHTML='<div class="sug">'+html+'</div>';
+    $$('.sug [data-go]').forEach(function(b){b.addEventListener('click',function(){pick(b.dataset.go)})});
+    $$('.sug [data-new]').forEach(function(b){b.addEventListener('click',function(){
+      var e=smsEntry(b.dataset.new,Date.now(),b.dataset.disp);
+      data.unshift(e);pick(e.id);
+    })});
+  }
+  function pick(id){openThread(id,true);$('#cInput').focus();}
+  $('#newSms').addEventListener('click',openNew);
+
+  // ---- Nom du correspondant : un clic sur le nom en gras de l'en-tête ----
+  // Le nom vaut pour le numéro (tous ses appels et SMS). Il ne s'affiche qu'une fois la
+  // base d'accord : l'app a déjà menti en peignant un succès trop tôt.
+  function saveName(x,v){
+    var d=digits(x.phone),k=d.slice(-9);
+    function apply(){if(v)NAMES[k]=v;else delete NAMES[k];applyNames();renderDetail();renderRows();}
+    if(!LIVE)return apply();
+    api('/rest/v1/clients?on_conflict=hotel_id,phone_e164',{method:'POST',
+      headers:{Prefer:'resolution=merge-duplicates,return=minimal'},
+      body:JSON.stringify({hotel_id:HOTEL_ID,phone_e164:'+'+d,name:v||null})})
+      .then(function(r){if(!r.ok)throw 0;apply();})
+      .catch(function(){renderDetail();
+        alertBox('Nom non enregistré','Le nom n\'a pas pu être enregistré. Réessayez dans un instant.');});
+  }
+  function startRename(){
+    var x=data.find(function(d){return d.id===selected});if(!x)return;
+    var box=$('#detHead .dn'),blank=/^[+\d]/.test(x.name)||x.name==='Appelant non identifié';
+    box.innerHTML='<input class="dnin" id="dnIn" maxlength="60" placeholder="Nom du client" aria-label="Nom du client" value="'+
+      (blank?'':esc(x.name))+'">';
+    var inp=$('#dnIn'),done=false;
+    function finish(save){
+      if(done)return;done=true;
+      var v=inp.value.trim();
+      if(save&&v!==(blank?'':x.name))saveName(x,v);else renderDetail();
+    }
+    inp.addEventListener('keydown',function(e){
+      if(e.key==='Enter'){e.preventDefault();finish(true);}
+      if(e.key==='Escape'){e.stopPropagation();finish(false);}
+    });
+    inp.addEventListener('blur',function(){finish(true)});
+    inp.focus();
+  }
+  $('#detHead').addEventListener('click',function(e){if(e.target.closest('#dnBtn'))startRename();});
+
+  // ---- Modèles de SMS : partagés par toute l'équipe de l'hôtel (table sms_templates) ----
+  var TPL=LIVE?[]:[
+    {t:'Arrivée tardive',b:"Bonjour, la réception ferme à 22h. Code de la porte d'entrée : [code]. Votre clé est dans la boîte au nom de [nom], chambre [chambre]. Bonne arrivée."},
+    {t:'Parking',b:"Bonjour, le parking de l'hôtel se trouve [adresse]. Code du portail : [code]. À bientôt."}];
+  function loadTpl(){
+    return api('/rest/v1/sms_templates?select=id,title,body&hotel_id=eq.'+HOTEL_ID+'&order=title.asc')
+      .then(function(r){if(!r.ok)throw 0;return r.json()})
+      .then(function(rows){TPL=rows.map(function(r){return {id:r.id,t:r.title,b:r.body}})})
+      .catch(function(){TPL=[]});
+  }
+  var tMenu=$('#tplMenu'),tBtn=$('#tplBtn'),cIn=$('#cInput');
+  function tplOpen(on){tMenu.hidden=!on;tBtn.setAttribute('aria-expanded',on?'true':'false');if(on)drawTpl(null);}
+  function flash(txt){var note=$('.composer .cnote');note.textContent=txt;
+    setTimeout(function(){note.textContent='Envoyer un sms'},2500);}
+  function tplSave(ed,n,v,er){
+    function done(t){if(ed>=0)TPL[ed]=t;else TPL.push(t);tplOpen(false);flash('✓ Modèle « '+t.t+' » enregistré');}
+    if(!LIVE)return done({t:n,b:v});
+    var body={title:n,body:v};
+    var req=ed>=0
+      ? api('/rest/v1/sms_templates?id=eq.'+TPL[ed].id,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(body)})
+      : api('/rest/v1/sms_templates',{method:'POST',headers:{Prefer:'return=representation'},
+          body:JSON.stringify(Object.assign({hotel_id:HOTEL_ID},body))});
+    er.textContent='Enregistrement…';
+    req.then(function(r){if(r.status===409)throw new Error('doublon');if(!r.ok)throw 0;return r.json()})
+      .then(function(rows){var w=rows&&rows[0];if(!w)throw 0;done({id:w.id,t:w.title,b:w.body});})
+      .catch(function(e){er.textContent=e&&e.message==='doublon'
+        ?'Un autre modèle s\'appelle déjà « '+n+' ».':'Enregistrement impossible. Réessayez dans un instant.';});
+  }
+  function tplDelete(t){
+    function gone(){TPL.splice(TPL.indexOf(t),1);flash('Modèle « '+t.t+' » supprimé');}
+    if(!LIVE)return gone();
+    api('/rest/v1/sms_templates?id=eq.'+t.id,{method:'DELETE',headers:{Prefer:'return=representation'}})
+      .then(function(r){if(!r.ok)throw 0;return r.json()})
+      .then(function(rows){if(!rows.length)throw 0;gone();})
+      .catch(function(){alertBox('Modèle non supprimé','La suppression a échoué. Réessayez dans un instant.');});
+  }
+  // ed : null = la liste ; -1 = nouveau modèle ; n = modification du modèle n.
+  function drawTpl(ed){
+    if(ed!==null){
+      var cur=ed>=0?TPL[ed]:{t:'',b:cIn.value.trim()};
+      tMenu.innerHTML='<div class="ted"><div class="teh">'+(ed>=0?'Modifier le modèle':'Nouveau modèle')+'</div>'+
+        '<input id="tplName" maxlength="40" placeholder="Nom (ex. Arrivée tardive)" aria-label="Nom du modèle" value="'+esc(cur.t)+'">'+
+        '<textarea id="tplBody" rows="5" placeholder="Texte du SMS" aria-label="Texte du modèle">'+esc(cur.b)+'</textarea>'+
+        '<div class="t0">Mettez entre crochets ce qui change à chaque client : [code], [chambre], [prénom]. '+
+        'L\'envoi est bloqué tant qu\'un crochet n\'est pas remplacé.</div>'+
+        '<div class="terr" id="tplErr"></div>'+
+        '<div class="tbtns"><button class="ghost" id="tplNo">Annuler</button><button id="tplOk">Enregistrer</button></div></div>';
+      var nm=$('#tplName',tMenu),bd=$('#tplBody',tMenu),er=$('#tplErr',tMenu);
+      (cur.t?bd:nm).focus();
+      $('#tplNo',tMenu).addEventListener('click',function(){drawTpl(null)});
+      $('#tplOk',tMenu).addEventListener('click',function(){
+        var n=nm.value.trim(),v=bd.value.trim();
+        if(!n){er.textContent='Donnez un nom au modèle.';nm.focus();return;}
+        if(!v){er.textContent='Le texte du modèle est vide.';bd.focus();return;}
+        var dup=TPL.some(function(t,i){return i!==ed&&t.t.toLowerCase()===n.toLowerCase()});
+        if(dup){er.textContent='Un autre modèle s\'appelle déjà « '+n+' ».';nm.focus();return;}
+        tplSave(ed,n,v,er);
+      });
+      return;
+    }
+    tMenu.innerHTML=(TPL.length?TPL.map(function(t,i){
+        return '<div class="ti"><button class="tu" data-i="'+i+'" title="Utiliser ce modèle"><b>'+esc(t.t)+'</b><span>'+esc(t.b)+'</span></button>'+
+          '<button class="te" data-e="'+i+'" title="Modifier" aria-label="Modifier le modèle '+esc(t.t)+'">✎</button>'+
+          '<button class="tx" data-x="'+i+'" title="Supprimer" aria-label="Supprimer le modèle '+esc(t.t)+'">×</button></div>';
+      }).join(''):'<div class="t0">Aucun modèle enregistré. Un modèle se remplit en un clic, puis se modifie avant l\'envoi.</div>')+
+      '<button class="tadd" id="tplAdd">＋ Nouveau modèle'+(cIn.value.trim()?' (à partir du message écrit)':'')+'</button>';
+    $$('.tu',tMenu).forEach(function(b){b.addEventListener('click',function(){
+      var t=TPL[+b.dataset.i].b;tplOpen(false);
+      // le modèle remplit le champ : tout reste modifiable avant l'envoi
+      cIn.value=t;cIn.dispatchEvent(new Event('input'));cIn.focus();
+      // le premier [champ] est sélectionné : on tape directement la bonne valeur
+      var m=/\[[^\]]*\]/.exec(t);if(m)cIn.setSelectionRange(m.index,m.index+m[0].length);
+    })});
+    $$('.te',tMenu).forEach(function(b){b.addEventListener('click',function(){drawTpl(+b.dataset.e)})});
+    $$('.tx',tMenu).forEach(function(b){b.addEventListener('click',function(){
+      var t=TPL[+b.dataset.x];tplOpen(false);
+      confirmBox('Supprimer ce modèle ?','« '+t.t+' » sera supprimé pour toute l\'équipe.',function(){tplDelete(t)});
+    })});
+    $('#tplAdd',tMenu).addEventListener('click',function(){drawTpl(-1)});
+  }
+  tBtn.addEventListener('click',function(e){e.stopPropagation();tplOpen(tMenu.hidden);});
+  tMenu.addEventListener('click',function(e){e.stopPropagation()});
+  document.addEventListener('click',function(){if(!tMenu.hidden)tplOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!tMenu.hidden){tplOpen(false);tBtn.focus();}});
   $('#feedBtn').addEventListener('click',openFeedback);
   $('#cSend').addEventListener('click',sendMsg);
   $('#cInput').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(120,this.scrollHeight)+'px'});
