@@ -542,9 +542,26 @@
   .instbar .logo{width:28px;height:28px;font-size:13px}
   .instbar p{margin:0;flex:1;font-size:var(--fs-sm);line-height:1.35;color:var(--ink)}
   .instbar b{font-weight:700}
+  /* l'icone se lit comme un mot de la phrase, pas comme une image a cote */
+  .instbar .ish{width:15px;height:15px;vertical-align:-3px;margin:0 1px}
   .instbar .ix{border:1px solid var(--line-strong);background:none;color:var(--ink-faint);
     font:inherit;font-size:15px;line-height:1;width:30px;height:30px;flex:0 0 auto;cursor:pointer;border-radius:0}
   .instbar .ix:hover,.instbar .ix:focus-visible{color:var(--ink);background:var(--surface-2);outline:0}
+
+  /* iOS agrandit la page des qu'on touche un champ de saisie sous 16px, et ne
+     revient JAMAIS en arriere apres la validation : la reception se retrouvait
+     sur son ecran d'accueil rogne, a ecarter les doigts pour lire. Ce n'est pas
+     propre a l'ecran de connexion, tous les champs sont concernes — dont le
+     composeur de SMS, le plus utilise au telephone. Constate le 28/09.
+     Ne PAS « corriger » par user-scalable=no dans le viewport : ca supprimerait
+     le zoom a deux doigts pour de bon, y compris pour qui en a besoin pour lire.
+     Regle posee en fin de feuille : a specificite egale, c'est la derniere qui
+     l'emporte sur les tailles definies plus haut. */
+  @media (max-width:900px){
+    input:not([type=range]):not([type=file]),textarea,select{font-size:16px}
+    .authbox input,.searchbox input,.to input,.composer textarea,
+    .tplmenu .ted input,.tplmenu .ted textarea{font-size:16px}
+  }
 </style>
 
 <div class="scrim" id="scrim"></div>
@@ -553,7 +570,7 @@
 <div class="modal" id="infosOv" hidden></div>
 <div class="instbar" id="instBar" hidden>
   <span class="logo">M</span>
-  <p>Installez Mylidie sur votre écran d'accueil : bouton <b>Partager</b>, en bas de l'écran, puis <b>« Sur l'écran d'accueil »</b>.</p>
+  <p id="instTxt">Installez Mylidie sur votre écran d'accueil : appuyez sur <svg class="ish" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Partager"><path d="M12 3v13"/><path d="M8 7l4-4 4 4"/><path d="M6 12H4v8h16v-8h-2"/></svg> dans la barre du navigateur, puis <b>« Sur l'écran d'accueil »</b>.</p>
   <button class="ix" id="instNo" aria-label="Ne plus proposer l'installation">✕</button>
 </div>
 <div class="scrollwrap">
@@ -2050,6 +2067,12 @@
                 (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
     var refuse=false; try{refuse=localStorage.getItem('mylidie_install')==='non'}catch(e){}
     if(!iOS || posee || refuse) return;
+    // Chrome sur iPhone n'affiche pas l'icone de partage dans sa barre : elle
+    // est rangee dans le menu « ... ». La consigne de Safari y envoie chercher
+    // au mauvais endroit, et on tourne en rond (vecu le 28/09).
+    if(/CriOS/.test(navigator.userAgent))
+      $('#instTxt').innerHTML='Installez Mylidie sur votre écran d\'accueil : '+
+        'menu <b>\u22EF</b> du navigateur, puis <b>« Sur l\'écran d\'accueil »</b>.';
     var bar=$('#instBar'); bar.hidden=false;
     $('#instNo').addEventListener('click',function(){
       bar.hidden=true;
