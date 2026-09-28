@@ -372,6 +372,26 @@
   // faire (transfert, dispo temps réel) ne se comble pas en éditant le prompt.
   // Le mélanger aux trous ferait croire à l'hôtelier qu'il peut le corriger.
   var RX_LIMITE=/je ne peux pas (?:transférer|collecter|vérifier|accéder|traiter)/i;
+  // 3e nature (2026-09-28) : le client a demandé une langue que l'agent n'a pas.
+  // Mesuré : hors des `language_presets`, l'agent ne dégrade pas, il bloque — il
+  // sert sa phrase de repli et raccroche. Sans cette ligne, ces appels ne sont
+  // signalés NULLE PART, et c'est justement le seul chiffre qui dirait s'il faut
+  // payer le câblage d'une langue de plus. Même principe que les deux autres :
+  // on ancre sur une phrase qu'on écrit soi-même, pas sur une intention devinée.
+  // Les deux rendus observés (le modèle traduit sa phrase une fois sur deux) :
+  //   « I can only assist in French, English, Spanish, German or Italian. »
+  //   « je ne peux vous aider qu'en français, anglais, espagnol, allemand… »
+  var RX_LANGUE=/can only assist in|ne peux (?:vous aider|communiquer) qu['\u2019]en/i;
+
+  // Une table plutôt que des ternaires répétés : un libellé, une pastille, et le
+  // statut par défaut au classement. Une 4e nature ne touchera que ces lignes.
+  var KIND={
+    trou:  {ordre:0,label:'Trou d\'information',pill:'p-traiter',statut:'traiter',
+            court:'trou',courtp:'trous'},
+    langue:{ordre:1,label:'Langue non gérée',   pill:'p-classer',statut:'horspor',
+            court:'langue',courtp:'langues'},
+    limite:{ordre:2,label:'Limite de l\'agent', pill:'p-horspor',statut:'horspor',
+            court:'limite',courtp:'limites'}};
 
   // Un appel détecté = le tour d'agent qui refuse + le tour d'appelant juste avant.
   // Nos transcriptions ElevenLabs portent les rôles (celles d'ALLO ne les ont pas) :
@@ -384,7 +404,7 @@
       for(var i=0;i<t.length;i++){
         if((t[i].role||'')!=='agent')continue;
         var m=String(t[i].message||'');
-        var kind=RX_TROU.test(m)?'trou':(RX_LIMITE.test(m)?'limite':'');
+        var kind=RX_LANGUE.test(m)?'langue':(RX_TROU.test(m)?'trou':(RX_LIMITE.test(m)?'limite':''));
         if(!kind)continue;
         var q='';
         for(var j=i-1;j>=0;j--){if((t[j].role||'')==='user'){q=String(t[j].message||'');break}}
@@ -896,14 +916,15 @@
     // Détections non encore classées, les trous d'abord : c'est ce qui se comble.
     var vus=dejaClasse(qHotel);
     var det=detecte(qHotel).filter(function(d){return !vus[d.call_id]});
-    det.sort(function(a,b){return (a.kind===b.kind)?0:(a.kind==='trou'?-1:1)});
-    var nTrou=det.filter(function(d){return d.kind==='trou'}).length;
-    var nLim=det.length-nTrou;
+    det.sort(function(a,b){return KIND[a.kind].ordre-KIND[b.kind].ordre});
+    var compte=Object.keys(KIND).map(function(k){
+      var n=det.filter(function(d){return d.kind===k}).length;
+      return n?n+' '+(n>1?KIND[k].courtp:KIND[k].court):''}).filter(Boolean).join(' · ');
 
     var detHtml=det.length
       ? '<ul class="qlist">'+det.map(function(d,i){
-          return '<li><div class="qmeta"><span class="pill '+(d.kind==='trou'?'p-traiter':'p-horspor')+'">'+
-            (d.kind==='trou'?'Trou d\'information':'Limite de l\'agent')+'</span>'+
+          return '<li><div class="qmeta"><span class="pill '+KIND[d.kind].pill+'">'+
+            esc(KIND[d.kind].label)+'</span>'+
             '<span>'+esc(d.date)+'</span>'+(d.from_e164?'<span>'+esc(d.from_e164)+'</span>':'')+'</div>'+
             '<p class="qtxt">« '+esc(d.question)+' »</p>'+
             '<div style="margin-top:7px"><button class="btn sm" data-d="'+i+'">Classer dans un thème</button></div>'+
@@ -918,15 +939,18 @@
         '<select id="qh">'+opts+'</select></div></div>'+
 
       '<div class="card"><h2>Détecté dans les appels'+
-        '<span class="sub">'+nTrou+' trou'+(nTrou!==1?'s':'')+' · '+nLim+' limite'+(nLim!==1?'s':'')+'</span></h2>'+
+        '<span class="sub">'+(compte||'rien')+'</span></h2>'+
         '<div class="in">'+
         // `.warn b` est en display:block (c'est le titre de l'encart) : toute
         // emphase en milieu de phrase passe par <strong>, sinon elle saute une ligne.
-        '<div class="warn"><b>Deux natures différentes, à ne pas confondre.</b>'+
+        '<div class="warn"><b>Trois natures différentes, à ne pas confondre.</b>'+
         'Un <strong>trou d\'information</strong> se comble en ajoutant le renseignement au prompt '+
-        'de l\'agent. Une <strong>limite de l\'agent</strong> (transférer un appel, vérifier une '+
-        'disponibilité en temps réel) ne se corrige pas en écrivant du texte : elle relève de la '+
-        'feuille de route produit.</div>'+
+        'de l\'agent — c\'est le seul des trois sur lequel vous pouvez agir. Une '+
+        '<strong>limite de l\'agent</strong> (transférer un appel, vérifier une disponibilité en '+
+        'temps réel) ne se corrige pas en écrivant du texte : elle relève de la feuille de route '+
+        'produit. Une <strong>langue non gérée</strong> veut dire que l\'appelant a demandé une '+
+        'langue que l\'agent ne parle pas : il n\'a pas pu être servi du tout. Signalez-le-nous, '+
+        'l\'ajout d\'une langue se fait de notre côté.</div>'+
         detHtml+'</div></div>'+
 
       '<div class="card"><h2>Thèmes<span class="sub">'+esc(h?h.name:'')+'</span>'+
@@ -996,7 +1020,7 @@
         // Une limite de l'agent n'est pas « à traiter » : elle ne se comble pas au prompt.
         p=api('/rest/v1/call_gaps',{method:'POST',headers:{Prefer:'return=representation'},
               body:JSON.stringify({hotel_id:qHotel,theme:nom,entries:[entry],
-                                   status:d.kind==='limite'?'horspor':'traiter'})})
+                                   status:KIND[d.kind].statut})})
              .then(function(r){return r.json()})
              .then(function(rows){
                if(!rows||!rows.length)throw new Error('Création refusée.');
