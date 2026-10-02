@@ -608,7 +608,7 @@
           <span class="chev">⌄</span>
         </button>
         <div class="menu" id="userMenu" hidden>
-          <button class="mi" id="infosBtn">🏨 Informations de l'hôtel</button>
+          <button class="mi" id="infosBtn">ℹ️ Informations agent</button>
           <button class="mi" id="themeBtn">🌗 Basculer clair / sombre</button>
           <button class="mi" id="adminBtn" hidden>⚙ Administration</button>
           <button class="mi danger" id="logoutBtn">⏻ Déconnexion</button>
@@ -1404,7 +1404,7 @@
           : '');
     ov.innerHTML='<div class="sheet wide"><div class="sh"><h2>Informations de l\'établissement</h2>'+
       '<button class="x" id="inX" aria-label="Fermer">×</button></div>'+
-      '<p class="lead">Tout ce que l\'agent sait dire au téléphone sur votre hôtel.</p>'+
+      '<p class="lead">Tout ce que l\'agent sait dire au téléphone.</p>'+
       '<div class="ro"><span>🔒</span><span><b>Lecture seule</b>Une erreur, une information qui '+
       'manque ? Signalez-la : on corrige l\'agent et vous recevez une confirmation.</span></div>'+
       (inf&&inf.maj?'<p class="maj">Mis à jour le '+esc(dateFr(inf.maj))+'</p>':'')+
