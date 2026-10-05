@@ -528,6 +528,26 @@
   .tplmenu .tbtns button{border:0;background:var(--btn-bg);color:var(--btn-fg);font:inherit;font-size:var(--fs-sm);font-weight:600;padding:8px 14px;cursor:pointer}
   .tplmenu .tbtns .ghost{background:none;color:var(--ink);border:1px solid var(--line-strong)}
 
+  /* ---- visite guidée (premiere connexion, puis « Revoir le guide ») ----
+     Le projecteur est un trou dans un voile : une ombre geante autour de la
+     cible. Il glisse d'une etape a l'autre, la bulle le suit. */
+  .guide{position:fixed;inset:0;z-index:60}
+  .guide[hidden]{display:none}
+  .guide .gh{position:fixed;pointer-events:none;box-shadow:0 0 0 9999px rgba(0,0,0,.62);outline:2px solid var(--accent);
+    transition:left .35s cubic-bezier(.2,.8,.2,1),top .35s cubic-bezier(.2,.8,.2,1),width .35s cubic-bezier(.2,.8,.2,1),height .35s cubic-bezier(.2,.8,.2,1)}
+  .guide .gt{position:fixed;width:min(330px,calc(100vw - 32px));background:var(--btn-bg);color:var(--btn-fg);padding:18px 18px 14px;
+    animation:gin .3s ease-out;transition:left .35s cubic-bezier(.2,.8,.2,1),top .35s cubic-bezier(.2,.8,.2,1)}
+  @keyframes gin{from{opacity:0;transform:translateY(8px)}}
+  .guide .gn{display:inline-block;background:var(--accent);color:#0a0a0a;font-size:var(--fs-xs);font-weight:700;padding:2px 7px;font-variant-numeric:tabular-nums}
+  .guide h3{margin:10px 0 6px;font-family:var(--display);font-weight:400;font-size:var(--fs-lg);letter-spacing:.2px}
+  .guide p{margin:0;font-size:var(--fs-sm);line-height:1.5;opacity:.85}
+  .guide .gb{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+  .guide .gb button{font:inherit;font-size:var(--fs-sm);font-weight:600;padding:8px 14px;cursor:pointer;border-radius:0}
+  .guide .gskip{border:0;background:none;color:inherit;opacity:.7}
+  .guide .gskip:hover{opacity:1}
+  .guide .gnext{border:1px solid #0a0a0a;background:var(--accent);color:#0a0a0a}
+  .guide .gb button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
   /* Bandeau « écran d'accueil », iPhone uniquement. Aucun navigateur d'iOS ne
      propose l'installation (Chrome iPhone est Safari sous une autre peau), et
      rien dans l'interface ne dit que l'app peut vivre hors du navigateur.
@@ -568,6 +588,11 @@
 <div class="modal" id="alertOv" hidden></div>
 <div class="modal" id="feedOv" hidden></div>
 <div class="modal" id="infosOv" hidden></div>
+<div class="guide" id="guide" hidden role="dialog" aria-modal="true" aria-labelledby="gT">
+  <div class="gh" id="gH"></div>
+  <div class="gt" id="gTip"><span class="gn" id="gN"></span><h3 id="gT"></h3><p id="gX"></p>
+    <div class="gb"><button class="gskip" id="gSkip">Passer</button><button class="gnext" id="gNext">Suivant</button></div></div>
+</div>
 <div class="instbar" id="instBar" hidden>
   <span class="logo">M</span>
   <p id="instTxt">Installez Mylidie sur votre écran d'accueil : appuyez sur <svg class="ish" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Partager"><path d="M12 3v13"/><path d="M8 7l4-4 4 4"/><path d="M6 12H4v8h16v-8h-2"/></svg> dans la barre du navigateur, puis <b>« Sur l'écran d'accueil »</b>.</p>
@@ -609,6 +634,7 @@
         </button>
         <div class="menu" id="userMenu" hidden>
           <button class="mi" id="infosBtn">ℹ️ Informations agent</button>
+          <button class="mi" id="guideBtn">🧭 Revoir le guide</button>
           <button class="mi" id="themeBtn">🌗 Basculer clair / sombre</button>
           <button class="mi" id="adminBtn" hidden>⚙ Administration</button>
           <button class="mi danger" id="logoutBtn">⏻ Déconnexion</button>
@@ -1626,6 +1652,7 @@
             renderCounts();renderRows();
             var v=visible();
             if(!selected&&v.length&&window.matchMedia('(min-width:901px)').matches)openThread(v[0].id);
+            guideAuto();
           });
         });
     });
@@ -2079,6 +2106,88 @@
       try{localStorage.setItem('mylidie_install','non')}catch(e){}
     });
   })();
+
+  // ---- Visite guidee -------------------------------------------------------
+  // Une fois par navigateur, au premier chargement des appels ; ensuite depuis
+  // le menu du compte. Une etape dont la cible n'est pas a l'ecran est sautee :
+  // la meme liste sert au bureau (motifs, souci, compte visibles) et au
+  // telephone (tout est dans le tiroir du ☰). `open` : la cible est dans le fil,
+  // on en ouvre un s'il le faut (sans le marquer lu). Les appels tests d'avant
+  // la mise en service servent d'exemple ; liste vide = ces etapes sautees.
+  var GUIDE=[
+    {t:'Bienvenue sur Mylidie',x:"Une minute pour faire le tour. Vous pourrez revoir ce guide quand vous voulez depuis votre compte."},
+    {s:'#rows .row',t:'Vos appels',x:"Chaque personne qui appelle a sa discussion ici, la plus récente en haut. Le petit carré de couleur signale ce que vous n'avez pas encore lu."},
+    {s:'#nav',t:'Trier par motif',x:"L'agent classe chaque appel : réservation, demande de rappel, urgence… Un clic filtre la liste."},
+    {s:'#burger',t:'Motifs et compte',x:"Ce bouton ouvre les filtres par motif, les informations de l'agent et de quoi nous signaler un souci."},
+    {s:'#detBody .tl-call',last:1,open:1,t:'Ouvrir un appel',x:"Ouvrez un appel pour lire son résumé, la conversation écrite, et écouter l'enregistrement."},
+    {s:'#composer .cbox',open:1,t:'Envoyer un SMS',x:"Écrivez au client sans quitter l'écran. « Modèles » garde vos messages habituels. Le client ne peut pas répondre à ce SMS."},
+    {s:'#feedBtn',t:"Un souci avec l'agent ?",x:"Une mauvaise réponse, une information qui manque : dites-le ici, on corrige l'agent."},
+    {s:'#userBtn',t:'Votre compte',x:"Ce que l'agent sait de votre établissement, le mode sombre, et ce guide à revoir."}
+  ];
+  var gWrap=$('#guide'),gHole=$('#gH'),gTip=$('#gTip'),gSteps=[],gi=0,gOpened=false,gAsked=false;
+  function gEl(st){
+    if(!st.s)return null;
+    var l=$$(st.s),el=st.last?l[l.length-1]:l[0];if(!el)return null;
+    var r=el.getBoundingClientRect();
+    // display:none (burger au bureau) ou hors champ (tiroir ferme au telephone)
+    return r.width&&r.height&&r.right>0&&r.left<innerWidth?el:null;
+  }
+  function guidePlace(){
+    var st=gSteps[gi],el=gEl(st),W=innerWidth,H=innerHeight,m=14,p=6,
+        tw=gTip.offsetWidth,th=gTip.offsetHeight,top,left;
+    if(!el){
+      gHole.style.cssText='left:50%;top:50%;width:0;height:0;outline-width:0';
+      top=(H-th)/2;left=(W-tw)/2;
+    }else{
+      var r=el.getBoundingClientRect();
+      gHole.style.cssText='left:'+(r.left-p)+'px;top:'+(r.top-p)+'px;width:'+(r.width+2*p)+'px;height:'+(r.height+2*p)+'px';
+      if(r.bottom+p+m+th<H){top=r.bottom+p+m;left=r.left;}
+      else if(r.top-p-m-th>0){top=r.top-p-m-th;left=r.left;}
+      else if(r.right+p+m+tw<W){top=r.top;left=r.right+p+m;}
+      else{top=H-th-16;left=(W-tw)/2;} // cible plus haute que l'ecran : la bulle passe dessus
+    }
+    gTip.style.left=Math.max(16,Math.min(left,W-tw-16))+'px';
+    gTip.style.top=Math.max(16,Math.min(top,H-th-16))+'px';
+  }
+  function guideShow(){
+    var st=gSteps[gi];
+    if(st.open&&!gEl(st)){var v=visible();if(v.length){openThread(v[0].id);gOpened=true;}}
+    if(st.s&&!gEl(st)){if(gi<gSteps.length-1){gi++;return guideShow();}return guideEnd();}
+    var el=gEl(st);if(el)el.scrollIntoView({block:'nearest'});
+    $('#gN').textContent=(gi+1)+' / '+gSteps.length;
+    $('#gT').textContent=st.t;$('#gX').textContent=st.x;
+    var fin=gi===gSteps.length-1;
+    $('#gNext').textContent=fin?"C'est parti":'Suivant';$('#gSkip').hidden=fin;
+    guidePlace();$('#gNext').focus();
+  }
+  function guideKey(e){
+    // capture : sans ca, Echap fermerait aussi le fil ouvert (gestionnaire global)
+    if(e.key==='Escape'){e.stopImmediatePropagation();guideEnd();}
+    else if(e.key==='ArrowRight'){e.stopImmediatePropagation();$('#gNext').click();}
+  }
+  function guideStart(){
+    openMenu(false);drawer(false);gOpened=false;
+    var v=visible().length;
+    gSteps=GUIDE.filter(function(st){return !st.s||(st.open&&v)||gEl(st)});
+    gi=0;gWrap.hidden=false;
+    document.addEventListener('keydown',guideKey,true);addEventListener('resize',guidePlace);
+    guideShow();
+  }
+  function guideEnd(){
+    gWrap.hidden=true;
+    document.removeEventListener('keydown',guideKey,true);removeEventListener('resize',guidePlace);
+    try{localStorage.setItem('mylidie_guide','vu')}catch(e){}
+    // au telephone, le fil ouvert pour la demo cachait la liste : on y revient
+    if(gOpened&&!window.matchMedia('(min-width:901px)').matches)document.body.classList.remove('detail');
+  }
+  function guideAuto(){
+    if(gAsked)return;gAsked=true;
+    var vu=false;try{vu=localStorage.getItem('mylidie_guide')==='vu'}catch(e){}
+    if(!vu)guideStart();
+  }
+  $('#gNext').addEventListener('click',function(){if(gi<gSteps.length-1){gi++;guideShow();}else guideEnd();});
+  $('#gSkip').addEventListener('click',guideEnd);
+  $('#guideBtn').addEventListener('click',guideStart);
 
   if(LIVE){
     data.length=0;
