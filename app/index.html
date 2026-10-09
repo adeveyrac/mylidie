@@ -2243,9 +2243,20 @@
     {s:'#nav',t:'Trier par motif',x:"L'agent classe chaque appel : réservation, demande de rappel, urgence… Un clic filtre la liste."},
     {s:'#burger',t:'Motifs et compte',x:"Ce bouton ouvre les filtres par motif, les informations de l'agent et de quoi nous signaler un souci."},
     {s:'#detBody .tl-call',last:1,open:1,t:'Ouvrir un appel',x:"Ouvrez un appel pour lire son résumé, la conversation écrite, et écouter l'enregistrement."},
+    {s:'#archBtn',open:1,t:'Marquer comme traité',x:"Client rappelé ou demande réglée : un clic, « Traité » ou « Réservation prise ». L'appel passe dans l'onglet Traités et toute l'équipe voit à quelle heure."},
     {s:'#composer .cbox',open:1,t:'Envoyer un SMS',x:"Écrivez au client sans quitter l'écran. « Modèles » garde vos messages habituels. Le client ne peut pas répondre à ce SMS."},
     {s:'#feedBtn',t:"Un souci avec l'agent ?",x:"Une mauvaise réponse, une information qui manque : dites-le ici, on corrige l'agent."},
     {s:'#userBtn',t:'Votre compte',x:"Ce que l'agent sait de votre établissement, le mode sombre, et ce guide à revoir."}
+  ];
+  // Nouveautés : jouées une fois, au premier lancement qui suit leur mise en ligne, à qui a
+  // déjà vu le guide (un nouveau compte a le guide, qui les contient). Nouvelle annonce =
+  // nouvelle liste + nouvelle valeur de NEWS_V.
+  var NEWS_V='2026-10-traite';
+  var NEWS=[
+    {t:'Nouveau : suivre les appels traités',x:"Votre équipe voit maintenant quels appels ont déjà été rappelés ou réglés, et à quelle heure. Trois écrans pour faire le tour."},
+    {s:'#tabs',t:'À traiter / Traités',x:"La liste ne montre plus que les appels à traiter, avec leur nombre. Ceux qui sont réglés passent dans l'onglet Traités."},
+    {s:'#archBtn',open:1,t:'Marquer comme traité',x:"Un clic quand c'est fait. « Traité » : client rappelé, ou rien à faire. « Réservation prise » : indiquez le nom et le nombre de nuits. Une erreur ? « Remettre à traiter » annule."},
+    {t:'Et aussi',x:"Dans le mail de chaque appel, le bouton vert « Marquer comme traité » ouvre directement l'appel. Et dans votre compte, « Exporter l'état des appels » télécharge un fichier Excel de tous les appels et de leur suite."}
   ];
   var gWrap=$('#guide'),gHole=$('#gH'),gTip=$('#gTip'),gSteps=[],gi=0,gOpened=false,gAsked=false;
   function gEl(st){
@@ -2288,10 +2299,10 @@
     if(e.key==='Escape'){e.stopImmediatePropagation();guideEnd();}
     else if(e.key==='ArrowRight'){e.stopImmediatePropagation();$('#gNext').click();}
   }
-  function guideStart(){
+  function guideStart(list){
     openMenu(false);drawer(false);gOpened=false;
     var v=visible().length;
-    gSteps=GUIDE.filter(function(st){return !st.s||(st.open&&v)||gEl(st)});
+    gSteps=(Array.isArray(list)?list:GUIDE).filter(function(st){return !st.s||(st.open&&v)||gEl(st)});
     gi=0;gWrap.hidden=false;
     document.addEventListener('keydown',guideKey,true);addEventListener('resize',guidePlace);
     guideShow();
@@ -2299,14 +2310,14 @@
   function guideEnd(){
     gWrap.hidden=true;
     document.removeEventListener('keydown',guideKey,true);removeEventListener('resize',guidePlace);
-    try{localStorage.setItem('mylidie_guide','vu')}catch(e){}
+    try{localStorage.setItem('mylidie_guide','vu');localStorage.setItem('mylidie_news',NEWS_V)}catch(e){}
     // au telephone, le fil ouvert pour la demo cachait la liste : on y revient
     if(gOpened&&!window.matchMedia('(min-width:901px)').matches)document.body.classList.remove('detail');
   }
   function guideAuto(){
     if(gAsked)return;gAsked=true;
-    var vu=false;try{vu=localStorage.getItem('mylidie_guide')==='vu'}catch(e){}
-    if(!vu)guideStart();
+    var vu=false,news='';try{vu=localStorage.getItem('mylidie_guide')==='vu';news=localStorage.getItem('mylidie_news')||''}catch(e){}
+    if(!vu)guideStart(GUIDE);else if(news!==NEWS_V)guideStart(NEWS);
   }
   $('#gNext').addEventListener('click',function(){if(gi<gSteps.length-1){gi++;guideShow();}else guideEnd();});
   $('#gSkip').addEventListener('click',guideEnd);
