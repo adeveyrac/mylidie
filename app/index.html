@@ -223,6 +223,34 @@
   border-radius:0;padding:7px 12px;font-size:12px;cursor:pointer;font-family:inherit}
 .archbtn:hover{background:var(--surface-3);color:var(--ink)}
 .archbtn:focus-visible,.cpy:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.archbtn.todo{background:#1f8a4c;color:#fff;border-color:#1f8a4c;font-weight:700;font-size:13px;padding:8px 14px}
+.archbtn.todo:hover{background:#19733f;color:#fff}
+.sm{display:none}
+.det-head{position:relative}
+/* Etat traité : une bande sous l'en-tête, pas un badge dedans — au téléphone le badge
+   écrasait le nom et le numéro de l'appelant, et cachait le nombre de nuits. */
+.detstate{display:flex;align-items:center;gap:10px;padding:8px 22px;background:rgba(31,138,76,.12);color:#1f8a4c;
+  border-bottom:1px solid rgba(31,138,76,.35);font-size:14px;line-height:1.35}
+.detstate[hidden]{display:none}
+.detstate b{font-weight:700}
+.detstate .archbtn{margin-left:auto;white-space:nowrap;flex:0 0 auto}
+@media(prefers-color-scheme:dark){.detstate{color:#5ccf8c}}
+:root[data-theme="dark"] .detstate{color:#5ccf8c}
+:root[data-theme="light"] .detstate{color:#1f8a4c}
+.outmenu{position:absolute;right:14px;top:calc(100% - 4px);z-index:30;width:300px;background:var(--surface);border:1px solid var(--ink);padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.outmenu .oo{display:block;width:100%;text-align:left;padding:10px 12px;border:0;background:transparent;font:inherit;font-weight:700;font-size:14px;color:var(--ink);cursor:pointer}
+.outmenu .oo:hover{background:var(--surface-2)}
+.outmenu .oo small{display:block;font-weight:400;font-size:12px;color:var(--ink-faint);margin-top:2px}
+.outmenu form{display:grid;gap:10px;padding:8px 12px 12px}
+.outmenu .ft{font-weight:700;font-size:14px}
+.outmenu label{display:grid;gap:4px;font-size:12px;color:var(--ink-soft)}
+.outmenu input{font:inherit;font-size:16px;padding:8px 10px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink)}
+.outmenu .ok{background:#1f8a4c;color:#fff;border:0;padding:10px;font:inherit;font-weight:700;cursor:pointer}
+.archtag.done{color:#1f8a4c;font-weight:700;background:#e9f5ee;border-color:#b9dfc8}
+.tcount{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;background:var(--ink);color:var(--surface);font-size:11px;line-height:18px;text-align:center}
+.row.done .rn{color:var(--ink-faint)}
+.row.done .rsub{color:#1f8a4c;font-weight:600}
+.chip.done{color:#1f8a4c;border-color:#b9dfc8;background:#e9f5ee}
 .archtag{margin-left:8px;border-radius:0;padding:6px 11px;font-size:12px;
   background:var(--surface-3);color:var(--ink-faint);border:1px solid var(--line)}
 /* Suppression définitive : discrète (elle ne concerne que l'administration),
@@ -450,8 +478,14 @@
     .det-head>.pill{display:none}
     /* « Désarchiver » dit deja que la discussion est archivee : l'etiquette en
        double poussait le numero du client hors de l'ecran */
+    /* sur 390px : libelles courts, l'heure reste lisible dans la liste */
     .det-head .archtag{display:none}
-    .det-head .archtag+.archbtn{margin-left:auto}
+    .det-head .archtag.done{display:inline-block;margin-left:auto;padding:7px 9px;white-space:nowrap;flex:0 0 auto}
+    .det-head .archtag+.archbtn{margin-left:6px}
+    .det-head .lg{display:none}
+    .det-head .sm{display:inline}
+    .archbtn.todo{white-space:nowrap;padding:8px 12px}
+    .outmenu{right:8px;left:8px;width:auto}
     .det-head .dp{white-space:nowrap}
     /* deux colonnes d'infos sur 390px : chaque libelle passait sur deux lignes */
     .info-grid{grid-template-columns:1fr}
@@ -633,6 +667,7 @@
           <span class="chev">⌄</span>
         </button>
         <div class="menu" id="userMenu" hidden>
+          <button class="mi" id="exportBtn">⬇ Exporter l'état des appels</button>
           <button class="mi" id="infosBtn">ℹ️ Informations agent</button>
           <button class="mi" id="guideBtn">🧭 Revoir le guide</button>
           <button class="mi" id="themeBtn">🌗 Basculer clair / sombre</button>
@@ -648,9 +683,8 @@
     <div class="list-head">
       <div class="lt"><button class="burger" id="burger" aria-label="Filtres et compte">☰</button>Discussions<button class="newsms" id="newSms" title="Écrire un SMS à n'importe quel numéro">✎ Nouveau SMS</button></div>
       <div class="tabs" id="tabs">
-        <button class="ltab" aria-selected="true" data-t="tous">Tous</button>
-        <button class="ltab" aria-selected="false" data-t="nonlus">Non lus</button>
-        <button class="ltab" aria-selected="false" data-t="archives">Archivés</button>
+        <button class="ltab" aria-selected="true" data-t="tous">À traiter <span class="tcount" id="todoCount"></span></button>
+        <button class="ltab" aria-selected="false" data-t="archives">Traités</button>
       </div>
     </div>
     <div class="rows" id="rows"></div>
@@ -661,6 +695,7 @@
     <div class="detail-empty" id="detailEmpty">Sélectionnez une conversation pour voir le détail.</div>
     <div class="col" id="detailInner" style="display:none;height:100%">
       <div class="det-head" id="detHead"></div>
+      <div class="detstate" id="detState" hidden></div>
       <div class="det-body" id="detBody"></div>
       <div class="composer" id="composer">
         <div class="cbox">
@@ -703,14 +738,14 @@
        {r:'client',x:"Du 14 au 16 février. On arrivera vers 22h."},
        {r:'agent',x:"C'est noté, l'arrivée tardive est possible avec un code. Je confirme la réservation."}
      ]},
-    {id:'c3',motif:'rappel',name:'Julien Marchand',phone:'+33 6 71 04 22 18',grp:'Cette semaine',when:'jeu.',d:'25/07 · 18h47',
+    {id:'c3',archived:true,outcome:'resa',nuits:1,archivedAt:"aujourd'hui à 14h32",motif:'rappel',name:'Julien Marchand',phone:'+33 6 71 04 22 18',grp:'Cette semaine',when:'jeu.',d:'25/07 · 18h47',
      dur:'0 m 38 s',summary:"Souhaite être rappelé pour modifier sa réservation de janvier (ajouter une nuit).",
      transcript:[
        {r:'agent',x:"Hôtel Saint-Énogat, bonjour."},
        {r:'client',x:"Bonjour, j'ai une réservation en janvier et je voudrais ajouter une nuit. Vous pouvez me rappeler ?"},
        {r:'agent',x:"Bien sûr, je transmets à la réception qui vous rappellera."}
      ]},
-    {id:'c4',motif:'info',name:'Marc Lefèvre',phone:'+33 7 82 55 41 30',grp:'Cette semaine',when:'jeu.',d:'25/07 · 09h39',
+    {id:'c4',archived:true,archivedAt:"aujourd'hui à 09h10",motif:'info',name:'Marc Lefèvre',phone:'+33 7 82 55 41 30',grp:'Cette semaine',when:'jeu.',d:'25/07 · 09h39',
      dur:'0 m 47 s',summary:"Demande les horaires du petit-déjeuner et si le parking est gratuit.",
      transcript:[
        {r:'agent',x:"Hôtel Saint-Énogat, bonjour, que puis-je pour vous ?"},
@@ -725,7 +760,7 @@
        {r:'client',x:"Bonjour, je dois annuler ma réservation du 2 août malheureusement."},
        {r:'agent',x:"C'est bien noté, votre réservation du 2 août est annulée. Vous recevrez une confirmation par SMS."}
      ]},
-    {id:'c6',motif:'info',name:'Claire Dubois',phone:'+33 6 12 88 63 45',grp:'Plus ancien',when:'24 juil.',d:'24/07 · 16h05',
+    {id:'c6',archived:true,archivedAt:"hier à 18h05",motif:'info',name:'Claire Dubois',phone:'+33 6 12 88 63 45',grp:'Plus ancien',when:'24 juil.',d:'24/07 · 16h05',
      dur:'1 m 09 s',summary:"Question sur l'acceptation des animaux et le supplément appliqué.",
      transcript:[
        {r:'agent',x:"Hôtel Saint-Énogat, bonjour."},
@@ -832,7 +867,7 @@
   }
 
   function counts(){var src=data.filter(function(x){return query||tab==='archives'?true:!x.archived});var c={all:src.length,urgence:0,resa:0,info:0,annulation:0,rappel:0,inconnu:0};src.forEach(function(x){c[x.motif]++});return c;}
-  function renderCounts(){var c=counts();$$('[data-c]').forEach(function(el){el.textContent=c[el.dataset.c]});}
+  function renderCounts(){var c=counts();$$('[data-c]').forEach(function(el){el.textContent=c[el.dataset.c]});var t=groupsOf(data.filter(function(x){return !x.archived})).length;var tc=$('#todoCount');if(tc)tc.textContent=t||'';}
   // Les particules sautent : « Pierre de Kerautem » donnait PD, ce qui se lit mal
   // sur un avatar. On prend la 1re lettre des deux premiers vrais mots.
   var SMS_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" '+
@@ -894,7 +929,7 @@
       g.last=Math.max(lc,lm?lm.ts:0);g.smsLast=lm&&lm.ts>lc?lm:null;
     });
     grps.sort(function(a,b){return b.last-a.last});
-    if(!grps.length){wrap.innerHTML='<div class="list-empty">'+(query?'Aucun résultat.':tab==='archives'?'Aucune discussion archivée.':'Aucune discussion.')+'</div>';return;}
+    if(!grps.length){wrap.innerHTML='<div class="list-empty">'+(query?'Aucun résultat.':tab==='archives'?'Aucun appel traité.':'Tout est traité.')+'</div>';return;}
     var html='',lastGrp=null;
     grps.forEach(function(g){
       var x=g.head;
@@ -910,12 +945,14 @@
       else if(!sg&&g.items.length>1)sub+=' · '+g.items.length+' appels';
       var unread=g.items.some(function(i){return i.unread});
       var sel=g.items.some(function(i){return i.id===selected});
-      html+='<div class="row" data-id="'+x.id+'"'+(sel?' aria-selected="true"':'')+'>'+
+      if(x.archived){var qc=x.archivedIso?quandTraite(x.archivedIso,true):String(x.archivedAt||'').replace("aujourd'hui à ",'').replace(' à ',' ');
+        sub=x.outcome==='resa'?'🛏 Résa prise · '+x.nuits+' nuit'+(x.nuits>1?'s':'')+' · '+qc:'✓ Traité · '+qc;}
+      html+='<div class="row'+(x.archived?' done':'')+'" data-id="'+x.id+'"'+(sel?' aria-selected="true"':'')+'>'+
         '<div class="rav" style="background:'+COLOR[x.motif]+'">'+avInner(x.name)+'</div>'+
         '<div class="rmeta"><div class="rl1"><span class="rn">'+esc(x.name)+'</span><span class="rt">'+(g.smsLast?whenOf(g.smsLast.ts):x.when)+'</span></div>'+
         '<div class="rl2"><span class="mdot" style="background:'+COLOR[x.motif]+'"></span>'+
           '<span class="rsub">'+esc(sub)+'</span>'+
-          (sg?'<span class="chip '+sg.cls+'">'+esc(sg.txt)+'</span>':'')+'</div></div>'+
+          (x.archived?'':sg?'<span class="chip '+sg.cls+'">'+esc(sg.txt)+'</span>':'')+'</div></div>'+
         (unread?'<span class="unread"></span>':'')+'</div>';
     });
     wrap.innerHTML=html;wrap.scrollTop=keep;
@@ -955,11 +992,20 @@
         ? '<button class="cpy" title="Copier le numéro" aria-label="Copier le numéro" data-n="'+esc(x.phone)+'">'+COPY_SVG+'</button>'
         : '')+'</div></div>'+
       '<span class="pill '+x.motif+'" style="margin-left:14px">'+LABEL[x.motif]+'</span>'+
-      (x.smsOnly ? '' : x.archived
-        ? '<span class="archtag" title="Archivée le '+esc(x.archivedAt||'')+'">Archivée</span>'+
-          '<button class="archbtn" id="archBtn">Désarchiver</button>'
-        : '<button class="archbtn" id="archBtn" title="Masque la discussion de la boîte — réversible à tout moment">Archiver</button>');
+      (x.smsOnly ? '' : traiteHTML(x));
   }
+  // Le même bouton dans l'en-tête du fil et dans celui d'un appel ouvert : on ne doit
+  // pas avoir à revenir au fil pour traiter l'appel qu'on vient d'écouter.
+  function traiteHTML(x){
+    return x.archived?'':'<button class="archbtn todo" id="archBtn" title="Le client a été rappelé ou la demande est réglée">✓ <span class="lg">Marquer comme traité</span><span class="sm">Traité</span></button>';
+  }
+  function stateHTML(x){
+    return x.outcome==='resa'
+      ? '<span>🛏 <b>Réservation prise</b> · '+x.nuits+' nuit'+(x.nuits>1?'s':'')+' · '+esc(x.archivedAt||'')+'</span>'+
+        '<button class="archbtn" id="archBtn">Remettre à traiter</button>'
+      : '<span>✓ <b>Traité</b> '+esc(x.archivedAt||'')+'</span><button class="archbtn" id="archBtn">Remettre à traiter</button>';
+  }
+
   // Horodatage du fil. En live il vient de la base ; en démo on le reconstruit
   // depuis le libellé « 27/07 · 07h58 » (année courante, suffisant pour trier).
   function tsOf(x){
@@ -1103,11 +1149,12 @@
       '<div class="dmeta"><div class="dn">Appel du '+esc(c.d)+'</div>'+
       '<div class="dp"><span>'+esc(c.name)+'</span></div></div>'+
       '<span class="pill '+c.motif+'" style="margin-left:14px">'+LABEL[c.motif]+'</span>'+
+      traiteHTML(c)+
       // Suppression définitive : administration seule, et seulement ici, dans le
       // détail d'UN appel. Jamais sur une carte de la liste ni sur l'en-tête du
       // fil — un fil regroupe plusieurs appels, on ne saurait pas ce qu'on efface.
       (isAdmin()
-        ? '<button class="delbtn" id="delBtn" style="margin-left:auto" '+
+        ? '<button class="delbtn" id="delBtn" '+
           'title="Supprimer définitivement cet appel" '+
           'aria-label="Supprimer définitivement cet appel">'+TRASH_SVG+'</button>'
         : '');
@@ -1155,6 +1202,7 @@
     var c=openId?data.find(function(d){return d.id===openId}):null;
     $('#detailEmpty').style.display='none';$('#detailInner').style.display='flex';
     $('#detHead').innerHTML=c?callHeadHTML(c):detHeadHTML(x);
+    var cx=c||x,st=$('#detState');st.hidden=!(cx.archived&&!cx.smsOnly);st.innerHTML=st.hidden?'':stateHTML(cx);
     var body=$('#detBody');body.innerHTML=c?callViewHTML(c):threadHTML(x);
     // une vue poussee s'ouvre en haut ; un fil s'ouvre sur son dernier message
     body.scrollTop=c?0:body.scrollHeight;
@@ -1174,6 +1222,7 @@
       });
       return bindArchive(x);
     }
+    bindArchive(c);
     var pp=$('#detBody .player .pp');
     if(pp)pp.addEventListener('click',function(){
       if(c.audio)play($('#detBody .player'),c.audio);else simPlay($('#detBody .player'));
@@ -1232,20 +1281,72 @@
             'L\'appel n\'a pas pu être supprimé. Réessayez dans un instant.')});
       });
   }
+  // `dates_sejour` est du texte libre : « du 28/10 au 2/11 », « Nuit du 11 au 12 octobre »,
+  // « 2 novembre 2026 au 3 novembre 2026 ». Deux jours trouvés = une durée ; sinon champ vide.
+  // ponytail: pré-remplissage seulement, la réception corrige ; « pour huit nuits » n'est pas lu.
+  var MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  function nightsOf(d){
+    var re=/\b(\d{1,2})(?:er)?\b(?:\/(\d{1,2})|\s+(janvier|février|fevrier|mars|avril|mai|juin|juillet|août|aout|septembre|octobre|novembre|décembre|decembre))?/gi,t=[],m;
+    while((m=re.exec(d||''))&&t.length<2){
+      var mo=m[2]?+m[2]:m[3]?MOIS.indexOf(m[3].toLowerCase().replace('fevrier','février').replace('aout','août').replace('decembre','décembre'))+1:0;
+      t.push({j:+m[1],m:mo});
+    }
+    if(t.length<2)return '';
+    var m1=t[0].m||t[1].m,m2=t[1].m||m1,n;
+    if(m1&&m2){n=Math.round((new Date(2026,m2-1,t[1].j)-new Date(2026,m1-1,t[0].j))/864e5);if(n<0)n+=365;}
+    else n=t[1].j-t[0].j;
+    return n>0&&n<60?n:'';
+  }
   function bindArchive(x){
     var ab=$('#archBtn');
-    if(ab)ab.addEventListener('click',function(){
-      // Archiver est réversible : la ligne reste, `archived_at` repasse à null.
-      // Un bouton qui fait l'aller-retour vaut mieux qu'un confirm() qui annonce
-      // du définitif ; le meme bouton sert d'annulation, sans fenêtre de quelques
-      // secondes à rater.
-      var on=!x.archived;
-      x.archived=on;
-      x.archivedAt=on?new Date().toLocaleDateString('fr-FR'):'';
-      patchCall(x.id,{archived_at:on?new Date().toISOString():null});
+    if(!ab)return;
+    function finish(o){
+      var n=new Date();
+      x.archived=true;x.outcome=o;
+      x.archivedIso=n.toISOString();x.archivedAt=quandTraite(x.archivedIso);
+      patchCall(x.id,{archived_at:n.toISOString(),outcome:o,nights:x.nuits||null});
       renderDetail();renderRows();renderCounts();
+    }
+    ab.addEventListener('click',function(){
+      // Deja traite : le meme bouton annule, comme l'archivage d'avant.
+      if(x.archived){x.archived=false;x.outcome=null;x.archivedAt='';patchCall(x.id,{archived_at:null,outcome:null,nights:null});renderDetail();renderRows();renderCounts();return;}
+      var m=$('#outMenu');if(m){m.remove();return;}
+      m=document.createElement('div');m.className='outmenu';m.id='outMenu';
+      m.innerHTML='<button class="oo" data-o="traite">✓ Traité<small>Client rappelé, ou rien à faire</small></button>'+
+        '<button class="oo" data-o="resa">🛏 Réservation prise<small>Indiquez le nom et le nombre de nuits</small></button>';
+      $('#detHead').appendChild(m);
+      m.querySelector('[data-o="traite"]').addEventListener('click',function(){finish('traite')});
+      m.querySelector('[data-o="resa"]').addEventListener('click',function(){
+        var nom=/^Appelant/.test(x.name)?'':x.name;
+        m.innerHTML='<form><span class="ft">🛏 Réservation prise</span>'+
+          '<label>Au nom de<input id="oNom" value="'+esc(nom)+'" placeholder="Nom de la réservation"></label>'+
+          '<label>Nombre de nuits<input id="oNuits" type="number" min="1" inputmode="numeric" value="'+nightsOf(x.dates)+'"></label>'+
+          '<button class="ok" type="submit">Valider</button></form>';
+        m.querySelector('form').addEventListener('submit',function(e){
+          e.preventDefault();
+          // le nom remplace le numero dans la liste : c'est le nom du correspondant (table clients)
+          var v=$('#oNom').value.trim();
+          x.nuits=+$('#oNuits').value||1;finish('resa');
+          if(v&&v!==x.name){if(digits(x.phone).length>=6)saveName(x,v);else{x.name=v;renderRows();renderDetail();}}
+        });
+        $('#oNom').focus();
+      });
     });
   }
+  // Export de l'etat des appels : meme format que l'export de l'admin (CSV ;, BOM pour Excel).
+  function csv(rows,cols){
+    var q=function(v){if(v==null)return '';v=String(v);return /[";\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+    return '\ufeff'+cols.join(';')+'\r\n'+rows.map(function(r){return cols.map(function(c){return q(r[c])}).join(';')}).join('\r\n');
+  }
+  $('#exportBtn').addEventListener('click',function(){
+    var rows=data.filter(function(x){return !x.smsOnly}).map(function(x){return {
+      'Date':x.d,'Numéro':x.phone,'Nom':x.name,'Motif':LABEL[x.motif],
+      'État':!x.archived?'À traiter':x.outcome==='resa'?'Réservation prise':'Traité',
+      'Traité le':x.archivedIso?new Date(x.archivedIso).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}):'','Nuits':x.outcome==='resa'?x.nuits:''};});
+    var b=new Blob([csv(rows,['Date','Numéro','Nom','Motif','État','Traité le','Nuits'])],{type:'text/csv;charset=utf-8'});
+    var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='etat-des-appels.csv';
+    document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000);
+  });
   // Lecture réelle : l'URL pointe le proxy N8N qui rejoue l'audio ElevenLabs.
   // Ce proxy IGNORE les requêtes Range : il renvoie 200 + le fichier entier au
   // lieu d'un 206, et pas d'Accept-Ranges. Impossible de se déplacer dans un
@@ -1498,6 +1599,16 @@
     return m?'+33 '+m[1]+' '+m[2]+' '+m[3]+' '+m[4]+' '+m[5]:p;
   }
   function fmtDur(sec){sec=sec||0;return sec>=60?Math.floor(sec/60)+' m '+(sec%60)+' s':sec+' s';}
+  // « aujourd'hui à 14h32 », « hier à 18h05 », « le 03/10 à 09h10 »
+  // court (ligne de la liste, coupée au téléphone) : « 14h32 », « hier 18h05 », « 03/10 09h10 »
+  function quandTraite(iso,court){
+    if(!iso)return '';
+    var d=new Date(iso),h=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}).replace(':','h'),
+        a=new Date(),b=new Date(iso),j;a.setHours(0,0,0,0);b.setHours(0,0,0,0);j=Math.round((a-b)/864e5);
+    var jj=d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+    if(court)return (j===0?'':j===1?'hier ':jj+' ')+h;
+    return (j===0?"aujourd'hui":j===1?'hier':'le '+jj)+' à '+h;
+  }
   function mapRow(r){
     var d=new Date(r.started_at),now=new Date();
     var jour=d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
@@ -1513,7 +1624,8 @@
       when:dayKey(d)===dayKey(now)?heure:(ecoule<7?d.toLocaleDateString('fr-FR',{weekday:'short'}):jour),
       d:jour+' · '+heure,ts:d.getTime(),
       unread:!r.read_at,archived:!!r.archived_at,
-      archivedAt:r.archived_at?new Date(r.archived_at).toLocaleDateString('fr-FR'):'',
+      archivedAt:quandTraite(r.archived_at),archivedIso:r.archived_at||'',outcome:r.outcome||'',nuits:r.nights||'',
+      conv:r.provider_call_id||'',
       dur:fmtDur(r.duration_secs),summary:r.summary||'(pas de résumé)',
       transcript:tr,noMessage:tr.length===0,audio:r.recording_url||'',
       dates:gv('dates_sejour'),resa:gv('reservation_prise'),suite:gv('suite_a_donner')};
@@ -1650,6 +1762,17 @@
           loadTpl();
           return loadClients().then(loadMsgs).then(function(){
             renderCounts();renderRows();
+            // Bouton « Marquer comme traité » du mail récap : ?appel=<conversation EL>.
+            // Consommé une fois : loadCalls repasse à chaque nouvel appel (poll).
+            var ap=/[?&]appel=([\w-]+)/.exec(location.search);
+            if(ap){
+              try{history.replaceState(null,'',location.pathname+location.search.replace(/[?&]appel=[\w-]+/,'').replace(/^&/,'?')+location.hash)}catch(e){}
+              var c=data.filter(function(x){return x.conv===ap[1]})[0];
+              if(c){
+                if(c.archived){tab='archives';$$('.ltab').forEach(function(b){b.setAttribute('aria-selected',b.dataset.t==='archives'?'true':'false')});renderRows();renderCounts();}
+                openThread(c.id,true);
+              }
+            }
             var v=visible();
             if(!selected&&v.length&&window.matchMedia('(min-width:901px)').matches)openThread(v[0].id);
             guideAuto();
