@@ -980,10 +980,15 @@
         ? '<button class="cpy" title="Copier le numéro" aria-label="Copier le numéro" data-n="'+esc(x.phone)+'">'+COPY_SVG+'</button>'
         : '')+'</div></div>'+
       '<span class="pill '+x.motif+'" style="margin-left:14px">'+LABEL[x.motif]+'</span>'+
-      (x.smsOnly ? '' : x.archived
+      (x.smsOnly ? '' : traiteHTML(x));
+  }
+  // Le même bouton dans l'en-tête du fil et dans celui d'un appel ouvert : on ne doit
+  // pas avoir à revenir au fil pour traiter l'appel qu'on vient d'écouter.
+  function traiteHTML(x){
+    return x.archived
         ? '<span class="archtag done">'+(x.outcome==='resa'?'🛏 Réservation prise<span class="lg">, '+x.nuits+' nuit'+(x.nuits>1?'s':'')+' · '+esc(x.archivedAt||'')+'</span>':'✓ Traité<span class="lg"> '+esc(x.archivedAt||'')+'</span>')+'</span>'+
           '<button class="archbtn" id="archBtn" aria-label="Remettre à traiter"><span class="lg">Remettre à traiter</span><span class="sm">↺</span></button>'
-        : '<button class="archbtn todo" id="archBtn" title="Le client a été rappelé ou la demande est réglée">✓ <span class="lg">Marquer comme traité</span><span class="sm">Traité</span></button>');
+        : '<button class="archbtn todo" id="archBtn" title="Le client a été rappelé ou la demande est réglée">✓ <span class="lg">Marquer comme traité</span><span class="sm">Traité</span></button>';
   }
   // Horodatage du fil. En live il vient de la base ; en démo on le reconstruit
   // depuis le libellé « 27/07 · 07h58 » (année courante, suffisant pour trier).
@@ -1128,11 +1133,12 @@
       '<div class="dmeta"><div class="dn">Appel du '+esc(c.d)+'</div>'+
       '<div class="dp"><span>'+esc(c.name)+'</span></div></div>'+
       '<span class="pill '+c.motif+'" style="margin-left:14px">'+LABEL[c.motif]+'</span>'+
+      traiteHTML(c)+
       // Suppression définitive : administration seule, et seulement ici, dans le
       // détail d'UN appel. Jamais sur une carte de la liste ni sur l'en-tête du
       // fil — un fil regroupe plusieurs appels, on ne saurait pas ce qu'on efface.
       (isAdmin()
-        ? '<button class="delbtn" id="delBtn" style="margin-left:auto" '+
+        ? '<button class="delbtn" id="delBtn" '+
           'title="Supprimer définitivement cet appel" '+
           'aria-label="Supprimer définitivement cet appel">'+TRASH_SVG+'</button>'
         : '');
@@ -1199,6 +1205,7 @@
       });
       return bindArchive(x);
     }
+    bindArchive(c);
     var pp=$('#detBody .player .pp');
     if(pp)pp.addEventListener('click',function(){
       if(c.audio)play($('#detBody .player'),c.audio);else simPlay($('#detBody .player'));
